@@ -1,16 +1,15 @@
 const { Schema } = require('mongoose');
-const { SupportedClasses } = require('coursesync')
+const { default: mongoose } = require('mongoose');
 
 /**
  * @typedef {{
  *      userId: string,
- *      university: string,
- *      joinedBot: Date,
- *      trustedUsers: Set<string>
- *      cachedServers: string[],
- *      classes: Map<SupportedClasses, string[]>
- *      classesCount: number,
- *      staff: boolean
+ *      stats: {
+ *          constitution: number,
+ *          strength: number,
+ *          speed: number,
+ *          dexterity: number,
+ *      },
  * }} UserSchema
  */
 
@@ -24,36 +23,15 @@ const userSchema = new Schema({
         unique: true,
         required: true,
     },
-    university: {
-        type: String,
-        lowercase: true,
-        default: 'New Mexico State University',
-    },
-    joinedBot: {
-        type: Date,
-        default: Date.now,
-    },
-    trustedUsers: {
-        type: Map,
-        of: String,
-        default: new Set(),
-    },
-    cachedServers: {
-        type: [String],
-        default: [],
-    },
-    classes: {
-        type: Map,
-        of: [String],
-        default: new Map(),
-    },
-    classesCount: {
-        type: Number,
-        default: 0,
-    },
-    staff: {
-        type: Boolean,
-        default: false,
+    stats: {      // dunno if I should split into diff
+        type: {},
+        default: {
+            constitution: 0,
+            strength: 0,
+            speed: 0,
+            dexterity: 0,
+        },
     },
 });
-module.exports = { userSchema };
+
+module.exports = userSchema;

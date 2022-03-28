@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 module.exports = {
     name: 'ping',
     description: 'Replies with Pong, and your status!',
-    guilds: ['903924793542311947', '910745675006877757'],
+    guilds: ['957854680367648778'],
     async execute( interaction ) {
         await interaction.reply({ content: 'Pong! Loading your stats...', ephemeral: true });
 

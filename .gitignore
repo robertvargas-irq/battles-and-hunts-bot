@@ -1,0 +1,7 @@
+.env
+/app/.env
+/src/.env
+/logs
+/node_modules
+/desktop.ini
+/.vscode

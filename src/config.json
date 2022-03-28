@@ -1,0 +1,13 @@
+{
+    "logoBanner": "https://media.discordapp.net/attachments/907157942594314251/907159920305135646/Concept_Bot_Logo_Banner_Full.png?width=1920&height=480",
+    "colors": {
+        "neutral": "0xeeacd5",
+        "positive": "#0xfcd1b7",
+        "negative": "#0xe4839c",
+        "muted": "#0xfb9ba4",
+        "other": "0xfacdbc"
+    },
+    "disclaimer": "",
+    "hints":[],
+    "preloader":"https://mir-s3-cdn-cf.behance.net/project_modules/disp/35771931234507.564a1d2403b3a.gif"
+}

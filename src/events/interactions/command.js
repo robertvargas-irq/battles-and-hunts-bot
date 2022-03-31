@@ -21,13 +21,13 @@ module.exports = async ( interaction ) => {
     catch ( error ) {
         console.error( error );
 
-        const write = fs.createWriteStream( `./logs/Error Log - ${Date().replace(/:/g, "-")}.txt` );
-        write.write( `${Date()}\n\n`
+        // const write = fs.createWriteStream( `./logs/Error Log - ${Date().replace(/:/g, "-")}.txt` );
+        console.error( `${Date()}\n\n`
             + `Command: ${interaction.commandName}\n`
             + `Guild: ${interaction.guild.name} (${interaction.guild.id})\n`
             + `Caller: ${interaction.user.tag} (${interaction.user.id})\n`
             + `${error.stack}` );
-        write.close();
+        // write.close();
 
         // send error message
         try {

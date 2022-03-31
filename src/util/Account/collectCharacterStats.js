@@ -1,4 +1,3 @@
-const editCharacter = require('./editCharacter');
 const { Message, MessageEmbed, BaseCommandInteraction } = require('discord.js');
 const MIN = 0;
 const MAX = 10;
@@ -10,10 +9,10 @@ const TIME = 30;
  * @param {BaseCommandInteraction} interaction 
  * @param {String} userId 
  */
-async function collectCharacterStats(interaction) {
+async function collectCharacterStats(interaction, promptMessage) {
 
     // prompt for stats
-    const prompt = new MessageEmbed({ title: "🐈‍ Stat Declaration", color: 'AQUA' });
+    const prompt = new MessageEmbed({ title: "🐈‍ Stat Declaration", description: promptMessage, color: 'AQUA', footer: { text: '❕ Send cancel to quit.' } });
     const filter = (/**@type {Message}*/ message) => message.author.id === interaction.user.id;
     let field = 0;
     let stats = {
@@ -23,13 +22,13 @@ async function collectCharacterStats(interaction) {
         dexterity: 0,
     };
 
+    // take input for each available step
+    const validate = (input) => !/[^0-9]/.exec(input);
     for await (let step of steps) {
-        console.log(steps)
-        console.log(step)
 
         // prompt for new input
         await interaction.editReply({
-            embeds: [ prompt.addField(`${step} ${flair[field]}`, `¦⁘⟧ [\`${MIN}\` - \`${MAX}\`] Please send your character's \`${step.toUpperCase()}\``) ]
+            embeds: [ prompt.addField(`${step} ${flair[field]}`, `⁅⁘⟧ [\`${MIN}\` - \`${MAX}\`] Please send your character's \`${step.toUpperCase()}\``) ]
         });
 
         // get user input and validate
@@ -38,12 +37,15 @@ async function collectCharacterStats(interaction) {
 
         // if input is not valid, retry 3 times
         if (!input) return terminate(interaction);
-        let validInput = !/[^0-9]/.exec(input);
+        let validInput = validate(input);
         let parsed = parseInt(input.split(/[^0-9]/)[0]);
 
         // validate
         for (let i = 0; i < RETRIES
         && (!validInput || (parsed < MIN || parsed > MAX)); i++) {
+            // process quit command
+            if (input.toLowerCase() === 'cancel') return cancel(interaction);
+
             // prompt for new input
             prompt.fields[field].value = `⚠️ \`${input}\` is **NOT** a valid input! Please only send a number between [\`${MIN}\` - \`${MAX}\`].\n(${RETRIES - i} attempts remaining.)`;
             await interaction.editReply({ embeds: [prompt] });
@@ -104,12 +106,31 @@ function invalid(interaction) {
 }
 
 /**
+ * Show successful cancellation.
+ * @param {BaseCommandInteraction} interaction 
+ */
+ function cancel(interaction) {
+    interaction.editReply({
+        embeds: [ new MessageEmbed()
+            .setColor('AQUA')
+            .setTitle("✅ Successfully cancelled.")
+            .setDescription("You may now dismiss this menu ❣️"),
+        ]
+    });
+    return false;
+}
+
+/**
  * Helper function; collects one input.
  * @param {BaseCommandInteraction} interaction
  */
 async function collect(interaction, filter) {
     let input = await interaction.channel.awaitMessages({ filter: filter, max: 1, time: TIME * 1000, errors: ['time'] })
-        .then(collected => { return collected.first().content })
+        .then(collected => {
+            let content = collected.first().content;
+            collected.first().delete().catch(console.error);
+            return content;
+        })
         .catch(() => { return false });
     return input;
 }

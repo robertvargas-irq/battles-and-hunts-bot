@@ -10,6 +10,7 @@ const { default: mongoose } = require('mongoose');
  *          speed: number,
  *          dexterity: number,
  *      },
+ *      currentHealth: number
  * }} UserSchema
  */
 
@@ -31,6 +32,10 @@ const userSchema = new Schema({
             speed: 0,
             dexterity: 0,
         },
+    },
+    currentHealth: {
+        type: Number,
+        default: 0,
     },
 });
 

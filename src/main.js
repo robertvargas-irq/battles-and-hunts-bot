@@ -12,7 +12,7 @@ let client = new BotClient({
     intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES ],
     partials: ["CHANNEL"]
 });
-// require('./database/connect.js')();
+require('./database/connect.js')();
 
 // login
 client.login( process.env.DISCORD_TOKEN );

@@ -109,9 +109,6 @@ class HuntManager {
             > 🍽️ **${interaction.member.displayName}, you have caught dinner!** 
             > You have caught a(n) \`${prey.name.toUpperCase()}\`, and it looks rather ${clanPrey.descriptors[prey.size - 1]}! (\`size\`: \`${prey.size}\`)
             > 
-            > **⚠️ THIS IS A TESTING PERIOD OF THE \`/hunt\` COMMAND ⚠️**
-            > \`THE BOTTOM TWO COMMANDS ARE NOT IMPLEMENTED YET AND ARE CURRENTLY UNDER DEVELOPMENT\`
-            > 
             > **⚠️ IF YOU WISH TO \`CARRY\` THIS ON YOUR BACK, USE \`/carry\`**
             > **➡️ TO \`DEPOSIT\` ANY PREY BEING CARRIED TO THE PREY PILE, USE \`/deposit\`**
             `

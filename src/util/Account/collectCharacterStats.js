@@ -4,6 +4,8 @@ const MAX = 10;
 const RETRIES = 3;
 const TIME = 30;
 
+const {names, flairs} = require('./stats.json');
+
 /**
  * Prompts user for character stats.
  * @param {BaseCommandInteraction} interaction 
@@ -16,19 +18,23 @@ async function collectCharacterStats(interaction, promptMessage) {
     const filter = (/**@type {Message}*/ message) => message.author.id === interaction.user.id;
     let field = 0;
     let stats = {
-        constitution: 0,
         strength: 0,
-        speed: 0,
         dexterity: 0,
-    };
+        constitution: 0,
+        speed: 0,
+        intelligence: 0,
+        charisma: 0,
+        swimming: 0,
+        stalking: 0
+    }
 
     // take input for each available step
     const validate = (input) => !/[^0-9]/.exec(input);
-    for await (let step of steps) {
+    for await (let step of names) {
 
         // prompt for new input
         await interaction.editReply({
-            embeds: [ prompt.addField(`${step} ${flair[field]}`, `⁅⁘⟧ [\`${MIN}\` - \`${MAX}\`] Please send your character's \`${step.toUpperCase()}\``) ]
+            embeds: [ prompt.addField(`${step} ${flairs[field]}`, `⁅⁘⟧ [\`${MIN}\` - \`${MAX}\`] Please send your character's \`${step.toUpperCase()}\``) ]
         });
 
         // get user input and validate
@@ -63,7 +69,7 @@ async function collectCharacterStats(interaction, promptMessage) {
         if (parsed < 0 || parsed > 10) return invalid(interaction);
 
         // after input is successful, update field
-        stats[steps[field].toLowerCase()] = parsed;
+        stats[names[field].toLowerCase()] = parsed;
         prompt.fields[field++].value = `> ↣ \`${input.toString()}\` / \`${MAX}\``;
         
         console.log(stats);
@@ -134,21 +140,5 @@ async function collect(interaction, filter) {
         .catch(() => { return false });
     return input;
 }
-
-// stats to collect
-const steps = [
-    "Constitution",
-    "Strength",
-    "Speed",
-    "Dexterity"
-];
-const flair = [
-    "❤️‍🔥",
-    "🦾",
-    "💨",
-    "⚔️"
-];
-
-
 
 module.exports = collectCharacterStats;

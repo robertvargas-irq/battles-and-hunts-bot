@@ -1,5 +1,6 @@
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const userSchema = require('../../database/schemas/user');
+const {flairs} = require('./stats.json');
 
 /**@readonly*/ const MAX = 10;
 /**
@@ -8,12 +9,7 @@ const userSchema = require('../../database/schemas/user');
  * @param {userSchema} userData 
  */
 function formatStats(interaction, userData) {
-    const flair = [
-        "❤️‍🔥",
-        "🦾",
-        "💨",
-        "⚔️"
-    ];
+    
     let i = 0;
     return new MessageEmbed()
         .setColor('LUMINOUS_VIVID_PINK')
@@ -29,7 +25,7 @@ function formatStats(interaction, userData) {
             },
             ...Object.keys(userData.stats).map(stat => {
                 return {
-                    name: stat.toUpperCase() + ' ' + flair[i++],
+                    name: stat.toUpperCase() + ' ' + flairs[i++],
                     value: `> ↣ \`${userData.stats[stat]}\` / \`${MAX}\``
                 }
             })

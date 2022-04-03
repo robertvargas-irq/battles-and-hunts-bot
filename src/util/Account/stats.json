@@ -1,0 +1,32 @@
+{
+    "names": [
+        "Strength",
+        "Dexterity",
+        "Constitution",
+        "Speed",
+        "Intelligence",
+        "Charisma",
+        "Swimming",
+        "Stalking"
+    ],
+    "flairs": [
+        "🦾",
+        "⚔️",
+        "❤️‍🔥",
+        "💨",
+        "🧠",
+        "🌟",
+        "🥽",
+        "👟"
+    ],
+    "defaultStats": {
+        "strength": 0,
+        "dexterity": 0,
+        "constitution": 0,
+        "speed": 0,
+        "intelligence": 0,
+        "charisma": 0,
+        "swimming": 0,
+        "stalking": 0
+    }
+}

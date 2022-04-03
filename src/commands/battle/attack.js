@@ -1,11 +1,10 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
-const userSchema = require('../database/schemas/user');
-const firstTimeRegister = require('../util/Account/firstTimeRegister');
+const userSchema = require('../../database/schemas/user');
+const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 
 const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
-
 
 module.exports = {
     name: 'attack',
@@ -20,9 +19,7 @@ module.exports = {
         },
     ],
     /**
-     * 
      * @param {BaseCommandInteraction} interaction 
-     * @returns 
      */
     async execute(interaction) {
 

@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
-const GUILDS = ['957854680367648778', '954037682223316992'];
+const GUILDS = ['957854680367648778'];
 
 /**
  * Registers all slash commands from the client.
@@ -20,10 +20,10 @@ async function registerClientCommands( client ) {
     //     )
     // );
 
-    for ( let command of commands ) {
+    // for ( let command of commands ) {
     
         // register command if being deployed in guilds
-        for ( g of GUILDS ) {
+        for ( let g of GUILDS ) {
             queue.push( client.guilds.cache.get( g )?.commands.set( commands ) );
             queue.push(
                 Rest.put(
@@ -32,7 +32,7 @@ async function registerClientCommands( client ) {
             );
         }
         
-    }
+    // }
 
     // ensure all items in queue complete
     await Promise.all( queue );

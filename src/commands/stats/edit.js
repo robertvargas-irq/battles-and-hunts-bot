@@ -29,6 +29,17 @@ module.exports = {
         }
         
         // collect new stats
+        if (found.stats.hasOwnProperty('stalking'))
+            found.stats = {
+                strength: 0,
+                dexterity: 0,
+                constitution: 0,
+                speed: 0,
+                intelligence: 0,
+                charisma: 0,
+                swimming: 0,
+                stalking: 0
+            }
         const catStats = await collectCharacterStats(interaction, '**Welcome back to the editor!**\nPlease enter your character\'s stats one by one!');
         if (!catStats) return; // error already handled inside collect()
 

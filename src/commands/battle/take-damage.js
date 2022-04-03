@@ -1,18 +1,18 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
-const userSchema = require('../database/schemas/user');
-const firstTimeRegister = require('../util/Account/firstTimeRegister');
-const { formatStats, calculateMaxHealth } = require('../util/Account/Player');
+const userSchema = require('../../database/schemas/user');
+const firstTimeRegister = require('../../util/Account/firstTimeRegister');
+const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
 
 module.exports = {
-    name: 'medicine',
-    description: 'Heal yourself!',
+    name: 'take-damage',
+    description: 'Take damage from an attack or any source of danger!',
     guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'amount',
-            description: 'The amount of health to heal. (You will never heal past your max health)',
+            description: 'The amount of damage to subtract from your health. (You will never go below 0)',
             type: dTypes.Integer,
             required: true,
         },
@@ -39,14 +39,13 @@ module.exports = {
             });
         }
         
-        // check for over-heal
-        let maxHealth = calculateMaxHealth(found.stats.constitution);
-        if (found.currentHealth + amount > maxHealth)
-            amount = maxHealth - found.currentHealth;
+        // check for already dead or under-heal
+        if (found.currentHealth < 1 || found.currentHealth - amount < 0)
+            amount = found.currentHealth;
         
         // save to database if actual change was made
         if (amount > 0) {
-            found.currentHealth += amount;
+            found.currentHealth -= amount;
             await found.save();
         }
 
@@ -54,10 +53,10 @@ module.exports = {
         interaction.editReply({
             embeds: [
                 new MessageEmbed()
-                    .setColor('AQUA')
-                    .setTitle('🌿 Serene')
-                    .setDescription(getRandomHealingMessage())
-                    .addField('CURRENT HEALTH 💘', `> ↣ \`${found.currentHealth}\` / \`${found.stats.constitution * 5 + 50}\``),
+                    .setColor(found.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED')
+                    .setTitle(found.currentHealth < 1 ? '...' : '🩸 Hrrk...!')
+                    .setDescription(getRandomDamageMessage(found.currentHealth))
+                    .addField('CURRENT HEALTH 💔', `> ↣ \`${found.currentHealth}\` / \`${calculateMaxHealth(found.stats.constitution)}\``),
             ]
         });
 
@@ -65,19 +64,20 @@ module.exports = {
 };
 
 
-const healingAction = [
-    'You put some cobwebs on your wounds',
-    'The medicine cat puts some Marigold on your scratches',
-    'You take two Poppy Seeds and rest in your den'
+const damageAction = [
+    'Such a heavy hand',
+    'No medicine cat is nearby',
+    'The damage inflicted is excruciating'
 ];
 
-const healingResponse = [
-    'you are feeling rejuvinated',
-    'your scabs will soon turn to scars',
-    'your aches and pains have been soothed'
+const damageResponse = [
+    'you are feeling weak',
+    'you feel the burning rise',
+    'your aches and pains are the least of your worries'
 ];
 
-function getRandomHealingMessage() {
-    return healingAction[Math.floor(Math.random() * healingAction.length)] + ', ' +
-        healingResponse[Math.floor(Math.random() * healingResponse.length)] + '.';
+function getRandomDamageMessage(health) {
+    if (health < 1) return 'Silence, as the world fades to black.';
+    return damageAction[Math.floor(Math.random() * damageAction.length)] + ', ' +
+        damageResponse[Math.floor(Math.random() * damageResponse.length)] + '.';
 }

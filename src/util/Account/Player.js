@@ -1,8 +1,7 @@
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const userSchema = require('../../database/schemas/user');
-const {flairs} = require('./stats.json');
+const {flairs, ranges} = require('./stats.json');
 
-/**@readonly*/ const MAX = 10;
 /**
  * Format player stats.
  * @param {BaseCommandInteraction} interaction 
@@ -21,19 +20,27 @@ function formatStats(interaction, userData) {
         .setFields([
             {
                 name: 'CURRENT HEALTH 💘',
-                value: `> ↣ \`${userData.currentHealth}\` / \`${userData.stats.constitution * 5 + 50}\``
+                value: `> ↣ \`${userData.currentHealth}\` / \`${userData.stats.constitution * 5 + 50}\``,
+                inline: true
+            },
+            {
+                name: 'CURRENT HUNGER '
+                + ['🍖', '🦴'][Math.floor((userData.currentHunger / userData.stats.cat_size)*2)],
+                value: `> ↣ \`${userData.currentHunger}\` / \`${userData.stats.cat_size}\``,
+                inline: true,
             },
             ...Object.keys(userData.stats).map(stat => {
                 return {
-                    name: stat.toUpperCase() + ' ' + flairs[i++],
-                    value: `> ↣ \`${userData.stats[stat]}\` / \`${MAX}\``
+                    name: stat.toUpperCase().replace('_', ' ') + ' ' + flairs[i],
+                    value: `> ↣ \`${userData.stats[stat]}\` / \`${ranges[i++][1]}\``
                 }
             })
-        ]);
+        ])
+        .setFooter(`⇸ CLAN AFFILITATION: ${userData.clan.toUpperCase()}`);
 }
 
 function calculateMaxHealth(constitution) {
     return constitution * 5 + 50;
 }
 
-module.exports = { formatStats, calculateMaxHealth, MAX };
+module.exports = { formatStats, calculateMaxHealth };

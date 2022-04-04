@@ -29,26 +29,20 @@ module.exports = {
         }
         
         // collect new stats
-        if (found.stats.hasOwnProperty('stalking'))
-            found.stats = {
-                strength: 0,
-                dexterity: 0,
-                constitution: 0,
-                speed: 0,
-                intelligence: 0,
-                charisma: 0,
-                swimming: 0,
-                stalking: 0
-            }
-        const catStats = await collectCharacterStats(interaction, '**Welcome back to the editor!**\nPlease enter your character\'s stats one by one!');
+        const {clanRole, stats: catStats} = await collectCharacterStats(interaction, '**Welcome back to the editor!**\nPlease enter your character\'s stats one by one!');
         if (!catStats) return; // error already handled inside collect()
 
         // handle new max health
         if (found.currentHealth > calculateMaxHealth(catStats.constitution))
             found.currentHealth = calculateMaxHealth(catStats.constitution);
 
+        // handle new hunger
+        if (found.stats.cat_size < found.currentHunger)
+            found.currentHunger = found.stats.cat_size;
+        
         // save to the database
         found.stats = catStats;
+        found.clan = clanRole;
         found.markModified('User.stats');
         await found.save()
             .then(() => {

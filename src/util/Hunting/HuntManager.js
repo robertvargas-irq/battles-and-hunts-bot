@@ -3,23 +3,21 @@ const clanPrey = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const userSchema = require('../../database/schemas/user');
 const { MessageEmbed, BaseCommandInteraction } = require('discord.js');
-const MAX_WEIGHT = 3;
-// const MAX_ROLL = 20;
-
+const PreyPile = require('./PreyPile');
 
 /**@typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans */
 /**@typedef {{name: string, size: number, bites_remaining: number}} prey */
 
-/**@type {Map<string, prey>} */
-const playerIdToRecentlyCaught = new Map();
-/**@type {Map<string, [weight, prey[]]>} */
-const playerIdToPreyCarried = new Map();
-
 
 class HuntManager {
-    
+    static MAX_WEIGHT = 3;
+    static INVENTORY_MAX_WEIGHT = 7;
     static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
-    static #RandomFromArray = (a) => { return a[this.#Random(0, a.length)] }
+    static #RandomFromArray = (a) => { return a[this.#Random(0, a.length - 1)] }
+    /**@type {Map<string, prey>} */
+    static #playerIdToRecentlyCaught = new Map();
+    /**@type {Map<string, [weight, prey[]]>} */
+    static #playerIdToInventory = new Map();
 
     /**
      * Roll for track.
@@ -95,6 +93,7 @@ class HuntManager {
             +
             // caught roll breakdown
             (tracked ? `\
+            
             __(1d20 + ${catchProf}) Catch Roll__: ${caught ? '✅' : '⛔'}
             > **Rolled**: \`${catchRoll}\` / \`20\`
             > **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][1].toUpperCase()}\`)
@@ -134,8 +133,23 @@ class HuntManager {
      * @returns {prey}
      */
     static setRecentlyCaught(userId, prey) {
-        playerIdToRecentlyCaught.set(userId, prey);
+        if (!prey) {
+            this.#playerIdToRecentlyCaught.delete(userId);
+            return null;
+        }
+        this.#playerIdToRecentlyCaught.set(userId, prey);
+        console.log(this.#playerIdToRecentlyCaught);
         return prey;
+    }
+    
+    /**
+     * Get the user's most recently caught prey item
+     * @param {string} userId The player who caught the prey
+     * @returns {prey}
+     */
+    static getRecentlyCaught(userId) {
+        console.log(this.#playerIdToRecentlyCaught);
+        return this.#playerIdToRecentlyCaught.get(userId);
     }
 
     /**
@@ -145,19 +159,29 @@ class HuntManager {
      * @returns {Array} [`AbleToAdd`, `WeightCarried`, `CurrentlyCarrying`]
      */
     static addToCarry(userId, prey) {
-        const inventory = playerIdToPreyCarried.get(userId);
-        if (!inventory) playerIdToPreyCarried.set(userId, [0, []]);
+
+        // get player inventory else create one
+        let inventory = this.#playerIdToInventory.get(userId);
+        if (!inventory) {
+            this.#playerIdToInventory.set(userId, [0, []]);
+            inventory = this.#playerIdToInventory.get(userId);
+        }
         const weight = inventory[0];
         const carried = inventory[1];
 
         // check to see if able to carry
-        if (prey + weight > MAX_WEIGHT)
+        if (prey.bites_remaining + weight > this.INVENTORY_MAX_WEIGHT)
             return [false, inventory[0], inventory[1]];
         
         // add to carried and increase weight
         carried.push(prey);
-        inventory[0] += weight;
-        
+        inventory[0] = inventory[0] + prey.bites_remaining;
+
+        // remove from recently caught
+        this.setRecentlyCaught(userId, null);
+        console.log(inventory);
+        console.log(this.#playerIdToInventory.get(userId));
+
         // return success and new weight and inventory
         return [true, inventory[0], inventory[1]];
     }
@@ -168,12 +192,12 @@ class HuntManager {
      * @returns {prey[]} All the prey in their inventory
      */
     static removeFromCarry(userId) {
-        const inventory = playerIdToPreyCarried.get(userId);
+        const inventory = this.#playerIdToInventory.get(userId);
         if (!inventory) return [];
 
         // cache inventory then empty player inventory
         const inventoryItems = inventory[1];
-        playerIdToPreyCarried.set(userId, [0, []]);
+        this.#playerIdToInventory.set(userId, [0, []]);
 
         // return inventory
         return inventoryItems;
@@ -189,64 +213,27 @@ class HuntManager {
     static addToPreyPile(prey, clan, server) {
         const pile = server.clans[clan].preyPile;
         for (let i = 0; i < prey.length; i++)
-            pile.push(prey);
+            pile.push(prey[i]);
+        
+        // mark to save
+        server.markModified(`clans.${clan}`);
         
         return pile;
     }
 
-    /**
-     * Empty a clan's prey pile.
-     * @param {clans} clan The clan's prey pile to empty.
-     * @param {serverSchema} server Current server's database entry.
-     * @returns {prey[]} The prey that WAS in the pile.
-     */
-    static emptyPreyPile(clan, server) {
-        const pile = server.clans[clan].preyPile;
-        server.clans[clan].preyPile = [];
-
-        return pile;
-    }
-
-    /**
-     * Pull a wanted amount from the prey pile.
-     * @param {clans} clan The clan's prey pile to take and how much.
-     * @param {serverSchema} server Current server's database entry.
-     * @param {number} bitesToSatisfy The amount of bites needed to satisfy hunger.
-     * @returns {{name:string, totalEaten:number}[]} The prey that was required to facilitate 
-     */
-    static pullFromPreyPile(clan, server, bitesToSatisfy) {
-        const preyPile = server.clans[clan].preyPile.shift();
-
-        // iterate through the pile until prey is depleted or bites satisfied
-        /**@type {prey} */
-        let pulled = null;
-        let bites_taken = 0;
-        let eatenPrey = {};
-        while (preyPile.length > 0 && bitesToSatisfy > 0) {
-
-            // unenqueue prey item
-            pulled = preyPile[0];
-            
-            // see how many bites needed; either the full thing or bites needed to satisfy
-            bites_taken = Math.min(pulled.bites_remaining, bitesToSatisfy);
-            pulled.bites_remaining -= bites_taken;
-
-            // if bites are left in the current pulled prey, re-add to the prey pile
-            if (pulled.bites_remaining < 1)
-                preyPile.shift();
-            
-            // record to eaten prey
-            eatenPrey.set(
-                pulled.name,
-                eatenPrey.get(pulled.name)
-                    + 1 * (bites_taken / pulled.bites_remaining)
-            );
-
+    static formatPrey(preyList) {
+        // count each prey in the list
+        const counter = new Map();
+        for (let i = 0; i < preyList.length; i++) {
+            counter.set(preyList[i].name, (counter.get(preyList[i].name) || 0) + 1);
         }
-
-        // return the prey needed to eat
-        return Object.keys(eatenPrey).map(p => { return {name: p, amountEaten: eatenPrey[p]} });
-
+        console.log(counter);
+        
+        // return a formatted string
+        return Array.from(counter.entries()).map(([k, v]) => {
+            console.log(k, v);
+            return `↣ **(${v}) ${k[0].toUpperCase() + k.substring(1)}**`
+        }).join('\n');
     }
 
 }

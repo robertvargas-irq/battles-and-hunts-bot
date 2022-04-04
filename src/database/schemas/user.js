@@ -15,6 +15,7 @@ const { Schema } = require('mongoose');
  * @typedef {{
  *      userId: string,
  *      stats: {
+ *          cat_size: number,
  *          strength: number,
  *          dexterity: number,
  *          constitution: number,
@@ -24,7 +25,9 @@ const { Schema } = require('mongoose');
  *          swimming: number,
  *          stalking: number
  *      },
- *      currentHealth: number
+ *      currentHealth: number,
+ *      currentHunger: number,
+ *      clan: string,
  * }} UserSchema
  */
 
@@ -41,6 +44,7 @@ const userSchema = new Schema({
     stats: {      // dunno if I should split into diff
         type: {},
         default: {
+            cat_size: 0,
             strength: 0,
             dexterity: 0,
             constitution: 0,
@@ -54,6 +58,14 @@ const userSchema = new Schema({
     currentHealth: {
         type: Number,
         default: 0,
+    },
+    currentHunger: {
+        type: Number,
+        default: 0,
+    },
+    clan: {
+        type: String,
+        default: null,
     },
 });
 

@@ -10,7 +10,7 @@ const collectCharacterStats = require('./collectCharacterStats');
 async function firstTimeRegister(interaction) {
 
     // collect stats
-    const stats = await collectCharacterStats(interaction,
+    const {clanRole, stats} = await collectCharacterStats(interaction,
         `Welcome to the Battle System for **${interaction.guild.name}**!\n` +
         `Let's get you squared away, **${interaction.member.displayName}**!\n` +
         `Please send your character's stats. (These can always be changed later using \`/edit\`!)`);
@@ -23,7 +23,9 @@ async function firstTimeRegister(interaction) {
     const newUser = new User({
         userId: interaction.user.id,
         stats: stats,
-        currentHealth: stats.constitution * 5 + 50
+        currentHealth: stats.constitution * 5 + 50,
+        currentHunger: 0,
+        clan: clanRole,
     });
     newUser.markModified('User.stats');
     return await newUser.save()

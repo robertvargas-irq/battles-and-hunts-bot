@@ -24,16 +24,32 @@ const serverSchema = new Schema({
         type: {},
         default: {
             unforgiven: {
-                preyPile: []
+                preyPile: [],
+                preyPileChannelId: null,
+                preyPileMessageId: null,
+                preyPileThreadId: null,
+                clanRoleId: null,
             },
             riverclan: {
-                preyPile: []
+                preyPile: [],
+                preyPileChannelId: null,
+                preyPileMessageId: null,
+                preyPileThreadId: null,
+                clanRoleId: null,
             },
             shadowclan: {
-                preyPile: []
+                preyPile: [],
+                preyPileChannelId: null,
+                preyPileMessageId: null,
+                preyPileThreadId: null,
+                clanRoleId: null,
             },
             thunderclan: {
-                preyPile: []
+                preyPile: [],
+                preyPileChannelId: null,
+                preyPileMessageId: null,
+                preyPileThreadId: null,
+                clanRoleId: null,
             }
         },
     },

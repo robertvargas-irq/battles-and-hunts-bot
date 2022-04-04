@@ -1,5 +1,6 @@
 {
     "names": [
+        "Cat Size",
         "Strength",
         "Dexterity",
         "Constitution",
@@ -9,7 +10,30 @@
         "Swimming",
         "Stalking"
     ],
+    "tooltips": [
+        "**This directly affects your hunger.**\n`1`: Kit-Young Warrior\n`2`: Warrior\n`3`: Large Warrior",
+        "**How hard you hit!**\nHow much you can lift, how muscular you are. Thunderclan is big and burly, so they tend to be stronger.",
+        "**Skill. Finesse. Performing actions with a level of care and expertise!**\nRiverclan is lithe and graceful, so they have more dexterity. Their hand-paw coordination is uniquely honed for fishing!",
+        "**Toughness.**\nYou can handle more pain, or even resist toxins or eat things most cats would struggle with. ShadowClan has a harsh territory, ShadowClan survives by eating things that would harm most cats!",
+        "**How fast you react or run.**\nWindclan used to be known for this, but The Unforgiven seem to have followed their footsteps…",
+        "**How smart you are.**\nYou can make plans and think things through. The Unforgiven's hierarchy is well thought put, and their battle prowess intimidates the clans!",
+        "**Persuasiveness, Likability, how you present yourself.**\nHow will you convince anyone if you can't even convince yourself? Thunderclan is full charismatic and well liked cats!",
+        "**How well you swim.**",
+        "**Stealth, how silent you can slink through shadows, bushes or night.**\nShadowClan is known for this!"
+    ],
+    "ranges": [
+        [1, 3],
+        [0, 10],
+        [0, 10],
+        [0, 10],
+        [0, 10],
+        [0, 10],
+        [0, 10],
+        [0, 10],
+        [0, 10]
+    ],
     "flairs": [
+        "🐈",
         "🦾",
         "⚔️",
         "❤️‍🔥",
@@ -20,6 +44,7 @@
         "👟"
     ],
     "defaultStats": {
+        "cat_size": 0,
         "strength": 0,
         "dexterity": 0,
         "constitution": 0,

@@ -11,11 +11,11 @@ module.exports = {
         client.user.setPresence({
             activities: [
                 {
-                    name: 'ALPHA V0.0 🐈',
-                    type: 'WATCHING',
+                    name: 'HUNTING UPDATE v1.0 🗡️',
+                    type: 'PLAYING',
                 },
             ],
-            status: 'dnd',
+            status: 'online',
         });
 
         let boot = client.user.tag + ' is now online!';

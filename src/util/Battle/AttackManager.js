@@ -33,23 +33,18 @@ class AttackManager {
 
         // inform user
         const descriptionFormat = `
-        Roll Breakdowns:
-        **- - - - - -**
+        Roll Breakdowns:\n**- - - - - -**
         __(1d100) Attack Hit__: ${hit ? '✅' : '⛔'}
         > **Rolled**: \`${d1Hit}\` / \`100\`
         > **Enemy Dodge Chance**: \`${target.stats.speed * 4}\`
         > \`${d1Hit}\` ${hit ? '>' : '≤'} \`${target.stats.speed * 4}\`
-
-        \n__(1d100) Critical Hit__: ${crit ? '✅' : '⛔'}
+        
+        __(1d100) Critical Hit__: ${crit ? '✅' : '⛔'}
         > **Rolled**: \`${d2Crit}\` / \`100\`
         > **Your Crit. Range**: \`0\` - \`${attacker.stats.dexterity * 3}\`
-        > \`${d2Crit}\` ${crit ? '≤' : '>'} \`${attacker.stats.dexterity * 3}\`
+        > \`${d2Crit}\` ${crit ? '≤' : '>'} \`${attacker.stats.dexterity * 3}\`\n\n**- - - - - -**
 
-        **- - - - - -**
-
-        > ⚔️ **${this.#getRandomDescription(hit, crit)}**
-
-        **- - - - - -**
+        > ⚔️ **${this.#getRandomDescription(hit, crit)}**\n\n**- - - - - -**
         ` + ( hit ?
         `
         > **<@${targetSnowflake.user.id}> has endured \`${damage}\`${crit ? ' CRITICAL ' : ' '}damage!!**
@@ -61,7 +56,9 @@ class AttackManager {
             color: (hit && crit) ? 'YELLOW' : (hit) ? 'GREEN' : 'RED',
             title: '🎲 __**Attack Roll Results**__ 🎲',
             description: descriptionFormat,
-        }).setFooter('Target: ' + targetSnowflake.displayName, targetSnowflake.displayAvatarURL());
+            thumbnail: {url: interaction.member.displayAvatarURL()},
+            footer: {text: 'Target: ' + targetSnowflake.displayName, icon_url: targetSnowflake.displayAvatarURL()}
+        });
 
         await interaction.editReply({ embeds: [response] });
     }

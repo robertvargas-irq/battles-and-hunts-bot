@@ -56,15 +56,7 @@ module.exports = {
             .setDescription(`\
             > You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, ready to carry it as you venture forward. 
             > 
-            > Your back gets a little heavier.
-            
-            🐈 __**Prey you are currently carrying**__
-
-            ${HuntManager.formatPrey(preyCarrying)}
-            
-            **- - - - - -**
-
-            Total weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\`
+            > Your back gets a little heavier.\n\n🐈 __**Prey you are currently carrying**__\n\n${HuntManager.formatPrey(preyCarrying)}\n\n**- - - - - -**\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\`
             `);
         else resultEmbed
             .setColor('RED')
@@ -72,16 +64,7 @@ module.exports = {
             .setDescription(`\
             > You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, but it simply slides right off, nearly toppling the rest of the tower you have managed to create! 
             > 
-            > You unfortunately must go back to camp and \`/deposit\` your prey before you can carry more.
-            
-            🐈 **Prey you are currently carrying**
-
-            ${HuntManager.formatPrey(preyCarrying)}
-            
-            **- - - - - -**
-
-            Total weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\`
-            > (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntManager.INVENTORY_MAX_WEIGHT}\`
+            > **You unfortunately must go back to camp and \`/deposit\` your prey before you can carry more.**\n\n🐈 **Prey you are currently carrying**\n\n${HuntManager.formatPrey(preyCarrying)}\n\n**- - - - - -**\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\`\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntManager.INVENTORY_MAX_WEIGHT}\`
             `)
 
         // display result

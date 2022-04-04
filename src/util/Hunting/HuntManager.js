@@ -79,11 +79,11 @@ class HuntManager {
         const results = new MessageEmbed()
             .setColor(tracked ? caught ? 'GREEN' : 'YELLOW' : 'RED')
             .setTitle('🎲 __Hunt Roll Results__ 🎲')
+            .setThumbnail(interaction.member.displayAvatarURL())
             .setDescription(
             // track roll breakdown
             `\
-            Roll Breakdowns:
-            **- - - - - -**
+            Roll Breakdowns:\n**- - - - - -**
             __(1d20 + ${trackProf}) Track Roll__: ${tracked ? '✅' : '⛔'}
             > **Rolled**: \`${trackRoll}\` / \`20\`
             > **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][0].toUpperCase()}\`)

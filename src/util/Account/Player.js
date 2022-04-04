@@ -15,8 +15,8 @@ function formatStats(interaction, userData) {
         // .setTitle(interaction.member.displayName + ' Player Stats')
         .setAuthor({name: interaction.member.displayName + ' Player Stats', iconURL: interaction.guild.iconURL() })
         .setImage('https://cdn.discordapp.com/attachments/958264733616705556/958265023308890132/86E85A9C-8C43-46AB-ABB2-78691EBBC17E.png')
-        // .setThumbnail(interaction.guild.iconURL())
-        .setThumbnail(interaction.member.avatarURL() || interaction.user.avatarURL())
+        .setThumbnail(interaction.member.displayAvatarURL())
+        .setDescription('**- - - - -**')
         .setFields([
             {
                 name: 'CURRENT HEALTH 💘',
@@ -25,18 +25,20 @@ function formatStats(interaction, userData) {
             },
             {
                 name: 'CURRENT HUNGER '
-                + ['🍖', '🦴'][Math.floor((userData.currentHunger / userData.stats.cat_size)*2)],
+                + ['🍖', '🦴'][userData.currentHunger == userData.stats.cat_size ? 1 : 0],
                 value: `> ↣ \`${userData.currentHunger}\` / \`${userData.stats.cat_size}\``,
                 inline: true,
             },
             ...Object.keys(userData.stats).map(stat => {
+                console.log(i);
                 return {
-                    name: stat.toUpperCase().replace('_', ' ') + ' ' + flairs[i],
+                    name: (i == 1 ? '- - - - -\n' : '') +
+                        stat.toUpperCase().replace('_', ' ') + ' ' + flairs[i],
                     value: `> ↣ \`${userData.stats[stat]}\` / \`${ranges[i++][1]}\``
                 }
             })
         ])
-        .setFooter(`⇸ CLAN AFFILITATION: ${userData.clan.toUpperCase()}`);
+        .setFooter({text:`⇸ CLAN AFFILITATION: ${userData.clan.toUpperCase()}`});
 }
 
 function calculateMaxHealth(constitution) {

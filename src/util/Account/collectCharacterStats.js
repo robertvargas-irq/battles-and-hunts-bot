@@ -1,8 +1,9 @@
 const { Message, MessageEmbed, BaseCommandInteraction } = require('discord.js');
-const MIN = 0;
-const MAX = 10;
 const RETRIES = 3;
 const TIME = 30;
+const clans = ['unforgiven', 'shadowclan', 'thunderclan', 'riverclan'];
+
+const {names, tooltips, ranges, flairs} = require('./stats.json');
 
 /**
  * Prompts user for character stats.
@@ -11,24 +12,47 @@ const TIME = 30;
  */
 async function collectCharacterStats(interaction, promptMessage) {
 
+    // find clan in their roles
+    let clanRole;
+    console.log(interaction.member.roles.cache);
+    interaction.member.roles.cache.find(r => {
+        let name = r.name.toLowerCase().replace(/[^a-zA-Z]/g, '');
+        console.log(name);
+        if (clans.some(c => c == name)) {
+            clanRole = name;
+            return true;
+        }
+        return false;
+    });
+    if (!clanRole) return notRegistered(interaction);
+
     // prompt for stats
     const prompt = new MessageEmbed({ title: "🐈‍ Stat Declaration", description: promptMessage, color: 'AQUA', footer: { text: '❕ Send cancel to quit.' } });
     const filter = (/**@type {Message}*/ message) => message.author.id === interaction.user.id;
     let field = 0;
     let stats = {
-        constitution: 0,
+        cat_size: 0,
         strength: 0,
-        speed: 0,
         dexterity: 0,
-    };
+        constitution: 0,
+        speed: 0,
+        intelligence: 0,
+        charisma: 0,
+        swimming: 0,
+        stalking: 0
+    }
 
     // take input for each available step
     const validate = (input) => !/[^0-9]/.exec(input);
-    for await (let step of steps) {
+    for await (let step of names) {
+
+        // current min and max for the field in question
+        let c_MIN = ranges[field][0];
+        let c_MAX = ranges[field][1];
 
         // prompt for new input
         await interaction.editReply({
-            embeds: [ prompt.addField(`${step} ${flair[field]}`, `⁅⁘⟧ [\`${MIN}\` - \`${MAX}\`] Please send your character's \`${step.toUpperCase()}\``) ]
+            embeds: [ prompt.addField(`${step} ${flairs[field]}`, `⁅⁘⟧ [\`${c_MIN}\` - \`${c_MAX}\`] Please send your character's \`${step.toUpperCase()}\`\n>>> ${tooltips[field]}`) ]
         });
 
         // get user input and validate
@@ -42,12 +66,12 @@ async function collectCharacterStats(interaction, promptMessage) {
 
         // validate
         for (let i = 0; i < RETRIES
-        && (!validInput || (parsed < MIN || parsed > MAX)); i++) {
+        && (!validInput || (parsed < c_MIN || parsed > c_MAX)); i++) {
             // process quit command
             if (input.toLowerCase() === 'cancel') return cancel(interaction);
 
             // prompt for new input
-            prompt.fields[field].value = `⚠️ \`${input}\` is **NOT** a valid input! Please only send a number between [\`${MIN}\` - \`${MAX}\`].\n(${RETRIES - i} attempts remaining.)`;
+            prompt.fields[field].value = `⚠️ \`${input}\` is **NOT** a valid input! Please only send a number between [\`${c_MIN}\` - \`${c_MAX}\`].\n(${RETRIES - i} attempts remaining.)`;
             await interaction.editReply({ embeds: [prompt] });
             input = await collect(interaction, filter);
 
@@ -63,15 +87,16 @@ async function collectCharacterStats(interaction, promptMessage) {
         if (parsed < 0 || parsed > 10) return invalid(interaction);
 
         // after input is successful, update field
-        stats[steps[field].toLowerCase()] = parsed;
-        prompt.fields[field++].value = `> ↣ \`${input.toString()}\` / \`${MAX}\``;
+        stats[names[field].toLowerCase().replace(' ', '_')] = parsed;
+        prompt.fields[field].value = `> ↣ \`${input.toString()}\` / \`${c_MAX}\``;
+        field++;
         
         console.log(stats);
     }
     await interaction.editReply({ embeds: [prompt] });
 
     // return full stats
-    return stats;
+    return { clanRole, stats };
 
 }
 
@@ -106,6 +131,21 @@ function invalid(interaction) {
 }
 
 /**
+ * Inform that they have not been assigned a clan yet.
+ * @param {BaseCommandInteraction} interaction 
+ */
+function notRegistered(interaction) {
+    interaction.editReply({
+        embeds: [ new MessageEmbed()
+            .setColor('RED')
+            .setTitle("⚠️ You have not submitted a character yet.")
+            .setDescription("You do not have a clan role yet. If this is a mistake, please let an administrator know ❣️"),
+        ]
+    });
+    return false;
+}
+
+/**
  * Show successful cancellation.
  * @param {BaseCommandInteraction} interaction 
  */
@@ -134,21 +174,5 @@ async function collect(interaction, filter) {
         .catch(() => { return false });
     return input;
 }
-
-// stats to collect
-const steps = [
-    "Constitution",
-    "Strength",
-    "Speed",
-    "Dexterity"
-];
-const flair = [
-    "❤️‍🔥",
-    "🦾",
-    "💨",
-    "⚔️"
-];
-
-
 
 module.exports = collectCharacterStats;

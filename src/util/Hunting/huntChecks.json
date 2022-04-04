@@ -1,0 +1,6 @@
+{
+    "unforgiven":["intelligence", "speed"],
+    "riverclan":["swimming", "dexterity"],
+    "shadowclan":["stalking", "constitution"],
+    "thunderclan":["charisma", "strength"]
+}

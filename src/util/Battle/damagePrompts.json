@@ -1,0 +1,12 @@
+{
+    "damageAction": [
+        "Such a heavy hand",
+        "No medicine cat is nearby",
+        "The damage inflicted is excruciating"
+    ],
+    "damageResponse": [
+        "you are feeling weak",
+        "you feel the burning rise",
+        "your aches and pains are the least of your worries"
+    ]
+}

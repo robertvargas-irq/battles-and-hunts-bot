@@ -1,9 +1,10 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const AttackManager = require('../../util/Battle/AttackManager');
 const mongoose = require('mongoose');
-const userSchema = require('../database/schemas/user');
-const firstTimeRegister = require('../util/Account/firstTimeRegister');
-const { formatStats, calculateMaxHealth } = require('../util/Account/Player');
+const userSchema = require('../../database/schemas/user');
+const firstTimeRegister = require('../../util/Account/firstTimeRegister');
+const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
 
 module.exports = {
     name: 'medicine',
@@ -16,6 +17,12 @@ module.exports = {
             type: dTypes.Integer,
             required: true,
         },
+        {
+            name: 'target-to-heal',
+            description: '⚠️ ONLY MEDICINE CATS CAN HEAL OTHERS: Who you wish to heal.',
+            type: dTypes.User,
+            required: false,
+        } // ! IMPLEMENT ME
     ],
     /**
      * @param {BaseCommandInteraction} interaction
@@ -56,28 +63,10 @@ module.exports = {
                 new MessageEmbed()
                     .setColor('AQUA')
                     .setTitle('🌿 Serene')
-                    .setDescription(getRandomHealingMessage())
+                    .setDescription(AttackManager.getRandomHealingMessage())
                     .addField('CURRENT HEALTH 💘', `> ↣ \`${found.currentHealth}\` / \`${found.stats.constitution * 5 + 50}\``),
             ]
         });
 
     },
 };
-
-
-const healingAction = [
-    'You put some cobwebs on your wounds',
-    'The medicine cat puts some Marigold on your scratches',
-    'You take two Poppy Seeds and rest in your den'
-];
-
-const healingResponse = [
-    'you are feeling rejuvinated',
-    'your scabs will soon turn to scars',
-    'your aches and pains have been soothed'
-];
-
-function getRandomHealingMessage() {
-    return healingAction[Math.floor(Math.random() * healingAction.length)] + ', ' +
-        healingResponse[Math.floor(Math.random() * healingResponse.length)] + '.';
-}

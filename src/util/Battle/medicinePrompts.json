@@ -1,0 +1,12 @@
+{
+    "healingAction": [
+        "You put some cobwebs on your wounds",
+        "The medicine cat puts some Marigold on your scratches",
+        "You take two Poppy Seeds and rest in your den"
+    ],
+    "healingResponse": [
+        "you are feeling rejuvinated",
+        "your scabs will soon turn to scars",
+        "your aches and pains have been soothed"
+    ]
+}

@@ -1,0 +1,49 @@
+{
+    "unforgiven":[
+        "rabbit",
+        "field mouse",
+        "vole",
+        "robin",
+        "goldfinch",
+        "toad",
+        "lizard"
+    ],
+    "riverclan":[
+        "bass",
+        "cod",
+        "mackerel",
+        "water vole",
+        "rabbit",
+        "eel",
+        "toad"
+        
+    ],
+    "shadowclan":[
+        "common toad",
+        "pool frog",
+        "wall lizard",
+        "green lizard",
+        "field mouse",
+        "running newt"
+    ],
+    "thunderclan":[
+        "goldfinch",
+        "robin",
+        "blackbird",
+        "squirrel",
+        "vole",
+        "mouse",
+        "lizard",
+        "adder",
+        "rabbit",
+        "bass",
+        "cod",
+        "mackerel",
+        "water vole"
+    ],
+    "descriptors":[
+        "scrawny",
+        "average",
+        "fat"
+    ]
+}

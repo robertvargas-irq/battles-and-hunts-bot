@@ -1,0 +1,18 @@
+{
+    "unforgiven": {
+        "flair":"🌲",
+        "color":"GREEN"
+    },
+    "riverclan": {
+        "flair":"🌊",
+        "color":"AQUA"
+    },
+    "shadowclan": {
+        "flair":"🩸",
+        "color":"RED"
+    },
+    "thunderclan": {
+        "flair":"⚡",
+        "color":"YELLOW"
+    }
+}

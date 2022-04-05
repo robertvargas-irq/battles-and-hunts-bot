@@ -1,6 +1,6 @@
 const { Message, MessageEmbed, BaseCommandInteraction } = require('discord.js');
 const RETRIES = 3;
-const TIME = 30;
+const TIME = 90;
 const clans = ['unforgiven', 'shadowclan', 'thunderclan', 'riverclan'];
 
 const {names, tooltips, ranges, flairs} = require('./stats.json');

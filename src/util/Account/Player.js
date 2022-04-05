@@ -26,7 +26,7 @@ function formatStats(interaction, userData) {
             {
                 name: 'CURRENT HUNGER '
                 + ['🍖', '🦴'][userData.currentHunger == userData.stats.cat_size ? 1 : 0],
-                value: `> ↣ \`${userData.currentHunger}\` / \`${userData.stats.cat_size}\``,
+                value: `> ↣ \`${userData.stats.cat_size - userData.currentHunger}\` / \`${userData.stats.cat_size}\``,
                 inline: true,
             },
             ...Object.keys(userData.stats).map(stat => {

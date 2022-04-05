@@ -27,7 +27,7 @@ module.exports = {
                 new MessageEmbed()
                     .setColor(getColor(found.currentHunger, found.stats.cat_size))
                     .setTitle(getTitle(found.currentHunger, found.stats.cat_size))
-                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.stats.cat_size ? '🍖' : '🦴'), `> ↣ \`${found.currentHunger}\` / \`${found.stats.cat_size}\``),
+                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.stats.cat_size ? '🍖' : '🦴'), `> ↣ \`${found.stats.cat_size - found.currentHunger}\` / \`${found.stats.cat_size}\``),
             ]
         });
     
@@ -51,15 +51,15 @@ const titles = [
 ]
 
 function getColor(hunger, cat_size) {
+    if (hunger == 0) return colors[0];
     if (hunger == cat_size) return colors[3];
     if (hunger == cat_size - 1) return colors[2];
-    if (hunger == 0) return colors[0];
     return colors[1];
 }
 
 function getTitle(hunger, cat_size) {
+    if (hunger == 0) return titles[0];
     if (hunger == cat_size) return titles[3];
     if (hunger == cat_size - 1) return titles[2];
-    if (hunger == 0) return titles[0];
     return titles[1];
 }

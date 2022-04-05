@@ -32,26 +32,27 @@ module.exports = {
         if (target.user.bot) return denyBotAttack(interaction);
         if (target.user.id === interaction.user.id) return denySelfAttack(interaction);
         
-        // roll and inform
-        let roll = getRandom(1, MAX_ROLL);
-        let pivot = Math.floor(MAX_ROLL / 2);
-        let first = roll < pivot;
+        // // roll and inform
+        // let roll = getRandom(1, MAX_ROLL);
+        // let pivot = Math.floor(MAX_ROLL / 2);
+        // let first = roll < pivot;
+
+        // flip a coin
+        const coin = getRandom(0, 1);
+        const first = coin == 0;
+        const side = first ? 'HEADS' : 'TAILS'
 
         interaction.editReply({
             embeds: [new MessageEmbed()
                 .setColor(first ? 'GREEN' : 'YELLOW')
-                .setTitle('🎲 __Let\'s see who\'s first!__')
+                .setTitle('🪙 __Let\'s see who\'s first!__')
                 .setThumbnail(first ? interaction.member.displayAvatarURL() : target.displayAvatarURL())
                 .setDescription(
-                `
-                🌿 **${interaction.member.displayName}**
-                > Needs a roll \`under\` \`${pivot}\`
-                🆚 **${target.displayName}**
-                > Needs a roll \`equal or over\` \`${pivot}\`
-
-                🎲 I have rolled a 1d${MAX_ROLL}: \`${roll}\`
-                > **<@${first ? interaction.user.id : target.user.id}> goes first as \`${roll}\` \`${first ? '<' : '≥'}\` \`${pivot}\`!!**
-                `
+                `Time to flip a coin...\n` +
+                `🌿 (\`HEADS\`) **${interaction.member.displayName}**\n` +
+                `🆚 (\`TAILS\`) **${target.displayName}**\n\n` +
+                `🪙 The coin has landed on **\`${side}\`**\n` +
+                `> **<@${first ? interaction.user.id : target.user.id}> goes first!!**`
                 )
             ]
         })

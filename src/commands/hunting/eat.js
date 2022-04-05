@@ -117,7 +117,6 @@ module.exports = {
         
         // pull and eat the amount, and update hunger
         const {bitesTaken, consumed} = PreyPile.pullFromPreyPile(clan, server, bitesNeeded);
-        console.log(consumed);
         const consumedFormatted = consumed.map(({name, amountEaten}) => {
             return `(\`${Number.isInteger(amountEaten) ? amountEaten : amountEaten.toFixed(2)}\`) **${name}**`
         }).join(', ');

@@ -20,8 +20,8 @@ class PreyPile {
         // if channel being set is unique, set to the database
         if (server.clans[clan].preyPileChannelId ?? 0 != interaction.channel.id) {
             // if original channel is deleted, use the current
-            if (!await interaction.guild.channels.fetch(server.clans[clan].preyPileChannelId).catch(() => false))
-                server.clans[clan].preyPileChannelId = interaction.channel.id;
+            // if (!await interaction.guild.channels.fetch(server.clans[clan].preyPileChannelId).catch(() => false))
+            server.clans[clan].preyPileChannelId = interaction.channel.id;
         }
 
         // if message is missing, spawn and set the id to the clan's entry
@@ -54,8 +54,6 @@ class PreyPile {
 
         // set clans as modified
         server.markModified(`clans.${clan}`);
-        console.log({server});
-        console.log({serverclanclan: server.clans[clan]});
         return { spawnedMessage, spawnedThread };
     }
 
@@ -119,7 +117,7 @@ class PreyPile {
         }
 
         // get message snowflake or spawn a new one if deleted
-        let message = await channel.messages.fetch(clanEntry.preyPileMessageId).catch(() => false);
+        let message = await channel?.messages?.fetch(clanEntry.preyPileMessageId).catch(() => false);
         if (!message) message = await this.setPreyPileChannelAndSpawn(interaction, server, clan);
 
         // create new pile and update existing message
@@ -220,7 +218,6 @@ class PreyPile {
         
         // return a formatted string with bites left out of the total size
         return preyList.map(p => {
-            console.log(p);
             return `↣ **(\`${p.bites_remaining}\` / \`${p.size}\`) ${p.name[0].toUpperCase() + p.name.substring(1)}**`
         }).join('\n') + `\n**- - - - - -**\nTotal Available Bites to Eat: \`${totalWeight}\``;
     }

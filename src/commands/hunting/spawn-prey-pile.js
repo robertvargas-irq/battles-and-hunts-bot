@@ -66,9 +66,6 @@ module.exports = {
 
         // set current channel to the corresponding clan's preyPileChannelId
         await PreyPile.setPreyPileChannelAndSpawn(interaction, server, clan);
-        console.log({server});
-        console.log({serverclanclan: server.clans[clan]});
-        console.log("!!!!!!!!SAVING!!!!!!!!");
         await server.save()
             .then(console.log)
             .catch(console.error);

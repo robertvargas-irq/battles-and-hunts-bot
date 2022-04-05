@@ -14,10 +14,8 @@ async function collectCharacterStats(interaction, promptMessage) {
 
     // find clan in their roles
     let clanRole;
-    console.log(interaction.member.roles.cache);
     interaction.member.roles.cache.find(r => {
         let name = r.name.toLowerCase().replace(/[^a-zA-Z]/g, '');
-        console.log(name);
         if (clans.some(c => c == name)) {
             clanRole = name;
             return true;
@@ -57,7 +55,6 @@ async function collectCharacterStats(interaction, promptMessage) {
 
         // get user input and validate
         let input = await collect(interaction, filter);
-        console.log(input);
 
         // if input is not valid, retry 3 times
         if (!input) return terminate(interaction);
@@ -91,7 +88,6 @@ async function collectCharacterStats(interaction, promptMessage) {
         prompt.fields[field].value = `> ↣ \`${input.toString()}\` / \`${c_MAX}\``;
         field++;
         
-        console.log(stats);
     }
     await interaction.editReply({ embeds: [prompt] });
 

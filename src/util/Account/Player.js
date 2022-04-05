@@ -30,7 +30,6 @@ function formatStats(interaction, userData) {
                 inline: true,
             },
             ...Object.keys(userData.stats).map(stat => {
-                console.log(i);
                 return {
                     name: (i == 1 ? '- - - - -\n' : '') +
                         stat.toUpperCase().replace('_', ' ') + ' ' + flairs[i],

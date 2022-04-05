@@ -133,8 +133,9 @@ module.exports = {
             notifyEmbed
                 .setColor('AQUA')
                 .setTitle('🦴 Some prey has been eaten')
+                .setThumbnail('https://c.tenor.com/27kedvI8EwQAAAAd/cat-eating.gif')
                 .setDescription(`\
-                ${interaction.member.displayName} has eaten some food from the prey pile.\
+                **${interaction.member.displayName}** has eaten some food from the prey pile.\
                 \n\
                 \n**- - - - - -**\
                 \n\
@@ -148,6 +149,7 @@ module.exports = {
             notifyEmbed
                 .setColor('RED')
                 .setTitle('❗⚠️ Some prey has possibly been stolen!')
+                .setThumbnail('https://www.wildliferemoval.com/wp-content/uploads/2019/02/Animal-Tracks.jpg')
                 .setDescription(`\
                 **An outsider to our clan has eaten from our prey pile!!**\
                 \n> The scent is coming from someone from **${player.clan.toUpperCase()}**.\

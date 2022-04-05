@@ -51,8 +51,16 @@ module.exports = {
 
         // empty all entries
         for ([clanName, clanData] of Array.from(Object.entries(server.clans))) {
-            PreyPile.emptyPreyPile(clanName, server);
+            const spoiledFood = PreyPile.emptyPreyPile(clanName, server);
             PreyPile.updatePreyPile(interaction, server, clanName);
+            PreyPile.pushPreyUpdateMessage(interaction, server, clanName, {
+                embeds: [new MessageEmbed()
+                    .setColor('RED')
+                    .setTitle('🪰🦴 All of your food has gone to waste.')
+                    .setDescription(`The entirety of the prey pile has rotted away, leaving behind a foul odor that absolutely engulfs your sense of smell.` +
+                    `\n\n__**All of the following prey has spoiled**__:\n${PreyPile.formatPrey(spoiledFood)}\n\n||**${interaction.member.displayName}** called the \`/spoil\` command.||`)
+                ]
+            })
         }
 
         // save to server

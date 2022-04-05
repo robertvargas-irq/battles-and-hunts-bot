@@ -30,7 +30,7 @@ module.exports = {
     async execute(interaction) {
 
         // defer
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: false });
 
         // filter out non-administrators
         if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
@@ -69,6 +69,10 @@ module.exports = {
             embeds: [new MessageEmbed()
                 .setColor('GREEN')
                 .setTitle('✅ Successfully set all user hungers to max.')
+                .setDescription(
+                `> **Hunger begins to bear down upon warriors great and small, leaders and young, and everyone in-between.**` +
+                `\n\n > It is inescapable, as time ticks by, finding something suitable to \`/eat\` grows prevalent to satiate this growing \`/hunger\`...`
+                )
             ]
         })
     },

@@ -48,7 +48,7 @@ module.exports = {
                 .setTitle('💭 __Let\'s see who\'s first!__')
                 .setThumbnail(first ? interaction.member.displayAvatarURL() : target.displayAvatarURL())
                 .setDescription(
-                `>Time to flip a coin...\n\n` +
+                `> Time to flip a coin...\n\n` +
                 `🌿 (\`HEADS\`) **${interaction.member.displayName}**\n` +
                 `🆚 (\`TAILS\`) **${target.displayName}**\n\n` +
                 `🪙 The coin has landed on **\`${side}\`**\n` +

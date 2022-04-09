@@ -9,22 +9,20 @@
         "lizard"
     ],
     "riverclan":[
-        "bass",
-        "cod",
-        "mackerel",
+        "trout",
+        "carp",
+        "chub",
         "water vole",
         "rabbit",
-        "eel",
+        "minnow",
         "toad"
         
     ],
     "shadowclan":[
-        "common toad",
-        "pool frog",
-        "wall lizard",
-        "green lizard",
-        "field mouse",
-        "running newt"
+        "toad",
+        "frog",
+        "lizard",
+        "field mouse"
     ],
     "thunderclan":[
         "goldfinch",
@@ -36,14 +34,33 @@
         "lizard",
         "adder",
         "rabbit",
-        "bass",
-        "cod",
-        "mackerel",
+        "trout",
+        "carp",
+        "chub",
         "water vole"
     ],
     "descriptors":[
         "scrawny",
         "average",
         "fat"
-    ]
+    ],
+    "visuals":{
+        "rabbit":"https://static.wikia.nocookie.net/warriors/images/0/0b/Rabbit.jpg/revision/latest/scale-to-width-down/150?cb=20110811022523",
+        "mouse":"https://static.wikia.nocookie.net/warriors/images/b/b7/Mouse.jpg/revision/latest/scale-to-width-down/150?cb=20110811015349",
+        "vole":"https://static.wikia.nocookie.net/warriors/images/e/e5/Vole.jpg/revision/latest/scale-to-width-down/150?cb=20110811030826",
+        "robin":"https://static.wikia.nocookie.net/warriors/images/2/2f/Robin.jpg/revision/latest/scale-to-width-down/150?cb=20160504204516",
+        "goldfinch":"https://static.wikia.nocookie.net/warriors/images/b/b0/Finch.jpg/revision/latest/scale-to-width-down/150?cb=20110810231638",
+        "toad":"https://static.wikia.nocookie.net/warriors/images/1/19/Toad.jpg/revision/latest/scale-to-width-down/150?cb=20110810205433",
+        "lizard":"https://static.wikia.nocookie.net/warriors/images/2/29/Lizard.jpg/revision/latest/scale-to-width-down/150?cb=20110811025540",
+        "trout":"https://static.wikia.nocookie.net/warriors/images/d/db/Trout.jpg/revision/latest/scale-to-width-down/150?cb=20160109234051",
+        "carp":"https://static.wikia.nocookie.net/warriors/images/f/fe/Fish.jpg/revision/latest/scale-to-width-down/150?cb=20110810220106",
+        "chub":"https://static.wikia.nocookie.net/warriors/images/1/15/Chub_fish.jpg/revision/latest/scale-to-width-down/150?cb=20180513183828",
+        "water vole":"https://static.wikia.nocookie.net/warriors/images/a/a8/Water_Vole.jpg/revision/latest/scale-to-width-down/150?cb=20110811031330",
+        "minnow":"https://static.wikia.nocookie.net/warriors/images/1/16/Minnow.jpg/revision/latest/scale-to-width-down/150?cb=20160109233817",
+        "frog":"https://static.wikia.nocookie.net/warriors/images/8/87/Frog.jpg/revision/latest/scale-to-width-down/150?cb=20110810204854",
+        "blackbird":"https://static.wikia.nocookie.net/warriors/images/2/2b/Blackbird.jpg/revision/latest/scale-to-width-down/150?cb=20110811010659",
+        "squirrel":"https://static.wikia.nocookie.net/warriors/images/f/fd/Squirrel.jpg/revision/latest/scale-to-width-down/150?cb=20110811030203",
+        "adder":"https://static.wikia.nocookie.net/warriors/images/1/18/European_Adder-1.jpg/revision/latest/scale-to-width-down/150?cb=20170523233354"
+
+    }
 }

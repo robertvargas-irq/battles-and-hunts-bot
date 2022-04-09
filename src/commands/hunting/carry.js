@@ -32,8 +32,10 @@ module.exports = {
         if (!hunter) return; // error message already handled in collect()
 
         // if not carrying anything, inform
-        const recentlyCaught = HuntManager.getRecentlyCaught(interaction.user.id);
-        if (!recentlyCaught) {
+        const recentlyCaughtResult = HuntManager.getRecentlyCaught(interaction.user.id);
+        let recentlyCaught;
+        let originalInteraction;
+        if (!recentlyCaughtResult) {
             return interaction.editReply({
                 embeds: [new MessageEmbed()
                     .setColor('RED')
@@ -45,8 +47,12 @@ module.exports = {
             });
         }
         
+        // attach recently caught and interaction to proper variables
+        recentlyCaught = recentlyCaughtResult.prey;
+        originalInteraction = recentlyCaughtResult.interaction;
+        
         // add to carry
-        const [ableToAdd, weightCarrying, preyCarrying] = HuntManager.addToCarry(interaction.user.id, recentlyCaught);
+        const [ableToAdd, weightCarrying, preyCarrying] = HuntManager.addToCarry(interaction.user.id, recentlyCaught, originalInteraction);
         const resultEmbed = new MessageEmbed();
 
         // if successful, notify

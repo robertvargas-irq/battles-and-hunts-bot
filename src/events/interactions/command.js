@@ -1,6 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const fs = require('fs');
-const restrictOnlyRegisterEdit = ['960693549735743518'];
+
+const restrictedChannels = new Map(require('./restrictions.json').ChannelToSpecific.map(([k,v]) => [k, new Set(v)]));
 
 module.exports = async ( interaction ) => {
 
@@ -19,11 +20,10 @@ module.exports = async ( interaction ) => {
     // execute command
     try {
         // error if the channel id is restricted and wrong command is used
-        if (restrictOnlyRegisterEdit.some(id => id == interaction.channel.id)) {
-            if (interaction.commandName != 'register'
-            && interaction.commandName != 'edit'
-            && interaction.commandName != 'stats'
-            && interaction.commandName != 'audit-registration') {
+        let check = restrictedChannels.get(interaction.channel.id);
+        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)
+        && restrictedChannels.has(interaction.channel.id)) {
+            if (!check.has(interaction.commandName)) {
                 return interaction.reply({
                     ephemeral: true,
                     embeds: [new MessageEmbed()
@@ -31,7 +31,9 @@ module.exports = async ( interaction ) => {
                         .setTitle('❗ __Woah There!__')
                         .setDescription('**This channel (<#'
                         + interaction.channel.id
-                        + ">) is only for `/register` and `/edit`; please only use these commands in this channel!**\nThank you! ❣️"
+                        + ">) is only for the following commands:\n"
+                        + Array.from(check.values()).map(v => "`/" + v + "`").join('\n')
+                        + "\n\n**Please only use these commands in this channel!**\nThank you! ❣️"
                     )]
                 })
             }

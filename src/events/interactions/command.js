@@ -1,4 +1,6 @@
+const { MessageEmbed } = require('discord.js');
 const fs = require('fs');
+const restrictOnlyRegisterEdit = ['960693549735743518'];
 
 module.exports = async ( interaction ) => {
 
@@ -16,6 +18,24 @@ module.exports = async ( interaction ) => {
     
     // execute command
     try {
+        // error if the channel id is restricted and wrong command is used
+        if (restrictOnlyRegisterEdit.some(id => id == interaction.channel.id)) {
+            if (interaction.commandName != 'register'
+            && interaction.commandName != 'edit'
+            && interaction.commandName != 'stats'
+            && interaction.commandName != 'audit-registration') {
+                return interaction.reply({
+                    ephemeral: true,
+                    embeds: [new MessageEmbed()
+                        .setColor('BLUE')
+                        .setTitle('❗ __Woah There!__')
+                        .setDescription('**This channel (<#'
+                        + interaction.channel.id
+                        + ">) is only for `/register` and `/edit`; please only use these commands in this channel!**\nThank you! ❣️"
+                    )]
+                })
+            }
+        }
         await interaction.client.commands.get( interaction.commandName ).execute( interaction ).catch();
     }
     catch ( error ) {

@@ -120,10 +120,29 @@ module.exports = async (button) => {
 
             // give adult role and update the title
             const pendingUserId = VerificationHandler.getPendingFromMessage(server, button.message.id);
-            await button.guild.members.fetch(pendingUserId).then(m => m.roles.add(adultRole,
-                'User has been verified as an adult by: ' + button.user.tag + ' (' + button.user.id + ')')
+            const pendingUser = await button.guild.members.fetch(pendingUserId);
+            pendingUser.roles.add(adultRole,
+                'User has been verified as an adult by: ' + button.user.tag + ' (' + button.user.id + ')'
             ).catch();
 
+            // notify user asyncronously
+            VerificationHandler.pushToUser(pendingUser, {
+                embeds: [new MessageEmbed()
+                    .setColor('GREEN')
+                    .setTitle('🌟 Update on your role request')
+                    .setDescription(
+                    'Hey there, **' + pendingUser.displayName + '**!'
+                    + '\nBased on a recent evaluation by one of our administrators, your adult status has been **accepted!** 🎉'
+                    + '\n\n__What does this mean?__'
+                    + '\nTo keep our community safe, we take the verification process very seriously, while also acknowledging that no system is ever 100% foolproof.'
+                    + '\nDue to the fact that you were able to provide sufficient proof to verify your age, you have been given the \'`ADULT`\' role.'
+                    + '\n\nOnce again, please be sure to read the disclaimer in the message you used to request in, and enjoy your new role!'
+                    )
+                    .setTimestamp()
+                ]
+            }).catch(() => console.log('User has DMs privated.'));
+
+            // notify admin
             await button.message.edit({
                 embeds: [button.message.embeds[0]
                     .setTitle('✅ User has been verified')
@@ -175,9 +194,28 @@ module.exports = async (button) => {
 
             // get pending user ID and update title
             const pendingUserId = VerificationHandler.getPendingFromMessage(server, button.message.id);
-            await button.guild.members.fetch(pendingUserId).then(m => m.roles.remove(server.roles.adult,
-                'User has been denied the adult role by: ' + button.user.tag + ' (' + button.user.id + ')')
+            const pendingUser = await button.guild.members.fetch(pendingUserId);
+            pendingUser.roles.remove(server.roles.adult,
+                'User has been denied the adult role by: ' + button.user.tag + ' (' + button.user.id + ')'
             ).catch();
+
+            // notify user asyncronously
+            VerificationHandler.pushToUser(pendingUser, {
+                embeds: [new MessageEmbed()
+                    .setColor('YELLOW')
+                    .setTitle('❗ Update on your role request')
+                    .setDescription(
+                    'Hey there, **' + pendingUser.displayName + '**!'
+                    + '\nBased on a recent evaluation by our administrators, your adult status has unfortunately been **denied.**'
+                    + '\n\n__What does this mean?__'
+                    + '\nTo keep our community safe, we take the verification process very seriously, while also acknowledging that no system is ever 100% foolproof.'
+                    + '\nYou will not be able to ask for verification again unless you have a valid form of identification that you own to present '
+                    + '(with sensitive information censored) to verify that you are 18, or you turn 18 and have obtained a valid form of identification.'
+                    + '\n\nWe\'re sorry for the unfortunate news, but please feel free to continue enjoying your time on the server!'
+                    )
+                    .setTimestamp()
+                ]
+            }).catch(() => console.log('User has DMs privated.'));
 
             await button.message.edit({
                 embeds: [button.message.embeds[0]

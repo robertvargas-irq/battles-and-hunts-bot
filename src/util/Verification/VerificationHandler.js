@@ -110,6 +110,15 @@ class VerificationHandler {
     }
 
     /**
+     * Send a message to the user
+     * @param {*} user The user to DM
+     * @param {MessagePayload} messagePayload Message to send
+     */
+    static async pushToUser(user, messagePayload) {
+        return await user.send(messagePayload).catch(console.error);
+    }
+
+    /**
      * Fetch the verification notification thread
      * @param {BaseCommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry

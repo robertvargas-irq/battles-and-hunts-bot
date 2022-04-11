@@ -30,7 +30,11 @@ class VerificationHandler {
      */
     static isPending(server, userId, messageId = null) {
         console.log({server, userId, messageId});
-        return server.verification.pendingToMessageId.has(userId)
+        console.log({ver: server.verification});
+
+        if (!userId && !messageId) return false;
+
+        return (!userId || server.verification.pendingToMessageId.has(userId))
         && (!messageId || server.verification.messageIdToPending.has(messageId));
     }
     
@@ -44,6 +48,7 @@ class VerificationHandler {
         // set to server
         server.verification.pendingToMessageId.set(userId, threadMessageId);
         server.verification.messageIdToPending.set(threadMessageId, userId);
+        server.markModified("verification");
     }
     
     /**
@@ -56,6 +61,7 @@ class VerificationHandler {
         console.log({messageId});
         server.verification.messageIdToPending.delete(messageId);
         server.verification.pendingToMessageId.delete(userId);
+        server.markModified("verification");
     }
 
     /**

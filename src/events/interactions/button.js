@@ -9,6 +9,8 @@ const serverSchema = require('../../database/schemas/server');
  */
 module.exports = async (button) => {
 
+    console.log(button.customId);
+
     // route to the global request
     switch (button.customId.slice(7)) {
         case 'VERIFY_AGE': {
@@ -22,7 +24,7 @@ module.exports = async (button) => {
             console.log(server.verification);
 
             // check to see if request is already pending
-            if (VerificationHandler.isPending(server, button.user.id))
+            if (VerificationHandler.isPending(server, button.user.id, null))
                 return button.editReply(VerificationHandler.REPLIES.IS_PENDING)
 
             // check if the user has been denied in the past
@@ -83,6 +85,7 @@ module.exports = async (button) => {
         case 'ACCEPT_VERIFICATION': {
             // unarchive the thread
             await button.deferUpdate();
+            await button.message.fetch();
             if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
             if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
             
@@ -93,7 +96,7 @@ module.exports = async (button) => {
             console.log(server.verification);
 
             // check to see if the request is already pending
-            if (!VerificationHandler.isPending(server, button.user.id, button.message.id))
+            if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
                         .setColor('YELLOW')
@@ -144,6 +147,7 @@ module.exports = async (button) => {
         case 'DENY_VERIFICATION': {
             // unarchive
             await button.deferUpdate();
+            await button.message.fetch();
             if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
             if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
             
@@ -154,7 +158,7 @@ module.exports = async (button) => {
             console.log(server.verification);
 
             // check to see if the request is already pending
-            if (!VerificationHandler.isPending(server, button.user.id, button.message.id))
+            if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
                         .setColor('YELLOW')

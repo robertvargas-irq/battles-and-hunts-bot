@@ -62,48 +62,36 @@
         [
             "960697143243472916",
             [
-                "attack",
-                "medicine",
-                "health",
-                "stats",
-                "take-damage",
-                "who-goes-first"
+                "hunt",
+                "carry",
+                "deposit"
             ],
             "uf-hunting"
         ],
         [
             "960697879830355979",
             [
-                "attack",
-                "medicine",
-                "health",
-                "stats",
-                "take-damage",
-                "who-goes-first"
+                "hunt",
+                "carry",
+                "deposit"
             ],
             "sc-hunting"
         ],
         [
             "960698133795459092",
             [
-                "attack",
-                "medicine",
-                "health",
-                "stats",
-                "take-damage",
-                "who-goes-first"
+                "hunt",
+                "carry",
+                "deposit"
             ],
             "tc-hunting"
         ],
         [
             "960698489405317140",
             [
-                "attack",
-                "medicine",
-                "health",
-                "stats",
-                "take-damage",
-                "who-goes-first"
+                "hunt",
+                "carry",
+                "deposit"
             ],
             "rc-hunting"
         ]

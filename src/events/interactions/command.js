@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Permissions } = require('discord.js');
 const fs = require('fs');
 
 const restrictedChannels = new Map(require('./restrictions.json').ChannelToSpecific.map(([k,v]) => [k, new Set(v)]));

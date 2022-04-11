@@ -85,11 +85,15 @@ module.exports = {
 
         // compare and only push members that are not registered
         const nonRegistered = [];
+        const nonSubmitted = [];
         for (let [id, member] of Members) {
             if (member.user.bot) continue;
             console.log(id);
             if (!allUsers.has(id))
-                nonRegistered.push(member);
+                if (member.displayName.startsWith('{+'))
+                    nonRegistered.push(member);
+                else
+                    nonSubmitted.push(member);
         }
 
         // notify successful set
@@ -101,8 +105,17 @@ module.exports = {
             embeds: [new MessageEmbed()
                 .setColor('GREEN')
                 .setTitle('✅ Audit complete.')
-                .setDescription("__**Non-Registered Users:**__\n>>> " +
-                    nonRegistered.map(m => m.displayName).join('\n')
+                .setDescription(
+                    (nonRegistered.length > 0 ? (
+                        "__**Non-Registered Users:**__\n"
+                        + "*These players are eligible to sign up as their character has been approved by\n<@" + interaction.guild.ownerId + ">, this is required to hunt and battle; all is needed is your cat's stats from your OC submission! Use `/register` to get started!*\n⩶⩶⩶⩶⩶⩶\n"
+                        + nonRegistered.map(m => '> ' + m.displayName).join('\n')
+                    ) : '__**All eligble users have registered for the bot.**__')
+                    + '\n\n' + (nonSubmitted.length > 0 ? (
+                        "__**Users who haven't submitted an OC:**__\n"
+                        + "*These players are unable to sign up as they still need approval from the server owner,\n<@" + interaction.guild.ownerId + ">.\nPick up a `template` from <#954246632550072350> and `submit it` in <#954246543102337086> as soon as possible!*\n⩶⩶⩶⩶⩶⩶\n"
+                        + nonSubmitted.map(m => '> ' + m.displayName + ' (<@' + m.user.id + '>)').join('\n')
+                    ) : '__**All players have submitted an OC.**__')
                 )
             ]
         })

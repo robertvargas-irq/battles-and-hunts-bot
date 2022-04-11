@@ -10,6 +10,14 @@ const { Schema } = require("mongoose");
  *              preyPile: prey[]
  *          }
  *      }
+ *      seasonDC: number,
+ *      verification: {
+ *          verificationThreadId: string,
+ *          deniedVerificationIds: Set<string>
+ *      },
+ *      roles: {
+ *          adult: string
+ *      }
  * }} ServerSchema
  */
 
@@ -56,6 +64,23 @@ const serverSchema = new Schema({
     seasonDC: {
         type: Number,
         default: 10
+    },
+    verification: {
+        verificationThreadId: {
+            type: String,
+            default: null,
+        },
+        deniedVerificationIds: { // those who have been denied
+            type: Map,
+            of: String,
+            default: new Map()
+        }
+    },
+    roles: {
+        adult: {
+            type: String,
+            default: null,
+        }
     }
 });
 

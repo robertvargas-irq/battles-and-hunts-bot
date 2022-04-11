@@ -11,7 +11,7 @@ module.exports = {
         client.user.setPresence({
             activities: [
                 {
-                    name: '🗡️HUNTING UPDATE v1.0',
+                    name: '🗡️HUNTING UPDATE v1.1 | QOL Patch',
                     type: 'PLAYING',
                 },
             ],

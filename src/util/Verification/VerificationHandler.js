@@ -27,12 +27,13 @@ class VerificationHandler {
     /**
      * Check to see if a user is pending
      * @param {string} userId The user to check for
+     * @param {string} messageId The message to check for
      * @returns {boolean} True if pending | False if not
      */
-    static isPending(userId) {
-        return this.#PendingToMessageId.has(userId);
+    static isPending(userId, messageId) {
+        return this.#PendingToMessageId.has(userId) && (!messageId || this.#MessageIdToPending.has(messageId));
     }
-
+    
     /**
      * Set a user to the pending set
      * @param {string} userId The user to set as pending
@@ -90,6 +91,7 @@ class VerificationHandler {
      * @returns {Message | Boolean} Message if successfully sent | False if error
      */
     static async pushToVerificationThread(threadChannel, messagePayload) {
+        await threadChannel.parent.send('**🆔 New verification request pending:**\n> <#' + threadChannel.id + '>\n||<@&954247879860568104>@everyone||');
         return await threadChannel.send(messagePayload).catch(() => false);
     }
 

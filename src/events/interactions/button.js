@@ -81,7 +81,7 @@ module.exports = async (button) => {
             // first check to see if already pending
             await button.deferUpdate();
             if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
-            if (!VerificationHandler.isPending(button.user.id))
+            if (!VerificationHandler.isPending(button.user.id, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
                         .setColor('YELLOW')
@@ -135,7 +135,7 @@ module.exports = async (button) => {
             // first check to see if already pending
             await button.deferUpdate();
             if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
-            if (!VerificationHandler.isPending(button.user.id))
+            if (!VerificationHandler.isPending(button.user.id, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
                         .setColor('YELLOW')

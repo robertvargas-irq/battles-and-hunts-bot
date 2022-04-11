@@ -9,11 +9,13 @@ const { Schema } = require("mongoose");
  *          [clan: keyof clans]:{
  *              preyPile: prey[]
  *          }
- *      }
+ *      },
  *      seasonDC: number,
  *      verification: {
- *          verificationThreadId: string,
+ *          verificationThreadId: string
  *          deniedVerificationIds: Set<string>
+ *          pendingToMessageId: Map<string, string>
+ *          messageIdToPending: Map<string, string>
  *      },
  *      roles: {
  *          adult: string
@@ -71,6 +73,16 @@ const serverSchema = new Schema({
             default: null,
         },
         deniedVerificationIds: { // those who have been denied
+            type: Map,
+            of: String,
+            default: new Map()
+        },
+        pendingToMessageId: {
+            type: Map,
+            of: String,
+            default: new Map()
+        },
+        messageIdToPending: {
             type: Map,
             of: String,
             default: new Map()

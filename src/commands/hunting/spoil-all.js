@@ -29,7 +29,7 @@ module.exports = {
     async execute(interaction) {
 
         // defer
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: false });
 
         // filter out non-administrators
         if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
@@ -71,6 +71,7 @@ module.exports = {
             embeds: [new MessageEmbed()
                 .setColor('GREEN')
                 .setTitle('✅ Successfully spoiled all prey piles.')
+                .setDescription('As the moons pass, disease and rot takes away what little you have left.')
             ]
         })
     },

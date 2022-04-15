@@ -217,9 +217,21 @@ class PreyPile {
         }
         
         // return a formatted string with bites left out of the total size
+        let charCount = 0;
+        let preyCount = 0;
+        let returnString;
         return preyList.map(p => {
-            return `↣ **(\`${p.bites_remaining}\` / \`${p.size}\`) ${p.name[0].toUpperCase() + p.name.substring(1)}**`
-        }).join('\n') + `\n**- - - - - -**\nTotal Available Bites to Eat: \`${totalWeight}\``;
+            returnString = `↣ **(\`${p.bites_remaining}\` / \`${p.size}\`) ${p.name[0].toUpperCase() + p.name.substring(1)}**`
+
+            if (charCount < 1500) {
+                charCount += returnString.length;
+                preyCount++;
+                return returnString;
+            }
+
+        }).slice(0, preyCount).join('\n') + '...\n'
+        + (charCount >= 1500 ? '[`' + (preyList.length - preyCount) + '` more]' : '')
+        + `\n**- - - - - -**\nTotal Available Bites to Eat: \`${totalWeight}\``;
     }
 }
 

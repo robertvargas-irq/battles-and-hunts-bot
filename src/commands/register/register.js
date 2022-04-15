@@ -13,7 +13,7 @@ module.exports = {
         await interaction.deferReply({ ephemeral: true });
         
         // if user is registered
-        let found = CoreUtil.FetchUser(interaction.user.id);
+        let found = await CoreUtil.FetchUser(interaction.user.id);
 
         // prompt registration if user is not registered; inform if registered
         if (found) return alreadyRegistered(interaction, found);

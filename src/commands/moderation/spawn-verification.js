@@ -1,9 +1,5 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
-const HuntManager = require('../../util/Hunting/HuntManager')
-const PreyPile = require('../../util/Hunting/PreyPile');
-const mongoose = require('mongoose');
-const serverSchema = require('../../database/schemas/server');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 
 module.exports = {

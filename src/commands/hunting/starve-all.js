@@ -2,6 +2,7 @@ const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10
 const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const mongoose = require('mongoose');
 const userSchema = require('../../database/schemas/user');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
     name: 'starve-all',
@@ -43,14 +44,13 @@ module.exports = {
         }
 
         // get all users
-        const User = mongoose.model('User', userSchema);
-        const allUsers = await User.find();
+        const { UserModel, users } = await CoreUtil.FetchAllUsers();
 
         // set all user's hunger to their size
-        for (let user of allUsers) user.currentHunger = user.stats.cat_size;
+        for (let user of users) user.currentHunger = user.stats.cat_size;
 
         // save all user documents
-        await User.bulkSave(allUsers);
+        await UserModel.bulkSave(users);
 
         // notify successful set
         return interaction.editReply({

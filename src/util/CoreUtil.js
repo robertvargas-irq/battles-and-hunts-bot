@@ -68,6 +68,15 @@ class CoreUtil {
         return await (await Server.findOne({ guildId, ...extraParameters }) || await Server.create({ guildId }));
     }
 
+    /**
+     * Fetches all Users from the database
+     * @returns {Promise<{UserModel: mongoose.Model, users: userSchema[]}>}
+     */
+    static async FetchAllUsers() {
+        const UserModel = mongoose.model('User', userSchema);
+        return { UserModel, users: await UserModel.find() };
+    }
+
 }
 
 module.exports = CoreUtil

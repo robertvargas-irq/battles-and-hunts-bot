@@ -1,10 +1,7 @@
-// import { HuntManager } from '../../util/Hunting/HuntManager';
 const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const serverSchema = require('../../database/schemas/server');
 
 module.exports = {
     name: 'eat',

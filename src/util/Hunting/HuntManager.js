@@ -145,10 +145,12 @@ class HuntManager extends CoreUtil {
      */
     static generatePrey(territory, maxSize) {
         let sizeRoll = this.#Random(1, maxSize);
+        let preyName = this.#RandomFromArray(clanPrey[territory]);
         return {
-            name: this.#RandomFromArray(clanPrey[territory]),
+            name: preyName,
             size: sizeRoll,
-            bites_remaining: sizeRoll
+            bites_remaining: sizeRoll,
+            visual: clanPrey.visuals[preyName]
         }
     }
 
@@ -188,6 +190,7 @@ class HuntManager extends CoreUtil {
             .setColor(tracked ? caught ? 'GREEN' : 'YELLOW' : 'RED')
             .setTitle('🎲 __Hunt Roll Results__ 🎲')
             .setThumbnail(interaction.member.displayAvatarURL())
+            .setImage(tracked ? prey.visual : '')
             .setDescription(
             // track roll breakdown
             'Roll Breakdowns:\n**- - - - - -**'
@@ -232,16 +235,21 @@ class HuntManager extends CoreUtil {
 
     /**
      * Set a user's recently caught to a prey
+     * @param {BaseCommandInteraction} originalInteraction The original interaction
      * @param {string} userId The player who caught the prey
      * @param {prey} prey The prey that was caught
      * @returns {prey}
      */
-    static setRecentlyCaught(userId, prey) {
+    static async setRecentlyCaught(interaction, userId, prey) {
+        // clear prey if null
         if (!prey) {
             this.#playerIdToRecentlyCaught.delete(userId);
-            return null;
+            return {prey: null, interaction: null};
         }
-        this.#playerIdToRecentlyCaught.set(userId, prey);
+
+        // set recently caught
+        this.#playerIdToRecentlyCaught.set(userId, {prey, interaction});
+        console.log("UPDATED RECENTLY CAUGHT");
         console.log(this.#playerIdToRecentlyCaught);
         return prey;
     }
@@ -260,9 +268,10 @@ class HuntManager extends CoreUtil {
      * Add to a user's caught prey
      * @param {string} userId The player to add to their carry
      * @param {prey} prey The prey to add to their carry
+     * @param {BaseCommandInteraction} originalInteraction The original interaction
      * @returns {Array} [`AbleToAdd`, `WeightCarried`, `CurrentlyCarrying`]
      */
-    static addToCarry(userId, prey) {
+    static addToCarry(userId, prey, originalInteraction) {
 
         // get player inventory else create one
         let inventory = this.#playerIdToInventory.get(userId);
@@ -282,10 +291,22 @@ class HuntManager extends CoreUtil {
         inventory[0] = inventory[0] + prey.bites_remaining;
 
         // remove from recently caught
-        this.setRecentlyCaught(userId, null);
+        this.setRecentlyCaught(null, userId, null);
         console.log(inventory);
         console.log(this.#playerIdToInventory.get(userId));
 
+        // swap interaction sidebar to grey if possible
+        originalInteraction.fetchReply().then(r => {
+            originalInteraction.editReply({
+                embeds: [r.embeds[0]
+                    .setColor('NOT_QUITE_BLACK')
+                    .setTitle('🎒 Prey has been carried away.')
+                    .setImage(r.embeds[0].image?.url || '')
+                    .setDescription(''),
+                ]
+            });
+        }).catch(() => console.log("Original interaction may have been timed out or deleted."));
+        
         // return success and new weight and inventory
         return [true, inventory[0], inventory[1]];
     }

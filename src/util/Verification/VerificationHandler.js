@@ -14,9 +14,6 @@ const CoreUtil = require('../CoreUtil');
 
 class VerificationHandler extends CoreUtil {
 
-    static #PendingToMessageId = new Map();
-    static #MessageIdToPending = new Map();
-
     /**
      * Set roles to server database
      * @param {serverSchema} server Server database entry
@@ -37,41 +34,55 @@ class VerificationHandler extends CoreUtil {
 
     /**
      * Check to see if a user is pending
+     * @param {serverSchema} server Server database entry
      * @param {string} userId The user to check for
+     * @param {string} messageId The message to check for
      * @returns {boolean} True if pending | False if not
      */
-    static isPending(userId) {
-        return this.#PendingToMessageId.has(userId);
-    }
+    static isPending(server, userId, messageId = null) {
+        console.log({server, userId, messageId});
+        console.log({ver: server.verification});
 
+        if (!userId && !messageId) return false;
+
+        return (!userId || server.verification.pendingToMessageId.has(userId))
+        && (!messageId || server.verification.messageIdToPending.has(messageId));
+    }
+    
     /**
      * Set a user to the pending set
+     * @param {serverSchema} server Server database entry
      * @param {string} userId The user to set as pending
      * @param {string} threadMessageId The message ID sent to the administrators
      */
-    static setPending(userId, threadMessageId) {
-        this.#PendingToMessageId.set(userId, threadMessageId);
-        this.#MessageIdToPending.set(threadMessageId, userId);
+    static setPending(server, userId, threadMessageId) {
+        // set to server
+        server.verification.pendingToMessageId.set(userId, threadMessageId);
+        server.verification.messageIdToPending.set(threadMessageId, userId);
+        server.markModified("verification");
     }
-
+    
     /**
      * Remove a user from the pending list
+     * @param {serverSchema} server Server database entry
      * @param {string} userId The user to remove from the pending
-     * @returns True if removed | False if wasn't in the pending list
      */
-    static removePending(userId) {
-        let messageId = this.#PendingToMessageId.get(userId);
-        return this.#MessageIdToPending.delete(messageId)
-        && this.#PendingToMessageId.delete(userId);
+    static removePending(server, userId) {
+        let messageId = server.verification.pendingToMessageId.get(userId);
+        console.log({messageId});
+        server.verification.messageIdToPending.delete(messageId);
+        server.verification.pendingToMessageId.delete(userId);
+        server.markModified("verification");
     }
 
     /**
      * Get the userId from the messageId
+     * @param {serverSchema} server Server database entry
      * @param {string} messageId The message to request the pending user
      * @returns {string} UserId of pending user
      */
-    static getPendingFromMessage(messageId) {
-        return this.#MessageIdToPending.get(messageId);
+    static getPendingFromMessage(server, messageId) {
+        return server.verification.messageIdToPending.get(messageId);
     }
     
     /**
@@ -96,12 +107,26 @@ class VerificationHandler extends CoreUtil {
 
     /**
      * Push a message to the verification thread
-     * @param {ThreadManager} threadChannel The channel to push a notification to
+     * @param {ThreadChannel} threadChannel The channel to push a notification to
      * @param {MessagePayload} messagePayload Message to send
+     * @param {string[]} usersToPing Users to ping
      * @returns {Message | Boolean} Message if successfully sent | False if error
      */
-    static async pushToVerificationThread(threadChannel, messagePayload) {
+    static async pushToVerificationThread(threadChannel, messagePayload, usersToPing) {
+        if (threadChannel.archived) threadChannel.setArchived(false, 'Emitted Verification request.');
+        await threadChannel.join();
+        await threadChannel.parent.send('**🆔 New verification request pending:**\n> \n> <#' + threadChannel.id + '>\n> '
+        + (usersToPing.length > 0 ? ('\n||' + usersToPing.map(u => '<@' + u + '>') + '||') : 'This is probably a test, no pings for now 💫'));
         return await threadChannel.send(messagePayload).catch(() => false);
+    }
+
+    /**
+     * Send a message to the user
+     * @param {*} user The user to DM
+     * @param {MessagePayload} messagePayload Message to send
+     */
+    static async pushToUser(user, messagePayload) {
+        return await user.send(messagePayload).catch(console.error);
     }
 
     /**

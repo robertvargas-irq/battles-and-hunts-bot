@@ -9,6 +9,8 @@ const serverSchema = require('../../database/schemas/server');
  */
 module.exports = async (button) => {
 
+    console.log(button.customId);
+
     // route to the global request
     switch (button.customId.slice(7)) {
         case 'VERIFY_AGE': {
@@ -17,6 +19,10 @@ module.exports = async (button) => {
             
             // get server entry from the database
             const server = await VerificationHandler.FetchServer(interaction.guild.id);
+
+            // check to see if request is already pending
+            if (VerificationHandler.isPending(server, button.user.id, null))
+                return button.editReply(VerificationHandler.REPLIES.IS_PENDING)
 
             // check to see if request is already pending
             if (VerificationHandler.isPending(server, button.user.id, null))

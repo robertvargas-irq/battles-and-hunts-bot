@@ -14,7 +14,7 @@ function formatStats(interaction, userData) {
         .setColor('LUMINOUS_VIVID_PINK')
         // .setTitle(interaction.member.displayName + ' Player Stats')
         .setAuthor({name: interaction.member.displayName + ' Player Stats', iconURL: interaction.guild.iconURL() })
-        .setImage('https://cdn.discordapp.com/attachments/958264733616705556/958265023308890132/86E85A9C-8C43-46AB-ABB2-78691EBBC17E.png')
+        .setImage('https://media.discordapp.net/attachments/954246414987309076/964285751657390130/IMG_8456.png?width=960&height=540')
         .setThumbnail(interaction.member.displayAvatarURL())
         .setDescription('**- - - - -**')
         .setFields([

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const userSchema = require('../../database/schemas/user');
 const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const { formatStats } = require('../../util/Account/Player');
+const CoreUtil = require('../../util/CoreUtil');
 module.exports = {
     name: 'register',
     description: 'Register for the bot if you haven\'t already entered your stats!',
@@ -14,8 +15,7 @@ module.exports = {
         await interaction.deferReply({ ephemeral: true });
         
         // if user is registered
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let found = await User.findOne({ userId: interaction.user.id }).exec();
+        let found = CoreUtil.FetchUser(interaction.user.id);
 
         // prompt registration if user is not registered; inform if registered
         if (found) return alreadyRegistered(interaction, found);

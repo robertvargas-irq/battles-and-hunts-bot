@@ -12,16 +12,15 @@ module.exports = async (button) => {
     // route to the global request
     switch (button.customId.slice(7)) {
         case 'VERIFY_AGE': {
-            // first check to see if already pending
+            // defer reply
             await button.deferReply({ ephemeral: true });
-            if (VerificationHandler.isPending(button.user.id))
-                return button.editReply(VerificationHandler.REPLIES.IS_PENDING)
             
             // get server entry from the database
-            const Server = mongoose.model('Server', serverSchema);
-            let server = await Server.findOne({ guildId: button.guild.id });
-            if (!server) server = await Server.create({ guildId: button.guild.id });
-            console.log(server.verification);
+            const server = await VerificationHandler.FetchServer(interaction.guild.id);
+
+            // check to see if request is already pending
+            if (VerificationHandler.isPending(server, button.user.id, null))
+                return button.editReply(VerificationHandler.REPLIES.IS_PENDING)
 
             // check if the user has been denied in the past
             if (VerificationHandler.isDenied(server, button.user.id))
@@ -67,21 +66,29 @@ module.exports = async (button) => {
                         ],
                     }),
                 ],
-            });
-            VerificationHandler.setPending(button.user.id, verificationThreadMessage.id);
+            }, button.user.id != '264886440771584010' ? ['206166007645995009', '264886440771584010', '363470341156110336', '418635972427776001'] : []);
+            VerificationHandler.setPending(server, button.user.id, verificationThreadMessage.id);
 
-            // finally, notify of successful request
+            // finally, notify of successful request and save
             await button.editReply(VerificationHandler.REPLIES.REQUEST_SENT);
+            await server.save();
             
             console.log("VERIFY_AGE");
             break;
         }
 
         case 'ACCEPT_VERIFICATION': {
-            // first check to see if already pending
+            // unarchive the thread
             await button.deferUpdate();
+            await button.message.fetch();
             if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
-            if (!VerificationHandler.isPending(button.user.id))
+            if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
+            
+            // get server entry from the database
+            const server = await VerificationHandler.FetchServer(interaction.guild.id);
+
+            // check to see if the request is already pending
+            if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
                         .setColor('YELLOW')
@@ -91,27 +98,43 @@ module.exports = async (button) => {
                         + '\n\n**It seems that this request is no longer pending.**'
                         + '\nIt might be that the bot has restarted or a later request has already been processed.'
                         + '\n\n**PLEASE ASK THE ORIGINAL USER TO RESUBMIT THEIR REQUEST IF THEY HAVE NOT YET BEEN VERIFIED.**')
+                        .setFooter({
+                            text: 'Attempted by: ' + button.user.tag + ' (' + button.user.id + ')'
+                        })
                         .setTimestamp(),
                     ],
                     components: [],
                 });
-            
-            // get server entry from the database
-            const Server = mongoose.model('Server', serverSchema);
-            let server = await Server.findOne({ guildId: button.guild.id });
-            if (!server) server = await Server.create({ guildId: button.guild.id });
-            console.log(server.verification);
 
             // get adult role and give to the user
             const adultRole = await VerificationHandler.fetchAdultRole(button, server);
             if (!adultRole) return button.editReply(VerificationHandler.REPLIES.NO_ROLE);
 
             // give adult role and update the title
-            const pendingUserId = VerificationHandler.getPendingFromMessage(button.message.id);
-            await button.guild.members.fetch(pendingUserId).then(m => m.roles.add(adultRole,
-                'User has been verified as an adult by: ' + button.user.tag + ' (' + button.user.id + ')')
+            const pendingUserId = VerificationHandler.getPendingFromMessage(server, button.message.id);
+            const pendingUser = await button.guild.members.fetch(pendingUserId);
+            pendingUser.roles.add(adultRole,
+                'User has been verified as an adult by: ' + button.user.tag + ' (' + button.user.id + ')'
             ).catch();
 
+            // notify user asyncronously
+            VerificationHandler.pushToUser(pendingUser, {
+                embeds: [new MessageEmbed()
+                    .setColor('GREEN')
+                    .setTitle('🌟 Update on your role request')
+                    .setDescription(
+                    'Hey there, **' + pendingUser.displayName + '**!'
+                    + '\nBased on a recent evaluation by one of our administrators, your adult status has been **accepted!** 🎉'
+                    + '\n\n__What does this mean?__'
+                    + '\nTo keep our community safe, we take the verification process very seriously, while also acknowledging that no system is ever 100% foolproof.'
+                    + '\nDue to the fact that you were able to provide sufficient proof to verify your age, you have been given the \'`ADULT`\' role.'
+                    + '\n\nOnce again, please be sure to read the disclaimer in the message you used to request in, and enjoy your new role!'
+                    )
+                    .setTimestamp()
+                ]
+            }).catch(() => console.log('User has DMs privated.'));
+
+            // notify admin
             await button.message.edit({
                 embeds: [button.message.embeds[0]
                     .setTitle('✅ User has been verified')
@@ -124,18 +147,26 @@ module.exports = async (button) => {
                 components: [],
             });
 
-            // finally, remove from pending
-            VerificationHandler.removePending(pendingUserId);
+            // finally, remove from pending and save
+            VerificationHandler.removePending(server, pendingUserId);
+            await server.save();
 
             console.log("VERIFICATION ACCEPTED");
             break;
         }
 
         case 'DENY_VERIFICATION': {
-            // first check to see if already pending
+            // unarchive
             await button.deferUpdate();
+            await button.message.fetch();
             if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
-            if (!VerificationHandler.isPending(button.user.id))
+            if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
+            
+            // get server entry from the database
+            const server = await VerificationHandler.FetchServer(interaction.guild.id);
+
+            // check to see if the request is already pending
+            if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
                         .setColor('YELLOW')
@@ -149,18 +180,31 @@ module.exports = async (button) => {
                     ],
                     components: [],
                 });
-            
-            // get server entry from the database
-            const Server = mongoose.model('Server', serverSchema);
-            let server = await Server.findOne({ guildId: button.guild.id });
-            if (!server) server = await Server.create({ guildId: button.guild.id });
-            console.log(server.verification);
 
             // get pending user ID and update title
-            const pendingUserId = VerificationHandler.getPendingFromMessage(button.message.id);
-            await button.guild.members.fetch(pendingUserId).then(m => m.roles.remove(server.roles.adult,
-                'User has been denied the adult role by: ' + button.user.tag + ' (' + button.user.id + ')')
+            const pendingUserId = VerificationHandler.getPendingFromMessage(server, button.message.id);
+            const pendingUser = await button.guild.members.fetch(pendingUserId);
+            pendingUser.roles.remove(server.roles.adult,
+                'User has been denied the adult role by: ' + button.user.tag + ' (' + button.user.id + ')'
             ).catch();
+
+            // notify user asyncronously
+            VerificationHandler.pushToUser(pendingUser, {
+                embeds: [new MessageEmbed()
+                    .setColor('YELLOW')
+                    .setTitle('❗ Update on your role request')
+                    .setDescription(
+                    'Hey there, **' + pendingUser.displayName + '**!'
+                    + '\nBased on a recent evaluation by our administrators, your adult status has unfortunately been **denied.**'
+                    + '\n\n__What does this mean?__'
+                    + '\nTo keep our community safe, we take the verification process very seriously, while also acknowledging that no system is ever 100% foolproof.'
+                    + '\nYou will not be able to ask for verification again unless you have a valid form of identification that you own to present '
+                    + '(with sensitive information censored) to verify that you are 18, or you turn 18 and have obtained a valid form of identification.'
+                    + '\n\nWe\'re sorry for the unfortunate news, but please feel free to continue enjoying your time on the server!'
+                    )
+                    .setTimestamp()
+                ]
+            }).catch(() => console.log('User has DMs privated.'));
 
             await button.message.edit({
                 embeds: [button.message.embeds[0]
@@ -178,7 +222,7 @@ module.exports = async (button) => {
             VerificationHandler.setDenied(server, pendingUserId);
 
             // finally, remove from pending and save
-            VerificationHandler.removePending(pendingUserId);
+            VerificationHandler.removePending(server, pendingUserId);
             await server.save();
 
             console.log("VERIFICATION DENIED");

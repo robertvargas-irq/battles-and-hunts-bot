@@ -1,16 +1,16 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed, GuildMember } = require('discord.js');
 const { formatStats } = require('../../util/Account/Player');
-const CoreUtil = require('../../util/CoreUtil');
+const HuntManager = require('../../util/Hunting/HuntManager');
 
 module.exports = {
-    name: 'stats',
-    description: 'Check out your stats (default)! Or another\'s (player)!',
+    name: 'hunting-stats',
+    description: 'Check out your hunting stats (default)! Or another\'s (player)!',
     guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'player',
-            description: '(DEFAULT: YOURSELF) Examine your enemy.',
+            description: '(DEFAULT: YOURSELF) Examine another\'s work!',
             type: dTypes.User,
             required: false,
         },
@@ -19,7 +19,7 @@ module.exports = {
     async execute( interaction ) {
 
         // defer reply
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: false });
 
         /**
          * @type {GuildMember}
@@ -30,11 +30,11 @@ module.exports = {
         if (playerMember.user.bot) return interaction.editReply({ embeds: [new MessageEmbed({ title: '🤖 These stats are too powerful!' })] });
         
         // fetch user from the database
-        const found = await CoreUtil.FetchUser(playerMember.user.id);
+        const found = await HuntManager.FetchUser(playerMember.user.id);
 
         // if target is not registered, inform the user appropriately and return
         if (!found) {
-            if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
+            if (playerMember.user.id == interaction.user.id) HuntManager.NotRegistered(interaction);
             else interaction.editReply({
                     embeds: [new MessageEmbed()
                         .setColor('AQUA')
@@ -46,14 +46,8 @@ module.exports = {
         }
 
         // show success message
-        let pseudoInteraction = interaction;
-        if (playerMember) pseudoInteraction = {
-            member: playerMember,
-            user: playerMember.user,
-            guild: playerMember.guild
-        };
         return interaction.editReply({
-            embeds: [ formatStats(pseudoInteraction, found) ]
+            embeds: [ HuntManager.formatStats(found, playerMember) ]
         });
     
     },

@@ -1,11 +1,8 @@
-// import { HuntManager } from '../../util/Hunting/HuntManager';
+const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
-const userSchema = require('../../database/schemas/user');
-const serverSchema = require('../../database/schemas/server');
+const CANON_MESSAGE = '🍃 This message is canon.'
 
 module.exports = {
     name: 'eat',
@@ -66,15 +63,17 @@ module.exports = {
         await interaction.deferReply({ ephemeral: false });
 
         // get clan
-        const clan = interaction.options.getString('clan-to-eat-from')
+        const clan = interaction.options.getString('clan-to-eat-from');
         
         // pull user and server from the database
-        const User = mongoose.model('User', userSchema);
-        const player = await User.findOne({ userId: interaction.user.id }).exec();
+        const player = await HuntManager.FetchUser(interaction.user.id);
+        if (!player) return await HuntManager.NotRegistered(interaction);
 
-        // prompt registration if user is not registered; then continue on
-        if (!player) player = await firstTimeRegister(interaction);
-        if (!player) return; // error message already handled in collect()
+        // get server data
+        const server = await PreyPile.FetchServer(interaction.guild.id);
+
+        // if hunting is currently restricted, display warning
+        if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
         
         // verify bites needed
         const bitesNeeded = Math.min(
@@ -89,14 +88,10 @@ module.exports = {
                     .setColor('AQUA')
                     .setTitle('🍖 Hmm...')
                     .setDescription('You are not really feeling hungry. Better to leave it for everyone else.')
+                    .setFooter({ text: CANON_MESSAGE })
                 ]
             });
         }
-
-        // get server data
-        const Server = mongoose.model('Server', serverSchema);
-        let server = await Server.findOne({ guildId: interaction.guild.id });
-        if (!server) server = await Server.create({ guildId: interaction.guild.id });
 
         // if the prey pile is empty, inform
         const preyPile = PreyPile.getPreyPile(clan, server);
@@ -109,6 +104,7 @@ module.exports = {
                     \n> Looks like there's nothing to eat.\
                     \n> Someone didn\'t go on patrol. Go \`/hunt\` for more if your leader sends you out.
                     `)
+                    .setFooter({ text: CANON_MESSAGE })
                 ]
             });
         }
@@ -131,7 +127,6 @@ module.exports = {
             notifyEmbed
                 .setColor('AQUA')
                 .setAuthor({name: '🦴 Some prey has been eaten', iconURL: interaction.member.displayAvatarURL()})
-                // .setTitle('🦴 Some prey has been eaten')
                 .setThumbnail('https://c.tenor.com/27kedvI8EwQAAAAd/cat-eating.gif')
                 .setDescription(`\
                 **${interaction.member.displayName}** has eaten some food from the prey pile.\
@@ -142,7 +137,8 @@ module.exports = {
                 \n\
                 \n${consumedFormatted}\
                 \n\
-                \n**- - - - - -**`);
+                \n**- - - - - -**`)
+                .setFooter({ text: CANON_MESSAGE });
         }
         else {
             notifyEmbed
@@ -160,7 +156,8 @@ module.exports = {
                 \n\
                 \n${consumedFormatted}\
                 \n\
-                \n**- - - - - -**`);
+                \n**- - - - - -**`)
+                .setFooter({ text: CANON_MESSAGE });
         }
         await PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[notifyEmbed]})
 
@@ -173,6 +170,7 @@ module.exports = {
             > 
             > ${player.currentHunger < 1 ? 'You are fully satiated.' : `Just... \`${player.currentHunger}\` more bite${player.currentHunger != 1 ? 's' : ''}...`}
             `)
+            .setFooter({ text: CANON_MESSAGE })
 
         // display result
         return interaction.editReply({

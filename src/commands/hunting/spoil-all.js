@@ -1,9 +1,6 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
-const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile');
-const mongoose = require('mongoose');
-const serverSchema = require('../../database/schemas/server');
 
 module.exports = {
     name: 'spoil-all',
@@ -45,9 +42,7 @@ module.exports = {
         }
         
         // pull server from the database
-        const Server = mongoose.model('Server', serverSchema);
-        let server = await Server.findOne({ guildId: interaction.guild.id });
-        if (!server) server = await Server.create({ guildId: interaction.guild.id });
+        const server = await PreyPile.FetchServer(interaction.guild.id);
 
         // empty all entries
         for ([clanName, clanData] of Array.from(Object.entries(server.clans))) {

@@ -1,4 +1,4 @@
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { BaseCommandInteraction, MessageEmbed, MessagePayload } = require('discord.js');
 const mongoose = require('mongoose');
 const userSchema = require('../database/schemas/user');
 const serverSchema = require('../database/schemas/server');
@@ -44,6 +44,40 @@ class CoreUtil {
         // delete if possible
         if (!interaction.ephemeral)
             setTimeout(() => interaction.deleteReply().catch(), 20 * 1000);
+    }
+
+    /**
+     * Send a message and delete after a set amount of seconds
+     * @param {BaseCommandInteraction} interaction 
+     * @param {MessagePayload} messagePayload
+     * @param {[number]} seconds
+     */
+    static async SendAndDelete(interaction, messagePayload, seconds = 20) {
+        if (messagePayload.embeds[0].footer?.text) messagePayload.embeds[0].footer.text += '\n'
+        + (
+            interaction.ephemeral
+            ? ''
+            : '✨ For cleanliness, this message will self-destruct in ' + seconds + ' seconds!'
+        )
+        else messagePayload.embeds[0].setFooter({
+            text: interaction.ephemeral
+            ? ''
+            : '✨ For cleanliness, this message will self-destruct in ' + seconds + ' seconds!'
+        });
+
+        // handle reply
+        let promise;
+        if (interaction.replied || interaction.deferred)
+            promise = await interaction.editReply(messagePayload);
+        else
+            promise = await interaction.reply({
+                ...messagePayload,
+                ephemeral: true,
+            });
+        
+        // delete if possible
+        if (!interaction.ephemeral)
+            setTimeout(() => interaction.deleteReply().catch(), seconds * 1000);
     }
 
     /**

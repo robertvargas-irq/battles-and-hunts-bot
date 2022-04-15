@@ -21,7 +21,8 @@ module.exports = {
                 new MessageEmbed()
                     .setColor(getColor(found.currentHunger, found.stats.cat_size))
                     .setTitle(getTitle(found.currentHunger, found.stats.cat_size))
-                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.stats.cat_size ? '🍖' : '🦴'), `> ↣ \`${found.stats.cat_size - found.currentHunger}\` / \`${found.stats.cat_size}\``),
+                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.stats.cat_size ? '🍖' : '🦴'), `> ↣ \`${found.stats.cat_size - found.currentHunger}\` / \`${found.stats.cat_size}\``)
+                    .setFooter('🍃 This hunger stat is canon.'),
             ]
         });
     

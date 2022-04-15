@@ -46,7 +46,19 @@ module.exports = {
         // pull user from the database
         const hunter = await HuntManager.FetchUser(interaction.user.id);
         if (!hunter) return await HuntManager.NotRegistered(interaction);
+
+        // pull the server from the database
         const server = await HuntManager.FetchServer(interaction.guild.id);
+
+        // if not locked, session is active, so check cooldowns
+        if (!server.hunting.locked) {
+            // return if on cooldown
+            if (HuntManager.onCooldownHunt(interaction.user.id))
+                return HuntManager.displayCooldownHunt(interaction);
+            
+            // add cooldown
+            HuntManager.addCooldownHunt(interaction.user.id);
+        }
 
         // roll for track
         const trackRoll = HuntManager.rollTrack(20);

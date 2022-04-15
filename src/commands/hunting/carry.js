@@ -35,6 +35,10 @@ module.exports = {
             });
         }
 
+        // check if user is on cooldown
+        if (HuntManager.onCooldownDeposit(interaction.user.id))
+            return HuntManager.displayCooldownDeposit(interaction);
+
         // add to carry
         const [ableToAdd, weightCarrying, preyCarrying] = HuntManager.addToCarry(interaction.user.id, recentlyCaught);
         const resultEmbed = new MessageEmbed();
@@ -52,6 +56,7 @@ module.exports = {
             + '\n\n**- - - - - -**'
             + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
             )
+            .setFooter({ text: '🍃 This carry is canon.' });
         else resultEmbed
             .setColor('RED')
             .setTitle(`⚠️ __Hhh... this \`${recentlyCaught.name}\` is too heavy...__`)
@@ -65,6 +70,7 @@ module.exports = {
             + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
             + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
             )
+            .setFooter({ text: '🍃 This carry is canon.' });
 
         // display result
         return interaction.editReply({

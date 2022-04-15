@@ -2,6 +2,7 @@ const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const CANON_MESSAGE = '🍃 This message is canon.'
 
 module.exports = {
     name: 'eat',
@@ -67,6 +68,12 @@ module.exports = {
         // pull user and server from the database
         const player = await HuntManager.FetchUser(interaction.user.id);
         if (!player) return await HuntManager.NotRegistered(interaction);
+
+        // get server data
+        const server = await PreyPile.FetchServer(interaction.guild.id);
+
+        // if hunting is currently restricted, display warning
+        if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
         
         // verify bites needed
         const bitesNeeded = Math.min(
@@ -81,15 +88,10 @@ module.exports = {
                     .setColor('AQUA')
                     .setTitle('🍖 Hmm...')
                     .setDescription('You are not really feeling hungry. Better to leave it for everyone else.')
+                    .setFooter({ text: CANON_MESSAGE })
                 ]
             });
         }
-
-        // get server data
-        const server = await PreyPile.FetchServer(interaction.guild.id);
-
-        // if hunting is currently restricted, display warning
-        if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
 
         // if the prey pile is empty, inform
         const preyPile = PreyPile.getPreyPile(clan, server);
@@ -102,6 +104,7 @@ module.exports = {
                     \n> Looks like there's nothing to eat.\
                     \n> Someone didn\'t go on patrol. Go \`/hunt\` for more if your leader sends you out.
                     `)
+                    .setFooter({ text: CANON_MESSAGE })
                 ]
             });
         }
@@ -124,7 +127,6 @@ module.exports = {
             notifyEmbed
                 .setColor('AQUA')
                 .setAuthor({name: '🦴 Some prey has been eaten', iconURL: interaction.member.displayAvatarURL()})
-                // .setTitle('🦴 Some prey has been eaten')
                 .setThumbnail('https://c.tenor.com/27kedvI8EwQAAAAd/cat-eating.gif')
                 .setDescription(`\
                 **${interaction.member.displayName}** has eaten some food from the prey pile.\
@@ -135,7 +137,8 @@ module.exports = {
                 \n\
                 \n${consumedFormatted}\
                 \n\
-                \n**- - - - - -**`);
+                \n**- - - - - -**`)
+                .setFooter({ text: CANON_MESSAGE });
         }
         else {
             notifyEmbed
@@ -153,7 +156,8 @@ module.exports = {
                 \n\
                 \n${consumedFormatted}\
                 \n\
-                \n**- - - - - -**`);
+                \n**- - - - - -**`)
+                .setFooter({ text: CANON_MESSAGE });
         }
         await PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[notifyEmbed]})
 
@@ -166,6 +170,7 @@ module.exports = {
             > 
             > ${player.currentHunger < 1 ? 'You are fully satiated.' : `Just... \`${player.currentHunger}\` more bite${player.currentHunger != 1 ? 's' : ''}...`}
             `)
+            .setFooter({ text: CANON_MESSAGE })
 
         // display result
         return interaction.editReply({

@@ -28,6 +28,17 @@ const { Schema } = require('mongoose');
  *      currentHealth: number,
  *      currentHunger: number,
  *      clan: string,
+ *      hunting: {
+ *          contributions: {
+ *              preyCount: number,
+ *              preyWeight: number,
+ *          },
+ *          hunts: {
+ *              successful: number,
+ *              unsuccessful: number,
+ *          },
+ *          trips: Number,
+ *      },
  * }} UserSchema
  */
 
@@ -91,6 +102,32 @@ const userSchema = new Schema({
         type: String,
         default: null,
     },
+    hunting: {
+        contributions: {
+            preyCount: {
+                type: Number,
+                default: 0,
+            },
+            preyWeight: {
+                type: Number,
+                default: 0,
+            }
+        },
+        hunts: {
+            successful: {
+                type: Number,
+                default: 0,
+            },
+            unsuccessful: {
+                type: Number,
+                default: 0,
+            }
+        },
+        trips: {
+            type: Number,
+            default: 0,
+        }
+    }
 });
 
 module.exports = userSchema;

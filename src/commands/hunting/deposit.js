@@ -52,6 +52,10 @@ module.exports = {
         // if hunting is currently restricted, display warning
         if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
 
+        // check if user is on cooldown
+        if (HuntManager.onCooldownDeposit(interaction.user.id))
+            return HuntManager.displayCooldownDeposit(interaction);
+
         // if not carrying anything, inform
         const carrying = HuntManager.removeFromCarry(interaction.user.id);
         if (carrying.length < 1) {
@@ -65,11 +69,25 @@ module.exports = {
                 ]
             });
         }
+
+        // record contributions if canon (weight and carry)
+        if (!server.hunting.locked) {
+            let weight = 0;
+            for (let i = 0; i < carrying.length; i++)
+                weight += carrying[i].size;
+            hunter.hunting.contributions.preyCount += carrying.length;
+            hunter.hunting.contributions.preyWeight += weight;
+            hunter.hunting.trips++;
+        }
         
         // dump into the prey pile
         HuntManager.addToPreyPile(carrying, clan, server);
         PreyPile.updatePreyPile(interaction, server, clan);
-        await server.save();
+        server.save();
+        hunter.save();
+
+        // add cooldown for user
+        HuntManager.addCooldownDeposit(interaction.user.id);
 
         // notify the clan
         const notifyEmbed = new MessageEmbed();
@@ -87,7 +105,8 @@ module.exports = {
                 \n\
                 \n${PreyPile.formatPrey(carrying)}\
                 \n\
-                \n**- - - - - -**`);
+                \n**- - - - - -**`)
+                .setFooter({ text: '🍃 This pile deposit is canon.' });
         }
         else {
             notifyEmbed
@@ -105,7 +124,8 @@ module.exports = {
                 \n\
                 \n${PreyPile.formatPrey(carrying)}\
                 \n\
-                \n**- - - - - -**`);
+                \n**- - - - - -**`)
+                .setFooter({ text: '🍃 This pile deposit is canon.' });
         }
         await PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[notifyEmbed]})
 

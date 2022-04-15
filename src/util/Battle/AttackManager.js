@@ -1,4 +1,5 @@
 const { MessageEmbed, BaseCommandInteraction } = require('discord.js');
+const CoreUtil = require('../CoreUtil');
 const {p_hit_and_crit, p_hit, p_crit_but_miss, p_miss} = require('./attackPrompts.json');
 const {damageAction, damageResponse} = require('./damagePrompts.json');
 const {healingAction, healingResponse} = require('./medicinePrompts.json');
@@ -14,7 +15,7 @@ const {healingAction, healingResponse} = require('./medicinePrompts.json');
  * @param {userSchema} target 
  * @param {GuildMember} targetSnowflake
  */
-class AttackManager {
+class AttackManager extends CoreUtil {
     static MAX_WEIGHT = 3;
     static INVENTORY_MAX_WEIGHT = 7;
     static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };

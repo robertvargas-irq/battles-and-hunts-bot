@@ -1,10 +1,7 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
-const mongoose = require('mongoose');
-const userSchema = require('../../database/schemas/user');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
-const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
+const { calculateMaxHealth } = require('../../util/Account/Player');
 
 module.exports = {
     name: 'medicine',
@@ -17,12 +14,12 @@ module.exports = {
             type: dTypes.Integer,
             required: true,
         },
-        {
-            name: 'target-to-heal',
-            description: '⚠️ ONLY MEDICINE CATS CAN HEAL OTHERS: Who you wish to heal.',
-            type: dTypes.User,
-            required: false,
-        } // ! IMPLEMENT ME
+        // {
+        //     name: 'who-healed-you',
+        //     description: '(THIS IS OPTIONAL)',
+        //     type: dTypes.User,
+        //     required: false,
+        // } // ! IMPLEMENT ME
     ],
     /**
      * @param {BaseCommandInteraction} interaction
@@ -34,17 +31,8 @@ module.exports = {
         let amount = Math.max(0, interaction.options.getInteger('amount'));
         
         // pull user from the database
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let found = await User.findOne({ userId: interaction.user.id }).exec();
-
-        // prompt registration if user is not registered; completely return
-        if (!found) {
-            let newStats = await firstTimeRegister(interaction);
-            if (!newStats) return; // error already handled inside collect()
-            return interaction.editReply({
-                embeds: [formatStats(interaction, newStats)]
-            });
-        }
+        const found = await AttackManager.FetchUser(interaction.user.id);
+        if (!found) return AttackManager.NotRegistered(interaction);
         
         // check for over-heal
         let maxHealth = calculateMaxHealth(found.stats.constitution);

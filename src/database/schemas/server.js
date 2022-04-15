@@ -10,6 +10,10 @@ const { Schema } = require("mongoose");
  *              preyPile: prey[]
  *          }
  *      },
+ *      hunting: {
+ *          seasonDC: number,
+ *          locked: boolean,
+ *      },
  *      seasonDC: number,
  *      verification: {
  *          verificationThreadId: string
@@ -63,9 +67,15 @@ const serverSchema = new Schema({
             }
         },
     },
-    seasonDC: {
-        type: Number,
-        default: 10
+    hunting: {
+        seasonDC: {
+            type: Number,
+            default: 10,
+        },
+        locked: {
+            type: Boolean,
+            default: false,
+        }
     },
     verification: {
         verificationThreadId: {
@@ -75,17 +85,17 @@ const serverSchema = new Schema({
         deniedVerificationIds: { // those who have been denied
             type: Map,
             of: String,
-            default: new Map()
+            default: new Map(),
         },
         pendingToMessageId: {
             type: Map,
             of: String,
-            default: new Map()
+            default: new Map(),
         },
         messageIdToPending: {
             type: Map,
             of: String,
-            default: new Map()
+            default: new Map(),
         }
     },
     roles: {

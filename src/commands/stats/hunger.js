@@ -1,7 +1,5 @@
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const userSchema = require('../../database/schemas/user');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
     name: 'hunger',
@@ -14,12 +12,8 @@ module.exports = {
         await interaction.deferReply({ ephemeral: false });
         
         // if user is registered
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let found = await User.findOne({ userId: interaction.user.id }).exec();
-
-        // prompt registration if user is not registered; inform if registered
-        if (!found) found = await firstTimeRegister(interaction);
-        if (!found) return; // error has already been handled inside collect()
+        const found = await CoreUtil.FetchUser(interaction.user.id);
+        if (!found) return CoreUtil.NotRegistered(interaction);
 
         // show health bar
         interaction.editReply({
@@ -27,7 +21,8 @@ module.exports = {
                 new MessageEmbed()
                     .setColor(getColor(found.currentHunger, found.stats.cat_size))
                     .setTitle(getTitle(found.currentHunger, found.stats.cat_size))
-                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.stats.cat_size ? '🍖' : '🦴'), `> ↣ \`${found.stats.cat_size - found.currentHunger}\` / \`${found.stats.cat_size}\``),
+                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.stats.cat_size ? '🍖' : '🦴'), `> ↣ \`${found.stats.cat_size - found.currentHunger}\` / \`${found.stats.cat_size}\``)
+                    .setFooter('🍃 This hunger stat is canon.'),
             ]
         });
     

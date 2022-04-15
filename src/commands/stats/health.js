@@ -1,8 +1,6 @@
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const userSchema = require('../../database/schemas/user');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const { calculateMaxHealth } = require('../../util/Account/Player');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
     name: 'health',
@@ -15,12 +13,8 @@ module.exports = {
         await interaction.deferReply({ ephemeral: false });
         
         // if user is registered
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let found = await User.findOne({ userId: interaction.user.id }).exec();
-
-        // prompt registration if user is not registered; inform if registered
-        if (!found) found = await firstTimeRegister(interaction);
-        if (!found) return; // error has already been handled inside collect()
+        const found = await CoreUtil.FetchUser(interaction.user.id);
+        if (!found) return CoreUtil.NotRegistered(interaction);
 
         // show health bar
         interaction.editReply({

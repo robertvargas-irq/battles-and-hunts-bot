@@ -1,8 +1,5 @@
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
 const collectCharacterStats = require('../../util/Account/collectCharacterStats');
-const userSchema = require('../../database/schemas/user');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');
 
@@ -18,15 +15,7 @@ module.exports = {
         
         // if user is registered
         const found = await CoreUtil.FetchUser(interaction.user.id);
-
-        // prompt registration if user is not registered; completely return
-        if (!found) {
-            let newStats = await firstTimeRegister(interaction);
-            if (!newStats) return; // error already handled inside collect()
-            return interaction.editReply({
-                embeds: [formatStats(interaction, newStats)]
-            });
-        }
+        if (!found) return CoreUtil.NotRegistered(interaction);
         
         // collect new stats
         const {clanRole, stats: catStats} = await collectCharacterStats(interaction, '**Welcome back to the editor!**\nPlease enter your character\'s stats one by one!');

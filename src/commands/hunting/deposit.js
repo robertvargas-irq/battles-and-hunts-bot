@@ -1,10 +1,6 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
-const userSchema = require('../../database/schemas/user');
-const serverSchema = require('../../database/schemas/server');
 const PreyPile = require('../../util/Hunting/PreyPile');
 
 module.exports = {
@@ -52,6 +48,9 @@ module.exports = {
         const hunter = await HuntManager.FetchUser(interaction.user.id);
         if (!hunter) return await HuntManager.NotRegistered(interaction);
         const server = await HuntManager.FetchServer(interaction.guild.id);
+
+        // if hunting is currently restricted, display warning
+        if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
 
         // if not carrying anything, inform
         const carrying = HuntManager.removeFromCarry(interaction.user.id);

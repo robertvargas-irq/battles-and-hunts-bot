@@ -91,6 +91,9 @@ module.exports = {
         // get server data
         const server = await PreyPile.FetchServer(interaction.guild.id);
 
+        // if hunting is currently restricted, display warning
+        if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
+
         // if the prey pile is empty, inform
         const preyPile = PreyPile.getPreyPile(clan, server);
         if (preyPile.length < 1) {

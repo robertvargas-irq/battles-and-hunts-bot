@@ -3,7 +3,7 @@ const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.j
 const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
-    name: 'lock-hunts',
+    name: 'restrict-hunting',
     description: '(🔒 ADMINISTRATOR ONLY) Lock all the prey piles.',
     guilds: ['957854680367648778', '954037682223316992'],
     options: [
@@ -51,8 +51,8 @@ module.exports = {
                 .setColor(lock ? 'YELLOW' : 'GREEN')
                 .setTitle(
                     lock
-                    ? '🔒 Hunting has been locked.'
-                    : '🔓 Hunting is now available.'
+                    ? '🔒 Hunting has been restricted.'
+                    : '🔓 Hunting is now fully available.'
                 )
                 .setDescription(
                     lock

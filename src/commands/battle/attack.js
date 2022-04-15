@@ -1,11 +1,6 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const userSchema = require('../../database/schemas/user');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const AttackManager = require('../../util/Battle/AttackManager');
-
-const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
 
 module.exports = {
     name: 'attack',
@@ -34,15 +29,11 @@ module.exports = {
         if (targetSnowflake.user.id === interaction.user.id) return AttackManager.denySelfAttack(interaction);
         
         // pull user from the database
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let attacker = await User.findOne({ userId: interaction.user.id }).exec();
-
-        // prompt registration if user is not registered; then continue on
-        if (!attacker) attacker = await firstTimeRegister(interaction);
-        if (!attacker) return; // error message already handled in collect()
+        const attacker = await AttackManager.FetchUser(interaction.user.id);
+        if (!attacker) return AttackManager.NotRegistered(interaction);
 
         // if target is not registered, deny
-        /**@type {mongoose.Document}*/ let target = await User.findOne({ userId: targetSnowflake.user.id }).exec();
+        const target = await AttackManager.FetchUser(targetSnowflake.user.id);
         if (!target) return AttackManager.targetNotRegistered(interaction);
 
         // initiate rolls

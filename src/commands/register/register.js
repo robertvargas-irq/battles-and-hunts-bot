@@ -1,6 +1,4 @@
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const userSchema = require('../../database/schemas/user');
 const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const { formatStats } = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');

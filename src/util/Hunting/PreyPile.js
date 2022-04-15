@@ -1,5 +1,4 @@
 const { BaseCommandInteraction, MessageEmbed, MessagePayload, Message, ThreadManager } = require('discord.js');
-const mongoose = require('mongoose');
 const serverSchema = require('../../database/schemas/server');
 const flairs = require('./preyPileFlairs.json');
 
@@ -106,7 +105,7 @@ class PreyPile {
      * @param {BaseCommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry
      * @param {clans} clan The clan's prey pile to update
-     * @returns {boolean} True if successful update | False if channel or message is missing
+     * @returns {Promise<boolean>} True if successful update | False if channel or message is missing
      */
     static async updatePreyPile(interaction, server, clan) {
         const clanEntry = server.clans[clan];

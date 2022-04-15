@@ -99,7 +99,7 @@ class VerificationHandler {
      * @param {ThreadChannel} threadChannel The channel to push a notification to
      * @param {MessagePayload} messagePayload Message to send
      * @param {string[]} usersToPing Users to ping
-     * @returns {Message | Boolean} Message if successfully sent | False if error
+     * @returns {Promise<Message | Boolean>} Message if successfully sent | False if error
      */
     static async pushToVerificationThread(threadChannel, messagePayload, usersToPing) {
         if (threadChannel.archived) threadChannel.setArchived(false, 'Emitted Verification request.');
@@ -122,7 +122,7 @@ class VerificationHandler {
      * Fetch the verification notification thread
      * @param {BaseCommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry
-     * @returns {ThreadChannel} Thread if found | False if no longer exists
+     * @returns {Promise<ThreadChannel>} Thread if found | False if no longer exists
      */
     static async fetchVerificationThread(interaction, server) {
         if (!server.verification.verificationThreadId) return false;

@@ -1,12 +1,10 @@
 // import { HuntManager } from '../../util/Hunting/HuntManager';
-const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
+const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
 const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const userSchema = require('../../database/schemas/user');
-const huntChecks = require('../../util/Hunting/huntChecks.json');
 const serverSchema = require('../../database/schemas/server');
 
 module.exports = {

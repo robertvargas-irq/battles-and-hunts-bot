@@ -1,7 +1,18 @@
-const { BaseCommandInteraction, GuildChannelManager, ThreadManager, MessageEmbed, MessageActionRow, MessageButton, GuildChannel, Message, ThreadChannel, MessagePayload } = require('discord.js');
+const {
+    BaseCommandInteraction, 
+    GuildChannel, 
+    ThreadManager, 
+    MessageEmbed, 
+    MessageActionRow, 
+    MessageButton, 
+    Message, 
+    ThreadChannel, 
+    MessagePayload
+} = require('discord.js');
 const serverSchema = require('../../database/schemas/server');
+const CoreUtil = require('../CoreUtil');
 
-class VerificationHandler {
+class VerificationHandler extends CoreUtil {
 
     static #PendingToMessageId = new Map();
     static #MessageIdToPending = new Map();
@@ -106,7 +117,7 @@ class VerificationHandler {
 
     /**
      * Spawn and store verification message
-     * @param {GuildChannelManager} guildChannel The channel to spawn the verification message inside
+     * @param {GuildChannel} guildChannel The channel to spawn the verification message inside
      */
     static async spawnVerificationRequest(guildChannel) {
         return await guildChannel.send({
@@ -137,7 +148,7 @@ class VerificationHandler {
      * Spawn a verification thread in the requested channel
      * @param {serverSchema} server Server database entry
      * @param {GuildChannel} parentChannel Thread's parent
-     * @returns {MessageChannel | Boolean} Resulting thread | False if not able to be created
+     * @returns {Promise<MessageChannel | Boolean>} Resulting thread | False if not able to be created
      */
     static async spawnVerificationThread(server, parentChannel) {
         /**@type {ThreadChannel} Spawned thread */

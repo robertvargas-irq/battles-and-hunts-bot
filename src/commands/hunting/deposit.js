@@ -49,15 +49,9 @@ module.exports = {
         const clan = interaction.options.getString('clan');
         
         // pull user and server from the database
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let hunter = await User.findOne({ userId: interaction.user.id }).exec();
-        const Server = mongoose.model('Server', serverSchema);
-        let server = await Server.findOne({ guildId: interaction.guild.id });
-        if (!server) server = await Server.create({ guildId: interaction.guild.id });
-
-        // prompt registration if user is not registered; then continue on
-        if (!hunter) hunter = await firstTimeRegister(interaction);
-        if (!hunter) return; // error message already handled in collect()
+        const hunter = await HuntManager.FetchUser(interaction.user.id);
+        if (!hunter) return await HuntManager.NotRegistered(interaction);
+        const server = await HuntManager.FetchServer(interaction.guild.id);
 
         // if not carrying anything, inform
         const carrying = HuntManager.removeFromCarry(interaction.user.id);

@@ -1,9 +1,7 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const userSchema = require('../../database/schemas/user');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
+const { BaseCommandInteraction, MessageEmbed, GuildMember } = require('discord.js');
 const { formatStats } = require('../../util/Account/Player');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
     name: 'stats',
@@ -20,35 +18,41 @@ module.exports = {
     /**@param {BaseCommandInteraction} interaction */
     async execute( interaction ) {
 
-        // defer
-        const otherPlayer = interaction.options.getMember('player', false);
+        // defer reply
         await interaction.deferReply({ ephemeral: true });
+
+        /**
+         * @type {GuildMember}
+         * Target's player member  */
+        const playerMember = interaction.options.getMember('player', false) || interaction.member;
+
+        // if the target is a bot, inform that bots do not have stats
+        if (playerMember.user.bot) return interaction.editReply({ embeds: [new MessageEmbed({ title: '🤖 These stats are too powerful!' })] });
         
-        // if user is registered
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let found = await User.findOne({ userId: otherPlayer?.user?.id || interaction.user.id }).exec();
+        // fetch user from the database
+        const found = await CoreUtil.FetchUser(playerMember.user.id);
 
-        // inform player is not valid
-        if (!found && otherPlayer) return interaction.editReply({
-                embeds: [new MessageEmbed()
-                    .setColor('AQUA')
-                    .setTitle('⚠️ Woah!')
-                    .setDescription('That user has not set up their stats yet! Come back later or bug them to do so! 🌟')
-                ]
-            });
-
-        // prompt registration if user is not registered; inform if registered
-        if (!found) found = await firstTimeRegister(interaction);
-        if (!found) return; // error has already been handled inside collect()
+        // if target is not registered, inform the user appropriately and return
+        if (!found) {
+            if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
+            else interaction.editReply({
+                    embeds: [new MessageEmbed()
+                        .setColor('AQUA')
+                        .setTitle('⚠️ Woah!')
+                        .setDescription('**That user has not set up their stats yet!**\nCome back later or bug them to do so! 🌟')
+                    ]
+                });
+            return;
+        }
 
         // show success message
         let pseudoInteraction = interaction;
-        if (otherPlayer) pseudoInteraction = {
-            member: otherPlayer,
-            user: otherPlayer.user,
-            guild: otherPlayer.guild
+        if (playerMember) pseudoInteraction = {
+            member: playerMember,
+            user: playerMember.user,
+            guild: playerMember.guild
         };
-        interaction.editReply({
+        return interaction.editReply({
             embeds: [ formatStats(pseudoInteraction, found) ]
         });
     

@@ -1,12 +1,12 @@
 const { BaseCommandInteraction, MessageEmbed, MessagePayload, Message, ThreadManager } = require('discord.js');
-const mongoose = require('mongoose');
 const serverSchema = require('../../database/schemas/server');
+const CoreUtil = require('../CoreUtil');
 const flairs = require('./preyPileFlairs.json');
 
 /**@typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans */
 
 
-class PreyPile {
+class PreyPile extends CoreUtil {
 
     /**
      * Associate a channel for a prey pile
@@ -20,7 +20,6 @@ class PreyPile {
         // if channel being set is unique, set to the database
         if (server.clans[clan].preyPileChannelId ?? 0 != interaction.channel.id) {
             // if original channel is deleted, use the current
-            // if (!await interaction.guild.channels.fetch(server.clans[clan].preyPileChannelId).catch(() => false))
             server.clans[clan].preyPileChannelId = interaction.channel.id;
         }
 
@@ -171,6 +170,7 @@ class PreyPile {
         /**@type {prey} */
         let pulled = null;
         let bites_taken = 0;
+        let total_bites_taken = 0;
         let eatenPrey = new Map();
         while (preyPile.length > 0 && bitesToSatisfy > 0) {
 
@@ -183,6 +183,7 @@ class PreyPile {
             bites_taken = Math.min(pulled.bites_remaining, bitesToSatisfy);
             pulled.bites_remaining -= bites_taken;
             bitesToSatisfy -= bites_taken;
+            total_bites_taken += bites_taken;
 
             // if bites are left in the current pulled prey, re-add to the prey pile
             if (pulled.bites_remaining < 1)
@@ -205,7 +206,7 @@ class PreyPile {
         }
             console.log({eaten});
         // return the prey needed to eat
-        return { bitesTaken: bites_taken, consumed: eaten };
+        return { bitesTaken: total_bites_taken, consumed: eaten };
 
     }
 

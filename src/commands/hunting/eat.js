@@ -2,11 +2,8 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
+const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
-const userSchema = require('../../database/schemas/user');
-const huntChecks = require('../../util/Hunting/huntChecks.json');
 const serverSchema = require('../../database/schemas/server');
 
 module.exports = {
@@ -68,15 +65,11 @@ module.exports = {
         await interaction.deferReply({ ephemeral: false });
 
         // get clan
-        const clan = interaction.options.getString('clan-to-eat-from')
+        const clan = interaction.options.getString('clan-to-eat-from');
         
         // pull user and server from the database
-        const User = mongoose.model('User', userSchema);
-        const player = await User.findOne({ userId: interaction.user.id }).exec();
-
-        // prompt registration if user is not registered; then continue on
-        if (!player) player = await firstTimeRegister(interaction);
-        if (!player) return; // error message already handled in collect()
+        const player = await HuntManager.FetchUser(interaction.user.id);
+        if (!player) return await HuntManager.NotRegistered(interaction);
         
         // verify bites needed
         const bitesNeeded = Math.min(
@@ -96,9 +89,7 @@ module.exports = {
         }
 
         // get server data
-        const Server = mongoose.model('Server', serverSchema);
-        let server = await Server.findOne({ guildId: interaction.guild.id });
-        if (!server) server = await Server.create({ guildId: interaction.guild.id });
+        const server = await PreyPile.FetchServer(interaction.guild.id);
 
         // if the prey pile is empty, inform
         const preyPile = PreyPile.getPreyPile(clan, server);

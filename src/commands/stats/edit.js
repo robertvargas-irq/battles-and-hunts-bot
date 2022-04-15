@@ -4,6 +4,7 @@ const collectCharacterStats = require('../../util/Account/collectCharacterStats'
 const userSchema = require('../../database/schemas/user');
 const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
     name: 'edit',
@@ -16,8 +17,7 @@ module.exports = {
         await interaction.deferReply({ ephemeral: true });
         
         // if user is registered
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let found = await User.findOne({ userId: interaction.user.id }).exec();
+        const found = await CoreUtil.FetchUser(interaction.user.id);
 
         // prompt registration if user is not registered; completely return
         if (!found) {

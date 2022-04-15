@@ -9,8 +9,11 @@ const { Schema } = require("mongoose");
  *          [clan: keyof clans]:{
  *              preyPile: prey[]
  *          }
- *      }
- *      seasonDC: number,
+ *      },
+ *      hunting: {
+ *          seasonDC: number,
+ *          locked: boolean,
+ *      },
  *      verification: {
  *          verificationThreadId: string,
  *          deniedVerificationIds: Set<string>
@@ -61,9 +64,15 @@ const serverSchema = new Schema({
             }
         },
     },
-    seasonDC: {
-        type: Number,
-        default: 10
+    hunting: {
+        seasonDC: {
+            type: Number,
+            default: 10,
+        },
+        locked: {
+            type: Boolean,
+            default: false,
+        }
     },
     verification: {
         verificationThreadId: {
@@ -73,7 +82,7 @@ const serverSchema = new Schema({
         deniedVerificationIds: { // those who have been denied
             type: Map,
             of: String,
-            default: new Map()
+            default: new Map(),
         }
     },
     roles: {

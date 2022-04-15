@@ -3,13 +3,13 @@ const clanPrey = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const userSchema = require('../../database/schemas/user');
 const { MessageEmbed, BaseCommandInteraction } = require('discord.js');
-const PreyPile = require('./PreyPile');
+const CoreUtil = require('../CoreUtil');
 
 /**@typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans */
 /**@typedef {{name: string, size: number, bites_remaining: number}} prey */
 
 
-class HuntManager {
+class HuntManager extends CoreUtil {
     static MAX_WEIGHT = 3;
     static INVENTORY_MAX_WEIGHT = 7;
     static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
@@ -69,11 +69,11 @@ class HuntManager {
         const catchProf = hunter.stats[huntChecks[territory][1]];
 
         // check if DC's pass
-        const tracked = trackRoll + trackProf >= server.seasonDC;
-        const caught = catchRoll + catchProf >= server.seasonDC;
+        const tracked = trackRoll + trackProf >= server.hunting.seasonDC;
+        const caught = catchRoll + catchProf >= server.hunting.seasonDC;
 
-        // if prey has been caught, add to recently caught
-        if (tracked && caught) this.setRecentlyCaught(interaction.user.id, prey);
+        // if hunting is not locked, and prey has been caught, add to recently caught
+        if (!server.hunting.locked && tracked && caught) this.setRecentlyCaught(interaction.user.id, prey);
 
         // display the results of the roll
         const results = new MessageEmbed()
@@ -82,45 +82,41 @@ class HuntManager {
             .setThumbnail(interaction.member.displayAvatarURL())
             .setDescription(
             // track roll breakdown
-            `\
-            Roll Breakdowns:\n**- - - - - -**
-            __(1d20 + ${trackProf}) Track Roll__: ${tracked ? '✅' : '⛔'}
-            > **Rolled**: \`${trackRoll}\` / \`20\`
-            > **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][0].toUpperCase()}\`)
-            > **Season DC**: \`${server.seasonDC}\`
-            > \`${trackRoll + trackProf}\` ${tracked ? '≥' : '<'} \`${server.seasonDC}\`
-            `
-            +
-            // caught roll breakdown
-            (tracked ? `\
-            
-            __(1d20 + ${catchProf}) Catch Roll__: ${caught ? '✅' : '⛔'}
-            > **Rolled**: \`${catchRoll}\` / \`20\`
-            > **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][1].toUpperCase()}\`)
-            > **Season DC**: \`${server.seasonDC}\`
-            > \`${catchRoll + catchProf}\` ${caught ? '≥' : '<'} \`${server.seasonDC}\`
-            ` : '')
-            +
-            '\n**- - - - - -**\n'
-            +
-            // descriptive result message
-            (tracked && caught ? `\
-            > 🍽️ **${interaction.member.displayName}, you have caught dinner!** 
-            > You have caught a(n) \`${prey.name.toUpperCase()}\`, and it looks rather ${clanPrey.descriptors[prey.size - 1]}! (\`size\`: \`${prey.size}\`)
-            > 
-            > **⚠️ IF YOU WISH TO \`CARRY\` THIS ON YOUR BACK, USE \`/carry\`**
-            > **➡️ TO \`DEPOSIT\` ANY PREY BEING CARRIED TO THE PREY PILE, USE \`/deposit\`**
-            `
-            : (
-            (tracked) ? `\
-            > 🔍❗ **You spotted a(n) ${clanPrey.descriptors[prey.size - 1]}-sized \`${prey.name.toUpperCase()}\`!**
-            > Unfortunately, it scurries away before you could catch it!
-            `
-            : `\
-            > 🍃 **You were unable to find any prey!**
-            > Nothing but the sound of the breeze.
-            `
-            )));
+            'Roll Breakdowns:\n**- - - - - -**'
+            + `\n__(1d20 + ${trackProf}) Track Roll__: ${tracked ? '✅' : '⛔'}`
+            + `\n> **Rolled**: \`${trackRoll}\` / \`20\``
+            + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][0].toUpperCase()}\`)`
+            + `\n> **Season DC**: \`${server.hunting.seasonDC}\``
+            + `\n> \`${trackRoll + trackProf}\` ${tracked ? '≥' : '<'} \`${server.hunting.seasonDC}\``
+            + ( // roll breakdown
+                tracked
+                ? `\n__(1d20 + ${catchProf}) Catch Roll__: ${caught ? '✅' : '⛔'}`
+                + `\n> **Rolled**: \`${catchRoll}\` / \`20\``
+                + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][1].toUpperCase()}\`)`
+                + `\n> **Season DC**: \`${server.hunting.seasonDC}\``
+                + `\n> \`${catchRoll + catchProf}\` ${caught ? '≥' : '<'} \`${server.hunting.seasonDC}\``
+                : ''
+            )
+            + '\n**- - - - - -**\n'
+            + ( // display a success message if tracked and caught
+                (tracked && caught)
+                ? `\n> 🍽️ **${interaction.member.displayName}, you have caught dinner!**`
+                + `\n> You have caught a(n) \`${prey.name.toUpperCase()}\`, and it looks rather ${clanPrey.descriptors[prey.size - 1]}! (\`size\`: \`${prey.size}\`)`
+                + '\n> '
+                + ( // display a message if hunting is locked in the server
+                    server.hunting.locked
+                    ? '\n> 🔒 **Hunting is currently restricted.**'
+                    + '\n> Due to no current active session, prey cannot be carried or deposited. If you believe this is a mistake, please contact an administrator.'
+                    : '\n> **⚠️ IF YOU WISH TO \`CARRY\` THIS ON YOUR BACK, USE \`/carry\`**'
+                    + '\n> **➡️ TO \`DEPOSIT\` ANY PREY BEING CARRIED TO THE PREY PILE, USE \`/deposit\`**'
+                )
+            : ( // display a message if only tracked or neither tracked nor caught
+                (tracked)
+                ? `\n> 🔍❗ **You spotted a(n) ${clanPrey.descriptors[prey.size - 1]}-sized \`${prey.name.toUpperCase()}\`!**`
+                + '\n> Unfortunately, it scurries away before you could catch it!'
+                : '\n> 🍃 **You were unable to find any prey!**'
+                + '\n> Nothing but the sound of the breeze.'
+            ))).setFooter({ text: server.hunting.locked ? '🔒 Hunting is heavily restricted.' : '' });
         return interaction.editReply({
             embeds: [results]
         });
@@ -234,6 +230,24 @@ class HuntManager {
             console.log(k, v);
             return `↣ **(${v}) ${k[0].toUpperCase() + k.substring(1)}**`
         }).join('\n');
+    }
+
+    /**
+     * Display that hunting is currently restricted
+     * @param {BaseCommandInteraction} interaction Interaction to edit
+     */
+    static async displayRestrictedHunting(interaction) {
+        return await interaction.editReply({
+            embeds: [new MessageEmbed()
+                .setColor('YELLOW')
+                .setTitle('🔒 Hunting is currently restricted.')
+                .setDescription(
+                    'It is possible that canon roleplay sessions are not in progress.'
+                    + ' Locks are enabled manually by the administrative team.'
+                    + ' If you believe this was a mistake, please contact an administrator.'
+                )
+            ]
+        });
     }
 
 }

@@ -1,24 +1,17 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
-const mongoose = require('mongoose');
-const userSchema = require('../../database/schemas/user');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
-    name: 'starve-all',
-    description: '(🔒 ADMINISTRATOR ONLY) Set all player\'s hunger to MAX.',
+    name: 'lock-hunts',
+    description: '(🔒 ADMINISTRATOR ONLY) Lock all the prey piles.',
     guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
-            name: 'are-you-sure',
-            description: '❗(🔒) Please ensure you are not calling this command by mistake.',
-            type: dTypes.String,
+            name: 'locks-enabled',
+            description: '(🔒 ADMINISTRATOR ONLY) True to enable Hunt Locks | False to disable',
+            type: dTypes.Boolean,
             required: true,
-            choices: [
-                {
-                    name: 'Yes',
-                    value: 'yes'
-                }
-            ],
         },
     ],
     /**
@@ -41,25 +34,32 @@ module.exports = {
                 ]
             });
         }
+        
+        // pull server from the database
+        const server = await CoreUtil.FetchServer(interaction.guild.id);
 
-        // get all users
-        const User = mongoose.model('User', userSchema);
-        const allUsers = await User.find();
+        // set locks
+        const lock = interaction.options.getBoolean('locks-enabled');
+        server.hunting.locked = lock;
 
-        // set all user's hunger to their size
-        for (let user of allUsers) user.currentHunger = user.stats.cat_size;
-
-        // save all user documents
-        await User.bulkSave(allUsers);
+        // save to server
+        await server.save();
 
         // notify successful set
         return interaction.editReply({
             embeds: [new MessageEmbed()
-                .setColor('GREEN')
-                .setTitle('✅ Successfully set all user hungers to max.')
+                .setColor(lock ? 'YELLOW' : 'GREEN')
+                .setTitle(
+                    lock
+                    ? '🔒 Hunting has been locked.'
+                    : '🔓 Hunting is now available.'
+                )
                 .setDescription(
-                `> **Hunger begins to bear down upon warriors great and small, leaders and young, and everyone in-between.**` +
-                `\n\n > It is inescapable, as time ticks by, finding something suitable to \`/eat\` grows prevalent to satiate this growing \`/hunger\`...`
+                    lock
+                    ? 'This is most likely due to the fact that the session is over.'
+                    + '\n`/carry` `/deposit` `/eat` are now `disabled`.'
+                    : 'This probably means that a session is about to start.'
+                    + '\n`/carry` `/deposit` `/eat` are now `enabled`.'
                 )
             ]
         })

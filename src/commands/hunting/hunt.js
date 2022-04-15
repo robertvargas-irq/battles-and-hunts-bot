@@ -1,14 +1,6 @@
-// import { HuntManager } from '../../util/Hunting/HuntManager';
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
-const mongoose = require('mongoose');
-const firstTimeRegister = require('../../util/Account/firstTimeRegister');
-const userSchema = require('../../database/schemas/user');
-const huntChecks = require('../../util/Hunting/huntChecks.json');
-const serverSchema = require('../../database/schemas/server');
-
-const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
+const { BaseCommandInteraction } = require('discord.js');
 
 module.exports = {
     name: 'hunt',
@@ -52,15 +44,9 @@ module.exports = {
         const territory = interaction.options.getString('current-territory');
         
         // pull user from the database
-        const User = mongoose.model('User', userSchema);
-        /**@type {mongoose.Document}*/ let hunter = await User.findOne({ userId: interaction.user.id }).exec();
-        const Server = mongoose.model('Server', serverSchema);
-        let server = await Server.findOne({ guildId: interaction.guild.id });
-        if (!server) server = await Server.create({ guildId: interaction.guild.id });
-
-        // prompt registration if user is not registered; then continue on
-        if (!hunter) hunter = await firstTimeRegister(interaction);
-        if (!hunter) return; // error message already handled in collect()
+        const hunter = await HuntManager.FetchUser(interaction.user.id);
+        if (!hunter) return await HuntManager.NotRegistered(interaction);
+        const server = await HuntManager.FetchServer(interaction.guild.id);
 
         // roll for track
         const trackRoll = HuntManager.rollTrack(20);

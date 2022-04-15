@@ -56,14 +56,12 @@ module.exports = {
         }
         
         // pull server from the database
-        const Server = mongoose.model('Server', serverSchema);
-        let server = await Server.findOne({ guildId: interaction.guild.id });
-        if (!server) server = await Server.create({ guildId: interaction.guild.id });
+        const server = await VerificationHandler.FetchServer(interaction.guild.id);
         
         // spawn verification request and processing thread
+        VerificationHandler.setAdultRole(server, adultRole.id);
         await VerificationHandler.spawnVerificationRequest(requestChannel);
         await VerificationHandler.spawnVerificationThread(server, processingChannel);
-        await VerificationHandler.setAdultRole(server, adultRole.id);
         await server.save();
 
         await interaction.editReply({

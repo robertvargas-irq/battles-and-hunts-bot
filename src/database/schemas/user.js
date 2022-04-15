@@ -42,17 +42,41 @@ const userSchema = new Schema({
         required: true,
     },
     stats: {      // dunno if I should split into diff
-        type: {},
-        default: {
-            cat_size: 0,
-            strength: 0,
-            dexterity: 0,
-            constitution: 0,
-            speed: 0,
-            intelligence: 0,
-            charisma: 0,
-            swimming: 0,
-            stalking: 0
+        cat_size: {
+            type: Number,
+            default: 0,
+        },
+        strength: {
+            type: Number,
+            default: 0,
+        },
+        dexterity: {
+            type: Number,
+            default: 0,
+        },
+        constitution: {
+            type: Number,
+            default: 0,
+        },
+        speed: {
+            type: Number,
+            default: 0,
+        },
+        intelligence: {
+            type: Number,
+            default: 0,
+        },
+        charisma: {
+            type: Number,
+            default: 0,
+        },
+        swimming: {
+            type: Number,
+            default: 0,
+        },
+        stalking: {
+            type: Number,
+            default: 0
         },
     },
     currentHealth: {

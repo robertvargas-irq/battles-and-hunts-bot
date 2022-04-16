@@ -110,6 +110,7 @@ module.exports = {
         }
         else {
             notifyEmbed
+                .setAuthor({ iconURL })
                 .setColor('AQUA')
                 .setTitle('🎁 Some prey has been graciously gifted to us!')
                 .setThumbnail(interaction.member.displayAvatarURL())
@@ -150,7 +151,8 @@ module.exports = {
             ${HuntManager.formatPrey(carrying)}
             
             **- - - - - -**
-            `);
+            `)
+            .setFooter({ text: '🍃 This pile deposit is canon.' });
 
         // display result
         return interaction.editReply({

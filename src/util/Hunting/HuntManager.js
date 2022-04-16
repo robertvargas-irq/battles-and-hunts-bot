@@ -176,7 +176,7 @@ class HuntManager extends CoreUtil {
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) { // (if canon)
             if (tracked && caught) {
-                this.setRecentlyCaught(interaction.user.id, prey);
+                this.setRecentlyCaught(interaction, interaction.user.id, prey);
                 hunter.hunting.hunts.successful++;
             }
             else {
@@ -240,7 +240,7 @@ class HuntManager extends CoreUtil {
      * @param {prey} prey The prey that was caught
      * @returns {prey}
      */
-    static async setRecentlyCaught(interaction, userId, prey) {
+    static setRecentlyCaught(interaction, userId, prey) {
         // clear prey if null
         if (!prey) {
             this.#playerIdToRecentlyCaught.delete(userId);
@@ -299,10 +299,15 @@ class HuntManager extends CoreUtil {
         originalInteraction.fetchReply().then(r => {
             originalInteraction.editReply({
                 embeds: [r.embeds[0]
-                    .setColor('NOT_QUITE_BLACK')
-                    .setTitle('🎒 Prey has been carried away.')
-                    .setImage(r.embeds[0].image?.url || '')
-                    .setDescription(''),
+                    .setColor('GREYPLE')
+                    .setAuthor({
+                        name: '🐾 Prey was carried away',
+                        iconURL: originalInteraction.member.displayAvatarURL() })
+                    .setTitle('')
+                    .setThumbnail(r.embeds[0].image?.url || '')
+                    .setImage('')
+                    .setDescription('🍃')
+                    .setFooter({ text: '' }),
                 ]
             });
         }).catch(() => console.log("Original interaction may have been timed out or deleted."));

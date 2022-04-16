@@ -1,21 +1,37 @@
-const mongoose = require('mongoose');
+const { MessageEmbed } = require('discord.js');
+const os = require('os');
 
 module.exports = {
     name: 'ping',
-    description: 'Replies with Pong, and your status!',
+    description: 'Replies with Pong, and the bot\'s uptime!',
     guilds: ['957854680367648778', '954037682223316992'],
     async execute( interaction ) {
-        await interaction.reply({ content: 'Pong!', ephemeral: true });
 
-        // if ( interaction.user.id == process.env.OWNER_ID )
-        //     return await interaction.client.emit('guildCreate', interaction.guild );
+        // convert seconds properly
+        let ut_sec = os.uptime();
+        let ut_min = ut_sec / 60;
+        let ut_hour = ut_min / 60;
         
-        // const User = mongoose.model('User', require('../../database/schemas/user').userSchema );
-        // const found = await User.findOne({ userId: interaction.user.id }).exec();
-        // if ( found )
-        //     return await interaction.editReply({ content: "Pong! Stats loaded!\nYou're already registered! You are userId: " + found.userId + " and joined the bot on " + new Date( found.joinedBot ) });
-        // else {
-        //     await interaction.editReply({ content: "Pong! Stats loaded!\nNo user profile found in the system! If you'd like to get started, go ahead and use `/register` to get started!" });
-        // }
+        // remove the decimal and convert to clock units
+        ut_sec = Math.floor(ut_sec) % 60;
+        ut_min = Math.floor(ut_min) % 60;
+        ut_hour = Math.floor(ut_hour) % 60;
+
+        // pong
+        return await interaction.reply({
+            embeds: [new MessageEmbed({
+                color: 'AQUA',
+                title: '🏓 Pong!',
+                description: '**Bot Uptime**'
+                + '\n'
+                + '`' + ut_hour + "` hour" + (ut_hour != 1 ? 's' : '') + ', '
+                + '`' + ut_min + "` minute" + (ut_min != 1 ? 's' : '') + ', '
+                + " and " 
+                + '`' + ut_sec + "` second" + (ut_sec != 1 ? 's' : '') + '.'
+                // Printing os.uptime() value
+            })],
+            ephemeral: true,
+        });
+
     },
 };

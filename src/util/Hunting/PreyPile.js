@@ -204,7 +204,7 @@ class PreyPile extends CoreUtil {
         if (eaten.length > 0) {
             server.markModified(`clans.${clan}`);
         }
-            console.log({eaten});
+        
         // return the prey needed to eat
         return { bitesTaken: total_bites_taken, consumed: eaten };
 

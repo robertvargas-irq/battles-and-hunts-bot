@@ -53,9 +53,9 @@ module.exports = async ( interaction ) => {
 
 function wrongChannel(interaction) {
 
-    // // administrator override
-    // if (interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
-    // return false;
+    // administrator override
+    if (interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
+    return false;
 
     // if guild has no data return
     const R_GUILD = restrictions[interaction.guild.id];

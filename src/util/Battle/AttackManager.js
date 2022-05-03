@@ -18,7 +18,24 @@ const {healingAction, healingResponse} = require('./medicinePrompts.json');
 class AttackManager extends CoreUtil {
     static MAX_WEIGHT = 3;
     static INVENTORY_MAX_WEIGHT = 7;
-    static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
+    // static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
+    static #Random = (min, max) => {
+        const ROLL_COUNT = 13;
+        let rolls = [];
+        for (let i = 0; i < ROLL_COUNT; i++) {
+            rolls.push(Math.random());
+        }
+        
+        console.log({rolls});
+        console.error({rolls});
+        return Math.floor(
+            rolls[
+                Math.floor( Math.random() * ROLL_COUNT )
+            ]  * (max - min + 1) + min
+        );
+
+
+    };
     static #RandomFromArray = (a) => { return a[this.#Random(0, a.length - 1)] }
 
     static async rollAndGiveAttackResult(interaction, attacker, target, targetSnowflake) {

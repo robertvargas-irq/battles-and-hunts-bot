@@ -5,6 +5,7 @@ const PreyPile = require('../../util/Hunting/PreyPile');
 const mongoose = require('mongoose');
 const serverSchema = require('../../database/schemas/server');
 const userSchema = require('../../database/schemas/user');
+const roles = require('./roles.json');
 
 module.exports = {
     name: 'audit-registration',
@@ -87,7 +88,10 @@ module.exports = {
         const nonRegistered = [];
         const nonSubmitted = [];
         for (let [id, member] of Members) {
-            if (member.user.bot) continue;
+            if (member.user.bot || member.user.id === '964281330609315872') continue;
+            if (roles[member.guild.id]) {
+                if (member.roles.cache.has(roles[member.guild.id].spectator)) continue;
+            }
             console.log(id);
             if (!allUsers.has(id))
                 if (member.displayName.startsWith('{+'))
@@ -108,12 +112,12 @@ module.exports = {
                 .setDescription(
                     (nonRegistered.length > 0 ? (
                         "__**Non-Registered Users:**__\n"
-                        + "*These players are eligible to sign up as their character has been approved by\n<@" + interaction.guild.ownerId + ">, this is required to hunt and battle; all is needed is your cat's stats from your OC submission! Use `/register` to get started!*\n⩶⩶⩶⩶⩶⩶\n"
+                        + "*These players are eligible to sign up as their character has been approved by\n<@" + interaction.guild.ownerId + ">, this is required to hunt and battle; all is needed is your cat's stats from your OC submission! Use `/register` to get started!*\n------------\n"
                         + nonRegistered.map(m => '> ' + m.displayName).join('\n')
                     ) : '__**All eligble users have registered for the bot.**__')
                     + '\n\n' + (nonSubmitted.length > 0 ? (
                         "__**Users who haven't submitted an OC:**__\n"
-                        + "*These players are unable to sign up as they still need approval from the server owner,\n<@" + interaction.guild.ownerId + ">.\nPick up a `template` from <#954246632550072350> and `submit it` in <#954246543102337086> as soon as possible!*\n⩶⩶⩶⩶⩶⩶\n"
+                        + "*These players are unable to sign up as they still need approval from the server owner,\n<@" + interaction.guild.ownerId + ">.\n\nPick up a `template` from <#954246632550072350>\nthen `submit` over at <#954246543102337086> as soon as possible!*\n------------\n"
                         + nonSubmitted.map(m => '> ' + m.displayName + ' (<@' + m.user.id + '>)').join('\n')
                     ) : '__**All players have submitted an OC.**__')
                 )

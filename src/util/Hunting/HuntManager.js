@@ -170,8 +170,8 @@ class HuntManager extends CoreUtil {
         const catchProf = hunter.stats[huntChecks[territory][1]];
 
         // check if DC's pass
-        const tracked = trackRoll + trackProf >= server.hunting.seasonDC;
-        const caught = catchRoll + catchProf >= server.hunting.seasonDC;
+        const tracked = trackRoll + Math.floor(trackProf / 2) >= server.hunting.seasonDC;
+        const caught = catchRoll + Math.floor(catchProf / 2) >= server.hunting.seasonDC;
 
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) { // (if canon)
@@ -194,16 +194,16 @@ class HuntManager extends CoreUtil {
             .setDescription(
             // track roll breakdown
             'Roll Breakdowns:\n**- - - - - -**'
-            + `\n__(1d20 + ${trackProf}) Track Roll__: ${tracked ? '✅' : '⛔'}`
+            + `\n__(1d20 + Floor(${trackProf} / 2)) Track Roll__: ${tracked ? '✅' : '⛔'}`
             + `\n> **Rolled**: \`${trackRoll}\` / \`20\``
-            + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][0].toUpperCase()}\`)`
+            + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+Floor(${huntChecks[territory][0].toUpperCase()} / 2)\`)`
             + `\n> **Season DC**: \`${server.hunting.seasonDC}\``
             + `\n> \`${trackRoll + trackProf}\` ${tracked ? '≥' : '<'} \`${server.hunting.seasonDC}\``
             + ( // roll breakdown
                 tracked
-                ? `\n__(1d20 + ${catchProf}) Catch Roll__: ${caught ? '✅' : '⛔'}`
+                ? `\n__(1d20 + Floor(${catchProf} / 2)) Catch Roll__: ${caught ? '✅' : '⛔'}`
                 + `\n> **Rolled**: \`${catchRoll}\` / \`20\``
-                + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+${huntChecks[territory][1].toUpperCase()}\`)`
+                + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+Floor(${huntChecks[territory][1].toUpperCase()} / 2)\`)`
                 + `\n> **Season DC**: \`${server.hunting.seasonDC}\``
                 + `\n> \`${catchRoll + catchProf}\` ${caught ? '≥' : '<'} \`${server.hunting.seasonDC}\``
                 : ''

@@ -149,6 +149,8 @@ module.exports = {
                 **An outsider to our clan has eaten from our prey pile!!**\
                 \n> The scent is coming from someone from **${player.clan.toUpperCase()}**.\
                 \n\
+                \n**SPOILER** \| WHO IT WAS: || ${interaction.member.displayName} ||
+                \n\
                 \n*(if someone has recently been given food, this can be ignored)*\
                 \n**- - - - - -**\
                 \n\

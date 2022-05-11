@@ -110,7 +110,6 @@ module.exports = {
         }
         else {
             notifyEmbed
-                .setAuthor({ iconURL })
                 .setColor('AQUA')
                 .setTitle('🎁 Some prey has been graciously gifted to us!')
                 .setThumbnail(interaction.member.displayAvatarURL())

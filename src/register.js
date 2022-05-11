@@ -27,7 +27,8 @@ async function registerClientCommands( client ) {
             queue.push( client.guilds.cache.get( g )?.commands.set( commands ) );
             queue.push(
                 Rest.put(
-                    Routes.applicationGuildCommands( client.user.id, g ), { body: commands },
+                    Routes.applicationGuildCommands( client.user.id, g ),
+                    { body: commands },
                 )
             );
         }

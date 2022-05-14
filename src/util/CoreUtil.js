@@ -1,8 +1,11 @@
+const FILE_LANG_ID = 'CORE_UTIL';
+
 const { BaseCommandInteraction, MessageEmbed, MessagePayload } = require('discord.js');
 const mongoose = require('mongoose');
 const userSchema = require('../database/schemas/user');
 const serverSchema = require('../database/schemas/server');
 const ROLEPLAY_NAME = 'The Black Sun';
+const Translator = require('./Translator');
 
 /**
  * Custom methods for myself because I am tired of rewriting them everywhere.
@@ -53,16 +56,17 @@ class CoreUtil {
      * @param {[number]} seconds
      */
     static async SendAndDelete(interaction, messagePayload, seconds = 20) {
+        const translator = new Translator(interaction.user.id, FILE_LANG_ID);
         if (messagePayload.embeds[0].footer?.text) messagePayload.embeds[0].footer.text += '\n'
         + (
             interaction.ephemeral
             ? ''
-            : '✨ For cleanliness, this message will self-destruct in ' + seconds + ' seconds!'
+            : '✨ ' + translator.get('CLEANLINESS_1') + ' ' + seconds + ' ' + translator.get('CLEANLINESS_2') + '!'
         )
         else messagePayload.embeds[0].setFooter({
             text: interaction.ephemeral
             ? ''
-            : '✨ For cleanliness, this message will self-destruct in ' + seconds + ' seconds!'
+            : '✨ ' + translator.get('CLEANLINESS_1') + ' ' + seconds + ' ' + translator.get('CLEANLINESS_2') + '!'
         });
 
         // handle reply
@@ -79,7 +83,7 @@ class CoreUtil {
         if (!interaction.ephemeral)
             setTimeout(() => interaction.deleteReply().catch(), seconds * 1000);
     }
-
+    
     /**
      * Fetch a User from the database
      * @param {string} userId Desired userId

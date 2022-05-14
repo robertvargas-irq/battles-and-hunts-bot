@@ -10,10 +10,10 @@ class BotClient extends Client {
      * Create a new Bot client.
      * @param {ClientOptions} clientOptions Discord Client options
      */
-    constructor( clientOptions ) {
-        super( clientOptions );
-        bindEvents( this );
-        bindCommands( this );
+    constructor(clientOptions) {
+        super(clientOptions);
+        bindEvents(this);
+        bindCommands(this);
 
         this.config = require('../../config.json');
     }

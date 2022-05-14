@@ -1,4 +1,4 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : dTypes, Locale } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const { calculateMaxHealth } = require('../../util/Account/Player');
@@ -6,19 +6,22 @@ const { calculateMaxHealth } = require('../../util/Account/Player');
 module.exports = {
     name: 'medicine',
     description: 'Heal yourself!',
+    name_localizations: {
+        [Locale.SpanishES]: 'medicina'
+    },
+    description_localizations: {
+        [Locale.SpanishES]: 'Cúrate mismo!',
+    },
     options: [
         {
             name: 'amount',
+            name_localizations: {
+                [Locale.SpanishES]: 'puntos'
+            },
             description: 'The amount of health to heal. (You will never heal past your max health)',
             type: dTypes.Integer,
             required: true,
         },
-        // {
-        //     name: 'who-healed-you',
-        //     description: '(THIS IS OPTIONAL)',
-        //     type: dTypes.User,
-        //     required: false,
-        // } // ! IMPLEMENT ME
     ],
     /**
      * @param {BaseCommandInteraction} interaction

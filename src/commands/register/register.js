@@ -1,7 +1,13 @@
+const FILE_LANG_ID = 'REGISTER'
+
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const userSchema = require('../../database/schemas/user');
 const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const { formatStats } = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');
+const Language = require('../../util/Language');
+const Translator = require('../../util/Translator');
+
 module.exports = {
     name: 'register',
     description: 'Register for the bot if you haven\'t already entered your stats!',
@@ -10,22 +16,28 @@ module.exports = {
 
         // defer
         await interaction.deferReply({ ephemeral: true });
+
+        // create translator
+        const translator = new Translator(interaction.user.id, FILE_LANG_ID);
         
         // if user is registered
         let found = await CoreUtil.FetchUser(interaction.user.id);
 
         // prompt registration if user is not registered; inform if registered
-        if (found) return alreadyRegistered(interaction, found);
+        if (found) return alreadyRegistered(interaction, found, translator);
         if (!found) found = await firstTimeRegister(interaction);
         if (!found) return; // error has already been handled inside collect()
+
+        // add to language cache
+        Language.SetLanguage(found);
 
         // show success message
         interaction.editReply({
             embeds: [
                 new MessageEmbed()
                     .setColor('AQUA')
-                    .setTitle('🌟 Your stats have been successfully saved!')
-                    .setDescription('You may now dismiss this menu.'),
+                    .setTitle('🌟 ' + Translator.getGlobal('STATS_SAVED'))
+                    .setDescription(Translator.getGlobal('MENU_DISMISS')),
                 formatStats(interaction, found)
             ]
         });
@@ -35,17 +47,16 @@ module.exports = {
 /**
  * Inform the user they have already registered for the bot.
  * @param {BaseCommandInteraction} interaction
+ * @param {userSchema} userData
+ * @param {Translator} translator
  */
-function alreadyRegistered(interaction, userData) {
+function alreadyRegistered(interaction, userData, translator) {
     interaction.editReply({
         embeds: [
             new MessageEmbed()
                 .setColor('AQUA')
-                .setTitle('🌟 You are already registered!')
-                .setDescription(`
-                If you want to attack another user during RP, use \`/attack\`!
-                If you wish to edit your stats, use \`/edit\`!
-                `),
+                .setTitle('🌟 ' + translator.get('ALREADY_REGISTERED_TITLE'))
+                .setDescription(translator.get('ALREADY_REGISTERED_DESCRIPTION')),
             formatStats(interaction, userData)
         ]
     })

@@ -3,7 +3,7 @@ const registerClientCommands = require('../register');
 module.exports = {
     name: 'ready',
     once: 'true',
-    execute( client ) {
+    execute(client) {
         registerClientCommands(client)
             .then(success => console.log(success))
             .catch(error => {
@@ -15,7 +15,7 @@ module.exports = {
         client.user.setPresence({
             activities: [
                 {
-                    name: '🗡️HUNTING UPDATE v1.1 | QOL Patch',
+                    name: 'LOCALIZATION UPDATE|v2.0|🌍🌎🌏',
                     type: 'PLAYING',
                 },
             ],

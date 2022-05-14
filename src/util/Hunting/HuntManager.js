@@ -382,17 +382,6 @@ class HuntManager extends CoreUtil {
                 )
             ]
         });
-        // return await interaction.editReply({
-        //     embeds: [new MessageEmbed()
-        //         .setColor('YELLOW')
-        //         .setTitle('🔒 Hunting is currently limited.')
-        //         .setDescription(
-        //             'It is possible that canon roleplay sessions are not in progress, so `certain` Hunt `features` are `restricted`.'
-        //             + ' Locks are enabled manually by the administrative team.'
-        //             + ' If you believe this was a mistake, please contact an administrator.'
-        //         )
-        //     ]
-        // });
     }
 
     /**

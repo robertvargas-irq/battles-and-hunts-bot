@@ -44,9 +44,7 @@ module.exports = {
             ],
         },
     ],
-    /**
-     * @param {BaseCommandInteraction} interaction 
-     */
+    /**@param {BaseCommandInteraction} interaction */
     async execute(interaction) {
 
         // get options then defer appropriately

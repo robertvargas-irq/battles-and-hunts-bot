@@ -3,7 +3,7 @@ const FILE_LANG_ID = 'PLAYER';
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const userSchema = require('../../database/schemas/user');
 const Translator = require('../Translator');
-const {names, tooltips, ranges, flairs, name_translations} = require('./stats.json');
+const {ranges, flairs, name_translations} = require('./stats.json');
 const STATS_BANNER = 'https://media.discordapp.net/attachments/954246414987309076/964285751657390130/IMG_8456.png?width=960&height=540';
 
 /**

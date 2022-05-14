@@ -53,6 +53,16 @@ module.exports = {
         // save to database
         await found.save();
 
+        // log only numbers
+        const log = {
+            en: 0,
+            es: 0,
+            pr: 0,
+            pol: 0,
+        }
+        Language.CachedLanguages.forEach(v => log[v]++);
+        console.log(log);
+
         // create translator
         const translator = new Translator(found.userId, FILE_LANG_ID);
 

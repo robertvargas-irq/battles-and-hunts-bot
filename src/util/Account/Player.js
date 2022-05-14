@@ -10,10 +10,11 @@ const STATS_BANNER = 'https://media.discordapp.net/attachments/95424641498730907
  * Format player stats.
  * @param {BaseCommandInteraction} interaction 
  * @param {userSchema} userData 
+ * @param {string} originalCallerId For translation purposes
  */
-function formatStats(interaction, userData) {
+function formatStats(interaction, userData, originalCallerId) {
 
-    const translator = new Translator(interaction.user.id, FILE_LANG_ID);
+    const translator = new Translator(originalCallerId, FILE_LANG_ID);
     
     let i = 0;
     return new MessageEmbed()

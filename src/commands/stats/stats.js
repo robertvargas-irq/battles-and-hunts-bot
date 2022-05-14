@@ -53,7 +53,7 @@ module.exports = {
             guild: playerMember.guild
         };
         return interaction.editReply({
-            embeds: [ formatStats(pseudoInteraction, found) ]
+            embeds: [ formatStats(pseudoInteraction, found, interaction.user.id) ]
         });
     
     },

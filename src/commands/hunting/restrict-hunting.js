@@ -5,7 +5,6 @@ const CoreUtil = require('../../util/CoreUtil');
 module.exports = {
     name: 'restrict-hunting',
     description: '(🔒 ADMINISTRATOR ONLY) Lock all the prey piles.',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'locks-enabled',

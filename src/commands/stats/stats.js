@@ -6,7 +6,6 @@ const CoreUtil = require('../../util/CoreUtil');
 module.exports = {
     name: 'stats',
     description: 'Check out your stats (default)! Or another\'s (player)!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'player',

@@ -7,7 +7,6 @@ const CANON_MESSAGE = '🍃 This message is canon.'
 module.exports = {
     name: 'eat',
     description: 'Take food from the prey pile to try and satisfy your hunger.',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'clan-to-eat-from',

@@ -5,7 +5,6 @@ const PreyPile = require('../../util/Hunting/PreyPile');
 module.exports = {
     name: 'spawn-prey-pile',
     description: '(🔒 ADMINISTRATOR ONLY) Spawn in a visual prey pile.',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'clan',

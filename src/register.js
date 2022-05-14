@@ -8,35 +8,25 @@ const GUILDS = ['954037682223316992'];
  * @param {Discord.Client} client Discord client.
  * @returns {Promise<String>}
  */
-async function registerClientCommands( client ) {
+async function registerClientCommands(client) {
 
-    const commands = client.commands.map( ({ execute, ...data }) => data );
-    const Rest = new REST({ version: '10' }).setToken( process.env.DISCORD_TOKEN );
+    const commands = client.commands.map(({ execute, ...data }) => data);
+    const Rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
     const queue = [];
     
-    // queue.push(
-    //     Rest.put(
-    //         Routes.applicationCommands( client.user.id ), { body: commands },
-    //     )
-    // );
-
-    // for ( let command of commands ) {
-    
-        // register command if being deployed in guilds
-        for ( let g of GUILDS ) {
-            queue.push( client.guilds.cache.get( g )?.commands.set( commands ) );
-            queue.push(
-                Rest.put(
-                    Routes.applicationGuildCommands( client.user.id, g ),
-                    { body: commands },
-                )
-            );
-        }
-        
-    // }
+    // register command if being deployed in guilds
+    for ( let g of GUILDS ) {
+        queue.push(client.guilds.cache.get(g)?.commands.set(commands));
+        queue.push(
+            Rest.put(
+                Routes.applicationGuildCommands(client.user.id, g),
+                { body: commands },
+            )
+        );
+    }
 
     // ensure all items in queue complete
-    await Promise.all( queue );
+    await Promise.all(queue);
     return Promise.resolve('Successfully reloaded all application commands.');
 
 }

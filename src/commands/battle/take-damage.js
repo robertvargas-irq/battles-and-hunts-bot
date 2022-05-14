@@ -6,7 +6,6 @@ const { calculateMaxHealth } = require('../../util/Account/Player');
 module.exports = {
     name: 'take-damage',
     description: 'Take damage from an attack or any source of danger!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'amount',

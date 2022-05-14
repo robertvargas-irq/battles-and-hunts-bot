@@ -6,7 +6,6 @@ const { calculateMaxHealth } = require('../../util/Account/Player');
 module.exports = {
     name: 'medicine',
     description: 'Heal yourself!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'amount',

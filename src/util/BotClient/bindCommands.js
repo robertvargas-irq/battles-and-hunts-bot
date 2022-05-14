@@ -5,12 +5,12 @@ function bindCommands( client ) {
     
     // populate command files with all available commands
     client.commands = new Collection();
-    const commandFiles = fs.readdirSync('./commands').filter( file => file.endsWith('.js') );
+    const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
     // check for nested commands, and populate commandFiles with them
     const commandSubDirectories = fs.readdirSync('./commands').filter( subdir => fs.statSync(`./commands/${subdir}`).isDirectory() );
     for ( let dir of commandSubDirectories ) {
-        let files = fs.readdirSync(`./commands/${dir}`);
+        let files = fs.readdirSync(`./commands/${dir}`).filter(file => file.endsWith('.js'));
         for ( let file of files )
             commandFiles.push([ dir, file ]);
     }

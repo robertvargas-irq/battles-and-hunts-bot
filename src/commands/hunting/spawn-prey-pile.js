@@ -31,9 +31,7 @@ module.exports = {
             ],
         },
     ],
-    /**
-     * @param {BaseCommandInteraction} interaction 
-     */
+    /** @param {BaseCommandInteraction} interaction */
     async execute(interaction) {
 
         // defer

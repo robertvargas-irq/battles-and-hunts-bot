@@ -1,19 +1,10 @@
 const { Schema } = require('mongoose');
-/* TEMPLATE
- * --------
- * Strength:     5        [35/40]
- * Dexterity:    8        [27/40]
- * Constitution: 5        [22/40]
- * Speed:        8        [14/40]
- * Intelligence: 4        [10/40]
- * Charisma:     1        [ 9/40]
- * Swimming:     4        [ 5/40]
- * Stalking:     5        [ 0/40]
- */
+const Language = require('../../util/Language');
 
 /**
  * @typedef {{
  *      userId: string,
+ *      preferredLanguage: string,
  *      stats: {
  *          cat_size: number,
  *          strength: number,
@@ -51,6 +42,11 @@ const userSchema = new Schema({
         type: String,
         unique: true,
         required: true,
+    },
+    preferredLanguage: {
+        type: String,
+        required: true,
+        default: 'en',
     },
     stats: {      // dunno if I should split into diff
         cat_size: {

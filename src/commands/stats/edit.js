@@ -1,14 +1,17 @@
+const FILE_LANG_ID = 'EDIT';
+
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const collectCharacterStats = require('../../util/Account/collectCharacterStats');
 const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');
+const Translator = require('../../util/Translator');
 
 module.exports = {
     name: 'edit',
     description: 'Edit your stats!',
     guilds: ['957854680367648778', '954037682223316992'],
     /**@param {BaseCommandInteraction} interaction */
-    async execute( interaction ) {
+    async execute(interaction) {
 
         // defer
         await interaction.deferReply({ ephemeral: true });
@@ -16,9 +19,12 @@ module.exports = {
         // if user is registered
         const found = await CoreUtil.FetchUser(interaction.user.id);
         if (!found) return CoreUtil.NotRegistered(interaction);
+
+        // create translator
+        const translator = new Translator(interaction.user.id, FILE_LANG_ID);
         
         // collect new stats
-        const {clanRole, stats: catStats} = await collectCharacterStats(interaction, '**Welcome back to the editor!**\nPlease enter your character\'s stats one by one!');
+        const {clanRole, stats: catStats} = await collectCharacterStats(interaction, translator.get('PROMPT'));
         if (!catStats) return; // error already handled inside collect()
 
         // handle new max health
@@ -40,8 +46,8 @@ module.exports = {
                     embeds: [
                         new MessageEmbed()
                             .setColor('AQUA')
-                            .setTitle('🌟 All changes have successfully been recorded!')
-                            .setDescription('You may now dismiss this menu.'),
+                            .setTitle('🌟 ' + translator.getGlobal('STATS_SAVED'))
+                            .setDescription(translator.getGlobal('MENU_DISMISS')),
                         formatStats(interaction, found)
                     ]
                 });
@@ -51,8 +57,8 @@ module.exports = {
                 interaction.editReply({
                     embeds: [new MessageEmbed()
                         .setColor('GREYPLE')
-                        .setTitle('⚠️ Something went wrong!')
-                        .setDescription('We were unable to save your changes to the database, please try again later!\nIf this issue persists, please let a moderator know! 🌟')
+                        .setTitle('⚠️ ' + translator.getGlobal('SOMETHING_WENT_WRONG'))
+                        .setDescription(translator.get('UNABLE_TO_SAVE') + ' 🌟')
                     ]
                 });
             });

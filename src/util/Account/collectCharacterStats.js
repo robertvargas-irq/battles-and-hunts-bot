@@ -1,9 +1,12 @@
+const FILE_LANG_ID = 'COLLECT_CHARACTER_STATS';
+
 const { Message, MessageEmbed, BaseCommandInteraction } = require('discord.js');
+const Translator = require('../Translator');
 const RETRIES = 3;
 const TIME = 90;
 const clans = ['unforgiven', 'shadowclan', 'thunderclan', 'riverclan'];
 
-const {names, tooltips, ranges, flairs} = require('./stats.json');
+const {names, tooltips, ranges, flairs, name_translations} = require('./stats.json');
 
 /**
  * Prompts user for character stats.
@@ -11,6 +14,9 @@ const {names, tooltips, ranges, flairs} = require('./stats.json');
  * @param {String} userId 
  */
 async function collectCharacterStats(interaction, promptMessage) {
+
+    // create translator
+    const translator = new Translator(interaction.user.id, FILE_LANG_ID);
 
     // find clan in their roles
     let clanRole;
@@ -22,10 +28,15 @@ async function collectCharacterStats(interaction, promptMessage) {
         }
         return false;
     });
-    if (!clanRole) return notRegistered(interaction);
+    if (!clanRole) return notRegistered(interaction, translator);
 
     // prompt for stats
-    const prompt = new MessageEmbed({ title: "🐈‍ Stat Declaration", description: promptMessage, color: 'AQUA', footer: { text: '❕ Send cancel to quit.' } });
+    const prompt = new MessageEmbed({
+        color: 'AQUA',
+        title: "🐈‍ " + translator.get('STAT_DECLARATION'),
+        description: promptMessage,
+        footer: { text: '❕ ' + translator.getGlobal('SEND_TO_CANCEL') }
+    });
     const filter = (/**@type {Message}*/ message) => message.author.id === interaction.user.id;
     let field = 0;
     let stats = {
@@ -42,7 +53,7 @@ async function collectCharacterStats(interaction, promptMessage) {
 
     // take input for each available step
     const validate = (input) => !/[^0-9]/.exec(input);
-    for await (let step of names) {
+    for await (let _ of names) {
 
         // current min and max for the field in question
         let c_MIN = ranges[field][0];
@@ -50,38 +61,43 @@ async function collectCharacterStats(interaction, promptMessage) {
 
         // prompt for new input
         await interaction.editReply({
-            embeds: [ prompt.addField(`${step} ${flairs[field]}`, `⁅⁘⟧ [\`${c_MIN}\` - \`${c_MAX}\`] Please send your character's \`${step.toUpperCase()}\`\n>>> ${tooltips[field]}`) ]
+            embeds: [prompt.addField(
+                `${translator.getFromObject(name_translations[field])} ${flairs[field]}`, 
+                `⁅⁘⟧ [\`${c_MIN}\` - \`${c_MAX}\`] `
+                +`${translator.get('PLEASE_SEND')} \`${translator.getFromObject(name_translations[field]).toUpperCase()}\` ${translator.get('PLEASE_SEND_FOLLOWUP')}`
+                + `\n>>> ${translator.getFromObject(tooltips[field])}`
+            )]
         });
 
         // get user input and validate
         let input = await collect(interaction, filter);
 
         // if input is not valid, retry 3 times
-        if (!input) return terminate(interaction);
+        if (!input) return terminate(interaction, translator);
         let validInput = validate(input);
         let parsed = parseInt(input.split(/[^0-9]/)[0]);
 
-        // validate
+        // validate input: loop until retries are over or correct input is given
         for (let i = 0; i < RETRIES
         && (!validInput || (parsed < c_MIN || parsed > c_MAX)); i++) {
             // process quit command
-            if (input.toLowerCase() === 'cancel') return cancel(interaction);
+            if (input.toLowerCase() === 'cancel') return cancel(interaction, translator);
 
-            // prompt for new input
-            prompt.fields[field].value = `⚠️ \`${input}\` is **NOT** a valid input! Please only send a number between [\`${c_MIN}\` - \`${c_MAX}\`].\n(${RETRIES - i} attempts remaining.)`;
+            // prompt for new input since invalid
+            prompt.fields[field].value = `⚠️ \`${input}\` ${translator.get('INVALID_INPUT_1')} [\`${c_MIN}\` - \`${c_MAX}\`].\n(${RETRIES - i} ${translator.get('INVALID_INPUT_2')}.)`;
             await interaction.editReply({ embeds: [prompt] });
             input = await collect(interaction, filter);
 
             // validate
-            if (!input) return terminate(interaction);
+            if (!input) return terminate(interaction, translator);
             validInput = !/[^0-9]/.exec(input);
             parsed = parseInt(input.split(/[^0-9]/)[0]);
         }
 
         // final input validation
-        if (!validInput) return invalid(interaction);
+        if (!validInput) return invalid(interaction, translator);
         parsed = parseInt(input.split(/[^0-9]/)[0]);
-        if (parsed < 0 || parsed > 10) return invalid(interaction);
+        if (parsed < 0 || parsed > 10) return invalid(interaction, translator);
 
         // after input is successful, update field
         stats[names[field].toLowerCase().replace(' ', '_')] = parsed;
@@ -99,13 +115,14 @@ async function collectCharacterStats(interaction, promptMessage) {
 /**
  * Prompts that time has run out.
  * @param {BaseCommandInteraction} interaction 
+ * @param {Translator} translator
  */
-function terminate(interaction) {
+function terminate(interaction, translator) {
     interaction.editReply({
         embeds: [ new MessageEmbed()
             .setColor('AQUA')
-            .setTitle("⏰ This editor has timed out!")
-            .setDescription("Please type faster ❣️"),
+            .setTitle("⏰ " + translator.getGlobal('TIMEOUT'))
+            .setDescription(translator.getGlobal('TIMEOUT_MESSAGE') + " ❣️"),
         ]
     });
     return false;
@@ -114,13 +131,14 @@ function terminate(interaction) {
 /**
  * Inform that input is invalid.
  * @param {BaseCommandInteraction} interaction 
+ * @param {Translator} translator
  */
-function invalid(interaction) {
+function invalid(interaction, translator) {
     interaction.editReply({
         embeds: [ new MessageEmbed()
             .setColor('AQUA')
-            .setTitle("⚠️ Too many invalid inputs.")
-            .setDescription("Please send your previous command again ❣️"),
+            .setTitle("⚠️ " + translator.get('TOO_MANY_INVALID'))
+            .setDescription(translator.get('TOO_MANY_INVALID_MESSAGE') + " ❣️"),
         ]
     });
     return false;
@@ -129,13 +147,14 @@ function invalid(interaction) {
 /**
  * Inform that they have not been assigned a clan yet.
  * @param {BaseCommandInteraction} interaction 
+ * @param {Translator} translator
  */
-function notRegistered(interaction) {
+function notRegistered(interaction, translator) {
     interaction.editReply({
         embeds: [ new MessageEmbed()
             .setColor('RED')
-            .setTitle("⚠️ You have not submitted a character yet.")
-            .setDescription("You do not have a clan role yet. If this is a mistake, please let an administrator know ❣️"),
+            .setTitle("⚠️ " + translator.get('NOT_REGISTERED'))
+            .setDescription(translator.get('NOT_REGISTERED_MESSAGE') + " ❣️"),
         ]
     });
     return false;
@@ -144,13 +163,14 @@ function notRegistered(interaction) {
 /**
  * Show successful cancellation.
  * @param {BaseCommandInteraction} interaction 
+ * @param {Translator} translator
  */
- function cancel(interaction) {
+ function cancel(interaction, translator) {
     interaction.editReply({
         embeds: [ new MessageEmbed()
             .setColor('AQUA')
-            .setTitle("✅ Successfully cancelled.")
-            .setDescription("You may now dismiss this menu ❣️"),
+            .setTitle("✅ " + translator.getGlobal('SUCCESSFUL_CANCEL'))
+            .setDescription(translator.getGlobal('MENU_DISMISS') + " ❣️"),
         ]
     });
     return false;

@@ -22,7 +22,7 @@ module.exports = async ( interaction ) => {
     try {
         // error if the channel id is restricted and wrong command is used
         let wrongId = wrongChannel(interaction);
-        console.log({wrongId});
+        // console.log({wrongId});
         if (wrongId) return wrongChannelMessage(interaction, wrongId);
 
         await interaction.client.commands.get( interaction.commandName ).execute( interaction ).catch();
@@ -60,14 +60,14 @@ function wrongChannel(interaction) {
 
     // if guild has no data return
     const R_GUILD = restrictions[interaction.guild.id];
-    console.log({R_GUILD});
+    // console.log({R_GUILD});
     if (!R_GUILD) return false;
 
     // get channel restrictions
     const R_CHANNEL = R_GUILD.CHANNELS[interaction.channel.id];
     const R_COMMAND = R_GUILD.COMMANDS[interaction.commandName];
 
-    console.log({R_CHANNEL, R_COMMAND});
+    // console.log({R_CHANNEL, R_COMMAND});
     // if no restrictions, return
     if (!R_CHANNEL && !R_COMMAND) return false;
 
@@ -78,7 +78,7 @@ function wrongChannel(interaction) {
 }
 
 async function wrongChannelMessage(interaction, [code, list]) {
-    console.log({code, list});
+    // console.log({code, list});
     // console.log(map);
     const description = (
         code == 1

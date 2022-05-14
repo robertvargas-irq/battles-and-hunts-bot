@@ -16,7 +16,8 @@ let client = new BotClient({
 require('./database/connect.js')().then(() => {
     // cache languages
     Language.LoadLanguages().then((cache) => console.log(
-        'Languages successfully cached', {cache}, 'Languages successfully cached'
+        'Languages successfully cached',
+        'Map(' + cache.size + ')'
     ));
 });
 

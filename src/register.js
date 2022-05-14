@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
-const GUILDS = ['957854680367648778'];
+const GUILDS = ['954037682223316992'];
 
 /**
  * Registers all slash commands from the client.

@@ -25,9 +25,7 @@ module.exports = {
             required: true,
         }
     ],
-    /**
-     * @param {BaseCommandInteraction} interaction 
-     */
+    /**@param {BaseCommandInteraction} interaction */
     async execute(interaction) {
 
         // defer

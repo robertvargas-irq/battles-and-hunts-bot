@@ -39,7 +39,7 @@ module.exports = {
     async execute( interaction ) {
         
         // defer
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply({ ephemeral: true });
         
         // fetch user
         const found = await CoreUtil.FetchUser(interaction.user.id);

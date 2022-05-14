@@ -12,7 +12,6 @@ module.exports = {
     description_localizations: {
         [Locale.SpanishES]: 'Cúrate mismo!',
     },
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'amount',

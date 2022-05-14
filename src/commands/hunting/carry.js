@@ -4,7 +4,6 @@ const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 module.exports = {
     name: 'carry',
     description: 'Put your most recently caught prey on your back.',
-    guilds: ['957854680367648778', '954037682223316992'],
     /**
      * @param {BaseCommandInteraction} interaction 
      */

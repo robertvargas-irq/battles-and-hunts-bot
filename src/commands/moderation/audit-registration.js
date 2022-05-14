@@ -10,7 +10,6 @@ const roles = require('./roles.json');
 module.exports = {
     name: 'audit-registration',
     description: '(🔒 ADMINISTRATOR ONLY) Check to see which users are not registered for the bot.',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'ping-them',

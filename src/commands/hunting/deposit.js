@@ -6,7 +6,6 @@ const PreyPile = require('../../util/Hunting/PreyPile');
 module.exports = {
     name: 'deposit',
     description: 'Dump all the prey you\'ve been carrying into the prey pile!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'clan',

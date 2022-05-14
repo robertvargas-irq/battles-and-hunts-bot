@@ -7,7 +7,6 @@ const CoreUtil = require('../../util/CoreUtil');
 module.exports = {
     name: 'starve-all',
     description: '(🔒 ADMINISTRATOR ONLY) Set all player\'s hunger to MAX.',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'are-you-sure',

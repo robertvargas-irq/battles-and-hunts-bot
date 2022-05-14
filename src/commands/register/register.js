@@ -11,7 +11,6 @@ const Translator = require('../../util/Translator');
 module.exports = {
     name: 'register',
     description: 'Register for the bot if you haven\'t already entered your stats!',
-    guilds: ['957854680367648778', '954037682223316992'],
     /**@param {BaseCommandInteraction} interaction */
     async execute( interaction ) {
 

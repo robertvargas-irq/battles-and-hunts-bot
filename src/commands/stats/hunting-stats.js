@@ -6,7 +6,6 @@ const HuntManager = require('../../util/Hunting/HuntManager');
 module.exports = {
     name: 'hunting-stats',
     description: 'Check out your hunting stats (default)! Or another\'s (player)!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'player',

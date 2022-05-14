@@ -5,7 +5,6 @@ const AttackManager = require('../../util/Battle/AttackManager');
 module.exports = {
     name: 'attack',
     description: 'Attack another user!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'opponent',

@@ -5,7 +5,6 @@ const { BaseCommandInteraction } = require('discord.js');
 module.exports = {
     name: 'hunt',
     description: 'Hunt for food!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'current-territory',

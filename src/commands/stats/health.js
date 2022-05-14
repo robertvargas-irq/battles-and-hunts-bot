@@ -5,7 +5,6 @@ const CoreUtil = require('../../util/CoreUtil');
 module.exports = {
     name: 'health',
     description: 'Quickly view your health!',
-    guilds: ['957854680367648778', '954037682223316992'],
     /**@param {BaseCommandInteraction} interaction */
     async execute( interaction ) {
 

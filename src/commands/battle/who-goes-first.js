@@ -7,7 +7,6 @@ const MAX_ROLL = 1000;
 module.exports = {
     name: 'who-goes-first',
     description: 'Attack another user!',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'opponent',
@@ -17,9 +16,7 @@ module.exports = {
         },
     ],
     /**
-     * 
      * @param {BaseCommandInteraction} interaction 
-     * @returns 
      */
     async execute(interaction) {
 
@@ -32,11 +29,6 @@ module.exports = {
         if (target.user.bot) return denyBotAttack(interaction);
         if (target.user.id === interaction.user.id) return denySelfAttack(interaction);
         
-        // // roll and inform
-        // let roll = getRandom(1, MAX_ROLL);
-        // let pivot = Math.floor(MAX_ROLL / 2);
-        // let first = roll < pivot;
-
         // flip a coin
         const coin = getRandom(0, 1);
         const first = coin == 0;

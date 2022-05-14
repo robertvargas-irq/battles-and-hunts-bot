@@ -5,7 +5,6 @@ const PreyPile = require('../../util/Hunting/PreyPile');
 module.exports = {
     name: 'spoil-all',
     description: '(🔒 ADMINISTRATOR ONLY) Spoil all food in all prey piles.',
-    guilds: ['957854680367648778', '954037682223316992'],
     options: [
         {
             name: 'are-you-sure',

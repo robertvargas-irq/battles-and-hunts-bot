@@ -4,7 +4,6 @@ const os = require('os');
 module.exports = {
     name: 'ping',
     description: 'Replies with Pong, and the bot\'s uptime!',
-    guilds: ['957854680367648778', '954037682223316992'],
     async execute( interaction ) {
 
         // convert seconds properly

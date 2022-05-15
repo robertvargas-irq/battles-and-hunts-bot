@@ -15,55 +15,64 @@
             "en":"Cat Size",
             "es":"Tamaño de tu Gato/a en el juego",
             "pr":"Tamanho de gato no jogo",
-            "pol":"Rozmiar Kota w Grze"
+            "pol":"Rozmiar Kota w Grze",
+            "de":"Katzengröße"
         },
         {
             "en":"Strength",
             "es":"Fuerza",
             "pr":"Força",
-            "pol":"Wytrzymałość"
+            "pol":"Wytrzymałość",
+            "de":"Kraft"
         },
         {
             "en":"Dexterity",
             "es":"Destreza",
             "pr":"Destreza",
-            "pol":"Zręczność"
+            "pol":"Zręczność",
+            "de":"Geschicklichkeit"
         },
         {
             "en":"Constitution",
             "es":"Constitución",
             "pr":"Dureza",
-            "pol":"Odporność"
+            "pol":"Odporność",
+            "de":"Widerstand"
         },
         {
             "en":"Speed",
             "es":"Velocidad",
             "pr":"Velocidade",
-            "pol":"Prędkość"
+            "pol":"Prędkość",
+            "de":"Geschwindigkeit"
         },
         {
             "en":"Intelligence",
             "es":"Inteligencia",
             "pr":"Inteligência",
-            "pol":"Inteligencja"
+            "pol":"Inteligencja",
+            "de":"Intelligenz"
         },
         {
             "en":"Charisma",
             "es":"Carisma",
             "pr":"Carisma",
-            "pol":"Charyzma"
+            "pol":"Charyzma",
+            "de":"Charisma"
         },
         {
             "en":"Swimming",
             "es":"Competencia de Natación",
             "pr":"Competência de Natação",
-            "pol":"Kompetencje Pływackie"
+            "pol":"Kompetencje Pływackie",
+            "de":"Schwimmfähigkeit"
         },
         {
             "en":"Stalking",
             "es":"Habilidad de Caza/Acecho",
             "pr":"Habilidade de Caça/Perseguição",
-            "pol":"Umiejętność Polowania/Podchodzenia"
+            "pol":"Umiejętność Polowania/Podchodzenia",
+            "de":"Pirsch-/Jagdfähigkeit"
         }
     ],
     "tooltips": [
@@ -71,55 +80,64 @@
             "en":"**This directly affects your hunger.**\n`1`: Kit-Young Warrior\n`2`: Warrior\n`3`: Large Warrior",
             "es":"**Esto afecta directamente tu nivel de hambre.**\n`1`: Kit-Joven Guerrero\n`2`: Guerrero\n`3`: Gran Guerrero",
             "pr":"**Isso afeta diretamente sua fome.**\n`1`: Kit-Young Warrior\n`2`: Warrior\n`3`: Large Warrior",
-            "pol":"**To bezpośrednio wpływa na twój głód.**\n`1`: Kit-Młody Wojownik\n`2`: Wojownik\n`3`: Duży Wojownik"
+            "pol":"**To bezpośrednio wpływa na twój głód.**\n`1`: Kit-Młody Wojownik\n`2`: Wojownik\n`3`: Duży Wojownik",
+            "de":"**Dies wirkt sich direkt auf deinen Hunger aus.**\n`1`: Bausatz -> Junger Krieger\n`2`: Krieger\n`3`: Großer Krieger"
         },
         {
             "en":"**How hard you hit!**\nHow much you can lift, how muscular you are. Thunderclan is big and burly, so they tend to be stronger.",
             "es":"**¡Qué fuerte golpeas!**\nCuánto puedes levantar, qué musculoso eres. Thunderclan es grande y corpulento, por lo que tienden a ser más fuertes.",
             "pr":"**Com que força você bate!**\nQuanto você consegue levantar, quão musculoso você é. Thunderclan é grande e corpulento, então eles tendem a ser mais fortes.",
-            "pol":"**Jak mocno uderzasz!**\nIle możesz podnieść, jaki jesteś umięśniony. Thunderclan jest duży i krzepki, więc wydaje się być silniejszy."
+            "pol":"**Jak mocno uderzasz!**\nIle możesz podnieść, jaki jesteś umięśniony. Thunderclan jest duży i krzepki, więc wydaje się być silniejszy.",
+            "de":"**Wie hart du triffst!**\nWie viel du heben kannst, wie muskulös du bist. Der Donnerclan ist groß und kräftig, also tendieren sie dazu, stärker zu sein."
         },
         {
             "en":"**Skill. Finesse. Performing actions with a level of care and expertise!**\nRiverclan is lithe and graceful, so they have more dexterity. Their hand-paw coordination is uniquely honed for fishing!",
             "es":"**Habilidad. Finura. ¡Realizando acciones con un nivel de cuidado y experiencia! **\nRiverclan es ágil y elegante, por lo que tienen más destreza. ¡Su coordinación mano-pata está especialmente perfeccionada para la pesca!",
             "pr":"**Habilidade. Finesse. Realizando ações com um nível de cuidado e experiência!**\nRiverclan é ágil e gracioso, então eles têm mais destreza. Sua coordenação mão-pata é excepcionalmente afinada para a pesca!",
-            "pol":"**Umiejętność. Impas. Wykonywanie czynności z odpowiednią dbałością i doświadczeniem!**\nRiverclan jest gibki i pełen wdzięku, dzięki czemu ma większą zręczność. Ich koordynacja ręka-łapa jest wyjątkowo dopracowana do łowienia ryb!"
+            "pol":"**Umiejętność. Impas. Wykonywanie czynności z odpowiednią dbałością i doświadczeniem!**\nRiverclan jest gibki i pełen wdzięku, dzięki czemu ma większą zręczność. Ich koordynacja ręka-łapa jest wyjątkowo dopracowana do łowienia ryb!",
+            "de":"**Fähigkeit. Finesse. Aktionen mit einem Maß an Sorgfalt und Sachkenntnis ausführen!**\nRiverclan ist geschmeidig und anmutig, daher haben sie mehr Geschicklichkeit. Ihre Hand-Pfoten-Koordination ist einzigartig für das Angeln!"
         },
         {
             "en":"**Toughness.**\nYou can handle more pain, or even resist toxins or eat things most cats would struggle with. ShadowClan has a harsh territory, ShadowClan survives by eating things that would harm most cats!",
             "es":"**Resistencia.**\nPuedes soportar más dolor, o incluso resistir toxinas o comer cosas con las que la mayoría de los gatos tendrían problemas. ShadowClan tiene un territorio duro, ShadowClan sobrevive comiendo cosas que dañarían a la mayoría de los gatos.",
             "pr":"**Resistência.**\nVocê pode lidar com mais dor ou até mesmo resistir a toxinas ou comer coisas com as quais a maioria dos gatos teria dificuldade. ShadowClan tem um território duro, ShadowClan sobrevive comendo coisas que prejudicariam a maioria dos gatos!",
-            "pol":"**Wytrzymałość.**\nPoradzisz sobie z większym bólem, a nawet oprzesz się toksynom lub zjesz to, z czym większość kotów zmaga się. ShadowClan ma surowe terytorium, ShadowClan przetrwa, jedząc rzeczy, które zaszkodzą większości kotów!"
+            "pol":"**Wytrzymałość.**\nPoradzisz sobie z większym bólem, a nawet oprzesz się toksynom lub zjesz to, z czym większość kotów zmaga się. ShadowClan ma surowe terytorium, ShadowClan przetrwa, jedząc rzeczy, które zaszkodzą większości kotów!",
+            "de":""
         },
         {
             "en":"**How fast you react or run.**\nWindclan used to be known for this, but The Unforgiven seem to have followed their footsteps…",
             "es":"**Qué tan rápido reaccionas o corres.**\nWindclan solía ser conocido por esto, pero The Unforgiven parece haber seguido sus pasos...",
             "pr":"**A rapidez com que você reage ou corre.**\nWindclan costumava ser conhecido por isso, mas os Imperdoáveis parecem ter seguido seus passos…",
-            "pol":"**Jak szybko reagujesz lub biegasz.**\nKlan Wiatru był kiedyś z tego znany, ale wydaje się, że The Unforgiven poszli w ich ślady…"
+            "pol":"**Jak szybko reagujesz lub biegasz.**\nKlan Wiatru był kiedyś z tego znany, ale wydaje się, że The Unforgiven poszli w ich ślady…",
+            "de":"**Zähigkeit.**\nSie können mit mehr Schmerzen umgehen oder sogar Giftstoffen widerstehen oder Dinge essen, mit denen die meisten Katzen zu kämpfen haben. Der SchattenClan hat ein raues Territorium, der SchattenClan überlebt, indem er Dinge isst, die den meisten Katzen schaden würden!"
         },
         {
             "en":"**How smart you are.**\nYou can make plans and think things through. The Unforgiven's hierarchy is well thought put, and their battle prowess intimidates the clans!",
             "es":"**Qué inteligente eres.**\nPuedes hacer planes y pensar bien las cosas. La jerarquía de los No Perdonados está bien pensada, ¡y su destreza en la batalla intimida a los clanes!",
             "pr":"**Quão inteligente você é.**\nVocê pode fazer planos e pensar nas coisas. A hierarquia dos Imperdoáveis ​​é bem pensada, e suas proezas de batalha intimidam os clãs!",
-            "pol":"**Jaki jesteś mądry.**\nMożesz planować i przemyśleć. Hierarchia Unforgiven jest dobrze przemyślana, a ich sprawność bojowa przeraża klany!"
+            "pol":"**Jaki jesteś mądry.**\nMożesz planować i przemyśleć. Hierarchia Unforgiven jest dobrze przemyślana, a ich sprawność bojowa przeraża klany!",
+            "de":"**Wie schlau du bist.**\nDu kannst Pläne machen und Dinge durchdenken. Die Hierarchie der Unforgiven ist gut durchdacht und ihre Kampfkraft schüchtert die Clans ein!"
         },
         {
             "en":"**Persuasiveness, Likability, how you present yourself.**\nHow will you convince anyone if you can't even convince yourself? Thunderclan is full charismatic and well liked cats!",
             "es":"**Persuasión, simpatía, cómo te presentas.**\n¿Cómo convencerás a alguien si ni siquiera puedes convencerte a ti mismo? ¡Thunderclan está lleno de gatos carismáticos y muy queridos!",
             "pr":"**Persuasão, simpatia, como você se apresenta.**\nComo você vai convencer alguém se não consegue convencer a si mesmo? Thunderclan é cheio de gatos carismáticos e bem quistos!",
-            "pol":"**Przekonywanie, sympatia, jak się prezentujesz.**\nJak przekonasz kogokolwiek, jeśli nie potrafisz przekonać samego siebie? Thunderclan to w pełni charyzmatyczne i lubiane koty!"
+            "pol":"**Przekonywanie, sympatia, jak się prezentujesz.**\nJak przekonasz kogokolwiek, jeśli nie potrafisz przekonać samego siebie? Thunderclan to w pełni charyzmatyczne i lubiane koty!",
+            "de":"**Überzeugungskraft, Sympathie, wie Sie sich präsentieren.**\nWie werden Sie jemanden überzeugen, wenn Sie sich nicht einmal selbst überzeugen können? Thunderclan ist voller charismatischer und beliebter Katzen!"
         },
         {
             "en":"**How well you swim.**",
             "es":"**Qué bien nadas.**",
             "pr":"**Quão bem você nada.**",
-            "pol":"**Jak dobrze pływasz.**"
+            "pol":"**Jak dobrze pływasz.**",
+            "de":"**Wie gut du schwimmst.**"
         },
         {
             "en":"**Stealth, how silent you can slink through shadows, bushes or night.**\nShadowClan is known for this!",
             "es":"**Sigilo, cuán silencioso puedes escabullirte a través de las sombras, los arbustos o la noche.**\n¡ShadowClan es conocido por esto!",
             "pr":"**Silencioso, quão silencioso você pode se esgueirar pelas sombras, arbustos ou noite.**\nShadowClan é conhecido por isso!",
-            "pol":"**Ukradkiem, jak cicho możesz przemykać przez cienie, krzaki lub noc.**\nShadowClan jest z tego znany!"
+            "pol":"**Ukradkiem, jak cicho możesz przemykać przez cienie, krzaki lub noc.**\nShadowClan jest z tego znany!",
+            "de":"**Heimlichkeit, wie leise du durch Schatten, Büsche oder Nacht schleichen kannst.**\nSchattenClan ist dafür bekannt!"
         }
     ],
     "ranges": [

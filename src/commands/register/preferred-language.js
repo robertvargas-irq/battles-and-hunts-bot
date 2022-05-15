@@ -31,6 +31,10 @@ module.exports = {
                 {
                     name: 'Polish',
                     value: Language.Languages.Polish,
+                },
+                {
+                    name: 'German',
+                    value: Language.Languages.German,
                 }
             ]
         }
@@ -59,6 +63,7 @@ module.exports = {
             es: 0,
             pr: 0,
             pol: 0,
+            de: 0,
         }
         Language.CachedLanguages.forEach(v => log[v]++);
         console.log(log);

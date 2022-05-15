@@ -14,6 +14,7 @@ class Language {
         Spanish:'es',
         Portuguese:'pr',
         Polish:'pol',
+        German: 'de',
     };
 
     /**

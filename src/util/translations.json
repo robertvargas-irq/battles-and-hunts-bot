@@ -4,55 +4,64 @@
             "en":"CURRENT HEALTH",
             "es":"SALUD ACTUAL",
             "pr":"SAÚDE ATUAL",
-            "pol":"AKTUALNE ZDROWIE"
+            "pol":"AKTUALNE ZDROWIE",
+            "de":"AKTUELLE GESUNDHEIT"
         },
         "CURRENT_HUNGER":{
             "en":"CURRENT HUNGER",
             "es":"HAMBRE ACTUAL",
             "pr":"FOME ATUAL",
-            "pol":"OBECNY GŁÓD"
+            "pol":"OBECNY GŁÓD",
+            "de":"AKTUELLER HUNGERSTAND"
         },
         "STATS_SAVED":{
             "en":"Your stats have been successfully saved!",
             "es":"¡Tus estadísticas se han guardado con éxito!",
             "pr":"Suas estatísticas foram salvas com sucesso!",
-            "pol":"Twoje statystyki zostały pomyślnie zapisane!"
+            "pol":"Twoje statystyki zostały pomyślnie zapisane!",
+            "de":"Deine Charaktereigenschaften wurden erfolgreich gespeichert!"
         },
         "MENU_DISMISS":{
             "en":"You may now dismiss this menu.",
             "es":"Ahora se puede descartar este menú.",
             "pr":"Agora você pode dispensar este menu.",
-            "pol":"Możesz teraz zamknąć to menu."
+            "pol":"Możesz teraz zamknąć to menu.",
+            "de":"Sie können dieses Menü jetzt schließen."
         },
         "SEND_TO_CANCEL":{
             "en":"Send cancel to quit.",
             "es":"Envie cancel para parar.",
             "pr":"Enviar cancel para parar.",
-            "pol":"Wyślij cancel, aby zatrzymać."
+            "pol":"Wyślij cancel, aby zatrzymać.",
+            "de":"cancel zum Stoppen senden."
         },
         "TIMEOUT":{
             "en":"This menu has timed out!",
             "es":"¡El tiempo ha expirado!",
             "pr":"O tempo deste menu expirou!",
-            "pol":"Upłynął limit czasu tego menu!"
+            "pol":"Upłynął limit czasu tego menu!",
+            "de":"Dieses Menü ist abgelaufen!"
         },
         "TIMEOUT_MESSAGE":{
             "en":"Please type faster next time",
             "es":"Por favor, escriba un poco más rápido la próxima vez",
             "pr":"Digite um pouco mais rápido da próxima vez",
-            "pol":"Następnym razem wpisz trochę szybciej"
+            "pol":"Następnym razem wpisz trochę szybciej",
+            "de":"Bitte tippen Sie das nächste Mal etwas schneller"
         },
         "SUCCESSFUL_CANCEL":{
             "en":"Successfully cancelled.",
             "es":"Cancelado con éxito.",
             "pr":"Cancelado com sucesso.",
-            "pol":"Anulowano pomyślnie."
+            "pol":"Anulowano pomyślnie.",
+            "de":"Erfolgreich gestoppt."
         },
         "SOMETHING_WENT_WRONG":{
             "en":"Something went wrong!",
             "es":"¡Algo salió mal!",
             "pr":"Algo deu errado!",
-            "pol":"Coś poszło nie tak!"
+            "pol":"Coś poszło nie tak!",
+            "de":"Etwas passiert!"
         }
     },
     "CORE_UTIL":{
@@ -60,13 +69,15 @@
             "en":"For cleanliness, this message will self-destruct in",
             "es":"Por limpieza, este mensaje se autodestruirá en",
             "pr":"Para limpeza, esta mensagem se autodestruirá em",
-            "pol":"Dla czystości ta wiadomość ulegnie samozniszczeniu w"
+            "pol":"Dla czystości ta wiadomość ulegnie samozniszczeniu w",
+            "de":"Aus Gründen der Sauberkeit zerstört sich diese Nachricht in"
         },
         "CLEANLINESS_2":{
             "en":"seconds",
             "es":"segundos",
             "pr":"segundos",
-            "pol":"sekundy"
+            "pol":"sekundy",
+            "de":"Sekunden selbst"
         }
     },
     "PREFERRED_LANGUAGE":{
@@ -74,7 +85,8 @@
             "en":":flag_us:|:flag_gb:\nYour preferred language has been successfully updated!",
             "es":":flag_mx:|:flag_sn:\nTu idioma preferido se actualizo!",
             "pr":":flag_br:|:flag_pt:\nSeu idioma preferido foi atualizado com sucesso!",
-            "pol":":flag_pl:\nTwój preferowany język został pomyślnie zaktualizowany!"
+            "pol":":flag_pl:\nTwój preferowany język został pomyślnie zaktualizowany!",
+            "de":":flag_de:\nIhre bevorzugte Sprache wurde erfolgreich aktualisiert!"
         }
     },
     "FIRST_TIME_REGISTER":{
@@ -82,7 +94,8 @@
             "en":"Welcome to the Battle System for **{{name}}**!\nLet's get you squared away, **${interaction.member.displayName}**!\nPlease send your character's stats. (These can always be changed later using `/edit`!)",
             "es":"¡Bienvenido al sistema de batalla de **{{name}}**!\n¡Vamos a ponerte en orden, **${interaction.member.displayName}**!\nEnvía las estadísticas de tu personaje. (¡Estos siempre se pueden cambiar más tarde usando `/edit`!)",
             "pr":"Bem-vindo ao Sistema de Batalha para **{{name}}**!\nVamos deixar você de lado, **${interaction.member.displayName}**!\nPor favor, envie as estatísticas do seu personagem. (Estes sempre podem ser alterados posteriormente usando `/edit`!)",
-            "pol":"Witamy w systemie bitewnym o **{{name}}**!\nRozwiążmy problem, **${interaction.member.displayName}**!\nProszę wysłać statystyki swojej postaci. (Można je zawsze zmienić później za pomocą `/edit`!)"
+            "pol":"Witamy w systemie bitewnym o **{{name}}**!\nRozwiążmy problem, **${interaction.member.displayName}**!\nProszę wysłać statystyki swojej postaci. (Można je zawsze zmienić później za pomocą `/edit`!)",
+            "de":"Welcome to the Battle System for **{{name}}**!\nLet's get you squared away, **${interaction.member.displayName}**!\nPlease send your character's stats. (These can always be changed later using `/edit`!)"
         }
     },
     "EDIT":{
@@ -90,13 +103,15 @@
             "en":"**Welcome back to the editor!**\nPlease enter your character's stats one by one!",
             "es":"**¡Bienvenido de nuevo al editor!**\n¡Por favor ingresa los puntos de estadísticas de tu personaje uno por uno!",
             "pr":"**Bem-vindo de volta ao editor!**\nPor favor, insira os pontos de status do seu personagem um por um!",
-            "pol":"**Witamy z powrotem w edytorze!**\nWprowadź jeden po drugim statystyki swojej postaci!"
+            "pol":"**Witamy z powrotem w edytorze!**\nWprowadź jeden po drugim statystyki swojej postaci!",
+            "de":"**Willkommen zurück im Editor!**\nBitte geben Sie die Statuspunkte Ihres Charakters nacheinander ein!"
         },
         "UNABLE_TO_SAVE":{
             "en":"We were unable to save your changes to the database, please try again later!\nIf this issue persists, please let a moderator know!",
             "es":"No pudimos guardar los cambios en la base de datos. Vuelva a intentarlo más tarde.\nSi el problema persiste, informe a un moderador.",
             "pr":"Não foi possível salvar suas alterações no banco de dados, tente novamente mais tarde!\nSe o problema persistir, informe um moderador!",
-            "pol":"Nie udało się zapisać zmian w bazie danych, spróbuj ponownie później!\nJeśli problem będzie się powtarzał, powiadom moderatora!"
+            "pol":"Nie udało się zapisać zmian w bazie danych, spróbuj ponownie później!\nJeśli problem będzie się powtarzał, powiadom moderatora!",
+            "de":"Wir konnten Ihre Änderungen nicht in der Datenbank speichern, bitte versuchen Sie es später erneut!\nSollte dieses Problem weiterhin bestehen, teilen Sie dies bitte einem Moderator mit!"
         }
     },
     "REGISTER":{
@@ -104,13 +119,15 @@
             "en":"You are already registered!",
             "es":"Ya estás registrado!",
             "pr":"Você já está registrado!",
-            "pol":"Jesteś już zarejestrowany!"
+            "pol":"Jesteś już zarejestrowany!",
+            "de":"Du bist bereits registriert!"
         },
         "ALREADY_REGISTERED_DESCRIPTION":{
             "en":"If you want to attack another user during RP, use `/attack`!\nIf you wish to edit your stats, use `/edit`!",
             "es":"Si quieres atacar otro miembro durante RP, usa `/attack`!\nSi quieres modificar sus estadísticas, usa `/edit`!",
             "pr":"Se você quiser atacar outro usuário durante o RP, use `/attack`!\nSe você deseja editar suas estatísticas, use `/edit`!",
-            "pol":"Jeśli chcesz zaatakować innego użytkownika podczas RP, użyj `/attack`!\nJeśli chcesz edytować swoje statystyki, użyj `/edit`!"
+            "pol":"Jeśli chcesz zaatakować innego użytkownika podczas RP, użyj `/attack`!\nJeśli chcesz edytować swoje statystyki, użyj `/edit`!",
+            "de":"Wenn Sie während des RP einen anderen Benutzer angreifen möchten, verwenden Sie `/attack`!\nWenn Sie Ihre Statistiken bearbeiten möchten, verwenden Sie `/edit`!"
         }
     },
     "COLLECT_CHARACTER_STATS":{
@@ -118,56 +135,65 @@
             "en":"Stat Declaration",
             "es":"Declaración de Estadísticas",
             "pr":"Declaração de ponto",
-            "pol":"Deklaracja Punktu"
+            "pol":"Deklaracja Punktu",
+            "de":"Punkt Deklaration"
         },
         "PLEASE_SEND":{
             "en":"Please send your character's",
             "es":"Envía la estadística",
             "pr":"Envie a estatística de",
-            "pol":"Prześlij statystyki"
+            "pol":"Prześlij statystyki",
+            "de":"Bitte sende die\""
         },
         "PLEASE_SEND_FOLLOWUP":{
             "en":"stat.",
             "es":"de su personaje.",
             "pr":"do seu personagem.",
-            "pol":"swojej postaci."
+            "pol":"swojej postaci.",
+            "de":"\"-Statistik Ihres Charakters"
         },
         "INVALID_INPUT_1":{
             "en":"is **NOT** a valid input! Please only send a number between",
             "es":"**NO** es una entrada válida! Por favor solo envíe un número entre",
             "pr":"**NÃO** é uma entrada válida! Por favor, envie apenas um número entre",
-            "pol":"**NIE** jest prawidłowym wejściem! Proszę wysłać numer tylko między"
+            "pol":"**NIE** jest prawidłowym wejściem! Proszę wysłać numer tylko między",
+            "de":"ist **KEINE** gültige Eingabe! Bitte senden Sie nur eine Zahl zwischen"
         },
         "INVALID_INPUT_2":{
             "en":"attempts remaining",
             "es":"intentos restantes",
             "pr":"tentativas restantes",
-            "pol":"pozostałe próby"
+            "pol":"pozostałe próby",
+            "de":"verbleibende Versuche"
         },
         "TOO_MANY_INVALID":{
             "en":"Too many invalid inputs.",
             "es":"Demasiadas entradas incorrectas.",
             "pr":"Muitas entradas inválidas.",
-            "pol":"Zbyt wiele nieprawidłowych danych wejściowych."
+            "pol":"Zbyt wiele nieprawidłowych danych wejściowych.",
+            "de":"Zu viele ungültige Eingaben."
         },
         "TOO_MANY_INVALID_MESSAGE":{
             "en":"Please send your previous command again",
             "es":"Por favor, envíe su comando anterior una vez más",
             "pr":"Por favor, envie seu comando anterior mais uma vez",
-            "pol":"Proszę ponownie wysłać poprzednie polecenie"
+            "pol":"Proszę ponownie wysłać poprzednie polecenie",
+            "de":"Bitte senden Sie Ihren vorherigen Befehl erneut"
 
         },
         "NOT_REGISTERED":{
             "en":"You have not submitted a character yet.",
             "es":"Aún no ha enviado un formulario de carácter.",
             "pr":"Você ainda não enviou um formulário de personagem.",
-            "pol":"Nie przesłałeś jeszcze formularza postaci."
+            "pol":"Nie przesłałeś jeszcze formularza postaci.",
+            "de":"Sie haben noch kein Zeichenformular eingereicht."
         },
         "NOT_REGISTERED_MESSAGE":{
             "en":"You do not have a clan role yet. If this is a mistake, please let an administrator know",
             "es":"Todavía no se le ha asignado un rol de clan. Si esto es un error, informe a un administrador",
             "pr":"Você ainda não recebeu uma função de clã. Se isso for um erro, informe um administrador",
-            "pol":"Nie otrzymałeś jeszcze roli w klanie. Jeśli to pomyłka, poinformuj o tym administratora"
+            "pol":"Nie otrzymałeś jeszcze roli w klanie. Jeśli to pomyłka, poinformuj o tym administratora",
+            "de":"Du hast noch keine Clan-Rolle. Wenn dies ein Fehler ist, teilen Sie dies bitte einem Administrator mit"
         }
     },
     "PLAYER":{
@@ -175,13 +201,15 @@
             "en":"Player Stats",
             "es":"Estadísticas del Jugador",
             "pr":"Estatísticas do Jogador",
-            "pol":"Statystyki Gracza"
+            "pol":"Statystyki Gracza",
+            "de":"Spielerstatistiken"
         },
         "CLAN_AFFILIATION":{
             "en":"CLAN AFFILIATION",
             "es":"AFILIACIÓN DEL CLAN",
             "pr":"AFILIAÇÃO DO CLÃ",
-            "pol":"PRZYNALEŻNOŚĆ DO KLANU"
+            "pol":"PRZYNALEŻNOŚĆ DO KLANU",
+            "de":"CLAN-ZUGEHÖRIGKEIT"
         }
     }
 }

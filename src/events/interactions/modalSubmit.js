@@ -21,6 +21,7 @@ module.exports = async (/**@type {ModalSubmitInteraction}*/ interaction) => {
             // validate incoming data (! will change when Select Menus are supported in Discord v14)
             if (!type) {
                 return interaction.reply({
+                    ephemeral: true,
                     embeds: [new MessageEmbed({
                         color: 'YELLOW',
                         title: '⚠️ Hm, that doesn\'t look right...',
@@ -40,6 +41,7 @@ module.exports = async (/**@type {ModalSubmitInteraction}*/ interaction) => {
             }
             if (!day) {
                 return interaction.reply({
+                    ephemeral: true,
                     embeds: [new MessageEmbed({
                         color: 'YELLOW',
                         title: '⚠️ Hm, that doesn\'t look right...',

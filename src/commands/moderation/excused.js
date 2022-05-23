@@ -48,7 +48,7 @@ module.exports = {
                             label: 'Reason',
                             style: 'PARAGRAPH',
                             minLength: 1,
-                            maxLength: 20,
+                            maxLength: 25,
                             required: true,
                         })
                     ],

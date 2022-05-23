@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const userSchema = require('../database/schemas/user');
 const serverSchema = require('../database/schemas/server');
 const ROLEPLAY_NAME = 'The Black Sun';
-const Translator = require('./Translator');
 
 /**
  * Custom methods for myself because I am tired of rewriting them everywhere.
@@ -113,6 +112,90 @@ class CoreUtil {
     static async FetchAllUsers() {
         const UserModel = mongoose.model('User', userSchema);
         return { UserModel, users: await UserModel.find() };
+    }
+
+    
+    /**
+     * Prompts that time has run out.
+     * @param {BaseCommandInteraction} interaction 
+     * @param {Translator} translator
+     */
+    static InformTimeout(interaction, translator) {
+        if (!translator) translator = new (require('./Translator'))();
+        interaction.editReply({
+            embeds: [ new MessageEmbed()
+                .setColor('AQUA')
+                .setTitle("⏰ " + translator.getGlobal('TIMEOUT'))
+                .setDescription(translator.getGlobal('TIMEOUT_MESSAGE') + " ❣️"),
+            ]
+        });
+        return false;
+    }
+
+    /**
+     * Inform that input is invalid.
+     * @param {BaseCommandInteraction} interaction 
+     * @param {Translator} translator
+     */
+    static InformInvalid(interaction, translator) {
+        if (!translator) translator = new require('./Translator')();
+        interaction.editReply({
+            embeds: [ new MessageEmbed()
+                .setColor('AQUA')
+                .setTitle("⚠️ " + translator.get('TOO_MANY_INVALID'))
+                .setDescription(translator.get('TOO_MANY_INVALID_MESSAGE') + " ❣️"),
+            ]
+        });
+        return false;
+    }
+
+    /**
+     * Inform that they have not been assigned a clan yet.
+     * @param {BaseCommandInteraction} interaction 
+     * @param {Translator} translator
+     */
+    static InformNotRegistered(interaction, translator) {
+        if (!translator) translator = new require('./Translator')();
+        interaction.editReply({
+            embeds: [ new MessageEmbed()
+                .setColor('RED')
+                .setTitle("⚠️ " + translator.get('NOT_REGISTERED'))
+                .setDescription(translator.get('NOT_REGISTERED_MESSAGE') + " ❣️"),
+            ]
+        });
+        return false;
+    }
+
+    /**
+     * Show successful cancellation.
+     * @param {BaseCommandInteraction} interaction 
+     * @param {Translator} translator
+     */
+    static InformSuccessfulCancel(interaction, translator) {
+        if (!translator) translator = new require('./Translator')();
+        interaction.editReply({
+            embeds: [ new MessageEmbed()
+                .setColor('AQUA')
+                .setTitle("✅ " + translator.getGlobal('SUCCESSFUL_CANCEL'))
+                .setDescription(translator.getGlobal('MENU_DISMISS') + " ❣️"),
+            ]
+        });
+        return false;
+    }
+
+    /**
+     * Helper function; collects one input.
+     * @param {BaseCommandInteraction} interaction
+     */
+    static async CollectOneMessage(interaction, filter) {
+        let input = await interaction.channel.awaitMessages({ filter: filter, max: 1, time: TIME * 1000, errors: ['time'] })
+            .then(collected => {
+                let content = collected.first().content;
+                collected.first().delete().catch(console.error);
+                return content;
+            })
+            .catch(() => { return false });
+        return input;
     }
 
 }

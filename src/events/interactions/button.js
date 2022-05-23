@@ -18,7 +18,7 @@ module.exports = async (button) => {
             await button.deferReply({ ephemeral: true });
             
             // get server entry from the database
-            const server = await VerificationHandler.FetchServer(interaction.guild.id);
+            const server = await VerificationHandler.FetchServer(button.guild.id);
 
             // check to see if request is already pending
             if (VerificationHandler.isPending(server, button.user.id, null))
@@ -91,7 +91,7 @@ module.exports = async (button) => {
             if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
             
             // get server entry from the database
-            const server = await VerificationHandler.FetchServer(interaction.guild.id);
+            const server = await VerificationHandler.FetchServer(button.guild.id);
 
             // check to see if the request is already pending
             if (!VerificationHandler.isPending(server, null, button.message.id))
@@ -169,7 +169,7 @@ module.exports = async (button) => {
             if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
             
             // get server entry from the database
-            const server = await VerificationHandler.FetchServer(interaction.guild.id);
+            const server = await VerificationHandler.FetchServer(button.guild.id);
 
             // check to see if the request is already pending
             if (!VerificationHandler.isPending(server, null, button.message.id))

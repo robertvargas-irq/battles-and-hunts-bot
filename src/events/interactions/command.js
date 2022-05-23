@@ -1,5 +1,4 @@
 const { MessageEmbed, Permissions, BaseCommandInteraction } = require('discord.js');
-const fs = require('fs');
 
 const restrictions = require('./restrictions.json');
 

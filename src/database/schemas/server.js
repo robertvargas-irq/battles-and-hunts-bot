@@ -21,6 +21,7 @@ const { Schema } = require("mongoose");
  *          pendingToMessageId: Map<string, string>
  *          messageIdToPending: Map<string, string>
  *      },
+ *      excusesChannelId: string,
  *      roles: {
  *          adult: string
  *      }

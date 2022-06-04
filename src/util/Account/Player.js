@@ -1,6 +1,6 @@
 const FILE_LANG_ID = 'PLAYER';
 
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { GuildMember, MessageEmbed } = require('discord.js');
 const userSchema = require('../../database/schemas/user');
 const Translator = require('../Translator');
 const {ranges, flairs, name_translations} = require('./stats.json');
@@ -8,11 +8,11 @@ const STATS_BANNER = 'https://media.discordapp.net/attachments/95424641498730907
 
 /**
  * Format player stats.
- * @param {BaseCommandInteraction} interaction 
+ * @param {GuildMember} member
  * @param {userSchema} userData 
  * @param {string} originalCallerId For translation purposes
  */
-function formatStats(interaction, userData, originalCallerId) {
+function formatStats(member, userData, originalCallerId) {
 
     const translator = new Translator(originalCallerId, FILE_LANG_ID);
     
@@ -20,11 +20,11 @@ function formatStats(interaction, userData, originalCallerId) {
     return new MessageEmbed()
         .setColor('LUMINOUS_VIVID_PINK')
         .setAuthor({
-            name: interaction.member.displayName + ' ' + translator.get('STATS_HEADER'),
-            iconURL: interaction.guild.iconURL()
+            name: member.displayName + ' ' + translator.get('STATS_HEADER'),
+            iconURL: member.guild.iconURL()
         })
         .setImage(STATS_BANNER)
-        .setThumbnail(interaction.member.displayAvatarURL())
+        .setThumbnail(member.displayAvatarURL())
         .setDescription('**- - - - -**')
         .setFields([
             {

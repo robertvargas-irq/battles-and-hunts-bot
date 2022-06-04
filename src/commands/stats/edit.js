@@ -2,7 +2,7 @@ const FILE_LANG_ID = 'EDIT';
 
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const collectCharacterStats = require('../../util/Account/collectCharacterStats');
-const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
+const Player = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');
 const Translator = require('../../util/Translator');
 
@@ -27,8 +27,8 @@ module.exports = {
         if (!catStats) return; // error already handled inside collect()
 
         // handle new max health
-        if (found.currentHealth > calculateMaxHealth(catStats.constitution))
-            found.currentHealth = calculateMaxHealth(catStats.constitution);
+        if (found.currentHealth > Player.calculateMaxHealth(catStats.constitution))
+            found.currentHealth = Player.calculateMaxHealth(catStats.constitution);
 
         // handle new hunger
         if (found.stats.cat_size < found.currentHunger)
@@ -47,7 +47,7 @@ module.exports = {
                             .setColor('AQUA')
                             .setTitle('🌟 ' + translator.getGlobal('STATS_SAVED'))
                             .setDescription(translator.getGlobal('MENU_DISMISS')),
-                        formatStats(interaction, found)
+                        Player.formatStats(interaction, found)
                     ]
                 });
             })

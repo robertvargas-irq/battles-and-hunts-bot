@@ -3,7 +3,7 @@ const FILE_LANG_ID = 'REGISTER'
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const userSchema = require('../../database/schemas/user');
 const firstTimeRegister = require('../../util/Account/firstTimeRegister');
-const { formatStats } = require('../../util/Account/Player');
+const Player = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');
 const Language = require('../../util/Language');
 const Translator = require('../../util/Translator');
@@ -38,7 +38,7 @@ module.exports = {
                     .setColor('AQUA')
                     .setTitle('🌟 ' + Translator.getGlobal('STATS_SAVED'))
                     .setDescription(Translator.getGlobal('MENU_DISMISS')),
-                formatStats(interaction, found)
+                Player.formatStats(interaction, found)
             ]
         });
     },
@@ -57,7 +57,7 @@ function alreadyRegistered(interaction, userData, translator) {
                 .setColor('AQUA')
                 .setTitle('🌟 ' + translator.get('ALREADY_REGISTERED_TITLE'))
                 .setDescription(translator.get('ALREADY_REGISTERED_DESCRIPTION')),
-            formatStats(interaction, userData)
+            Player.formatStats(interaction, userData)
         ]
     })
 }

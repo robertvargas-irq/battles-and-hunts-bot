@@ -130,11 +130,82 @@ module.exports = {
                     ],
                 }
             ]
+        },
+        {
+            name: 'hunting',
+            description: '(🔒 ADMINISTRATOR ONLY) Configure hunting.',
+            type: dTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'dc',
+                    description: 'Change the Hunting DC (roll needed to successfully hunt)',
+                    type: dTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'value',
+                            description: 'Please enter a positive value for Hunting DC.',
+                            type: dTypes.Integer,
+                            required: true,
+                        }
+                    ]
+                },
+                {
+                    name: 'starve-everyone',
+                    description: '(🔒 ADMINISTRATOR ONLY) Set all player\'s hunger to 0.',
+                    type: dTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'are-you-sure',
+                            description: '❗(🔒) Please ensure you are not calling this command by mistake.',
+                            type: dTypes.String,
+                            required: true,
+                            choices: [
+                                {
+                                    name: 'Yes',
+                                    value: 'yes'
+                                }
+                            ],
+                        },
+                    ],
+                },
+                {
+                    name: 'spoil-everything',
+                    description: '(🔒 ADMINISTRATOR ONLY) Spoil all food in all prey piles.',
+                    type: dTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'are-you-sure',
+                            description: '❗(🔒) Please ensure you are not calling this command by mistake.',
+                            type: dTypes.String,
+                            required: true,
+                            choices: [
+                                {
+                                    name: 'Yes',
+                                    value: 'yes'
+                                }
+                            ],
+                        },
+                    ],
+                }
+            ]
         }
     ],
     /**@param {BaseCommandInteraction} interaction */
     async execute(interaction) {
         console.log({interaction});
+
+        // filter out non-administrators
+        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
+            return interaction.editReply({
+                embeds: [new MessageEmbed()
+                    .setColor('RED')
+                    .setTitle('❗ Woah wait-!')
+                    .setDescription(
+                        `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
+                    )
+                ]
+            });
+        }
         
         // route
         const group = interaction.options.getSubcommandGroup();
@@ -144,6 +215,8 @@ module.exports = {
                 return require('./admin-routes/admin-excuses')(interaction, subcommand);
             case 'audit':
                 return require('./admin-routes/admin-audit')(interaction, subcommand);
+            case 'hunting':
+                return require('./admin-routes/admin-hunting')(interaction, subcommand);
         }
 
     },

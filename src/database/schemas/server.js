@@ -22,6 +22,8 @@ const { Schema } = require("mongoose");
  *          messageIdToPending: Map<string, string>
  *      },
  *      excusesChannelId: string,
+ *      excusesThreads: Map<string, string>,
+ *      excusesPaused: Map<string, string>,
  *      roles: {
  *          adult: string
  *      }
@@ -102,6 +104,16 @@ const serverSchema = new Schema({
     excusesChannelId: {
         type: String,
         default: null,
+    },
+    excusesThreads: {
+        type: Map,
+        of: String,
+        default: new Map(),
+    },
+    excusesPaused: {
+        type: Map,
+        of: String,
+        default: new Map(),
     },
     roles: {
         adult: {

@@ -1,8 +1,7 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
+const { BaseCommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
-const Excuse = require('../../database/schemas/excuse');
 
 module.exports = {
     name: 'spawn',

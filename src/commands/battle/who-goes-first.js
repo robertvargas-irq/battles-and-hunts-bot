@@ -8,7 +8,7 @@ module.exports = {
     options: [
         {
             name: 'opponent',
-            description: 'The target of this attack.',
+            description: 'Your opponent.',
             type: CommandTypes.User,
             required: true,
         },

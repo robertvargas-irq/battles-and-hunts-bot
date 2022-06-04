@@ -186,13 +186,22 @@ module.exports = {
                             ],
                         },
                     ],
+                },
+                {
+                    name: 'lock',
+                    description: '(🔒 ADMINISTRATOR ONLY) Lock all the prey piles.',
+                    type: dTypes.Subcommand,
+                },
+                {
+                    name: 'unlock',
+                    description: '(🔒 ADMINISTRATOR ONLY) Unlock all the prey piles.',
+                    type: dTypes.Subcommand,
                 }
             ]
         }
     ],
     /**@param {BaseCommandInteraction} interaction */
     async execute(interaction) {
-        console.log({interaction});
 
         // filter out non-administrators
         if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {

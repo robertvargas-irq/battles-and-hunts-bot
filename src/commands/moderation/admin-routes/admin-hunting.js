@@ -105,6 +105,70 @@ module.exports = async (interaction, subcommand) => {
                     .setDescription('As the moons pass, disease and rot takes away what little you have left.')
                 ]
             })
+        } // end spoil-everything
+
+        case 'lock': {
+            // defer
+            await interaction.deferReply({ ephemeral: false });
+
+            // pull server from the database
+            const server = await HuntManager.FetchServer(interaction.guild.id);
+
+            // inform if already locked
+            if (server.hunting.locked) return interaction.editReply({
+                embeds: [new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: '🔐 Hunting is already locked!',
+                })]
+            });
+
+            // lock hunting and save
+            server.hunting.locked = true;
+            await server.save();
+
+            // notify successful set
+            return interaction.editReply({
+                embeds: [new MessageEmbed()
+                    .setColor('DARK_VIVID_PINK')
+                    .setTitle('🔒 Hunting has been heavily restricted.')
+                    .setDescription(
+                        '> We hope you had a wonderful roleplay session, hunting is now restricted.'
+                        + '\n\n`/carry` `/deposit` `/eat` are now `disabled`.'
+                    )
+                ]
+            });
+        }
+
+        case 'unlock': {
+            // defer
+            await interaction.deferReply({ ephemeral: false });
+
+            // pull server from the database
+            const server = await HuntManager.FetchServer(interaction.guild.id);
+
+            // inform if already unlocked
+            if (!server.hunting.locked) return interaction.editReply({
+                embeds: [new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: '🔓 Hunting is already unlocked!',
+                })]
+            });
+
+            // unlock hunting and save
+            server.hunting.locked = false;
+            await server.save();
+
+            // notify successful set
+            return interaction.editReply({
+                embeds: [new MessageEmbed()
+                    .setColor('GREEN')
+                    .setTitle('🔓 Hunting is now fully available.')
+                    .setDescription(
+                        '> This probably means that a session is about to start, **happy roleplaying!**'
+                        + '\n\n`/carry` `/deposit` `/eat` are now `enabled`.'
+                    )
+                ]
+            });
         }
     }
 

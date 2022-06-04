@@ -1,8 +1,5 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
-const VerificationHandler = require('../../util/Verification/VerificationHandler');
-const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
-const Excuse = require('../../database/schemas/excuse');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
+const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const DAY_CHOICES = [
     {
         name: 'Friday',
@@ -25,18 +22,18 @@ module.exports = {
         {
             name: 'excuses',
             description: '(🔒 ADMINISTRATOR ONLY) Spawn and configure Excuses.',
-            type: dTypes.SubcommandGroup,
+            type: CommandTypes.SubcommandGroup,
             options: [
                 {
                     name: 'clear',
                     description: 'Clear out a full day\'s worth of excuses.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'day',
                             description: 'Which day would you like to clear?',
                             required: true,
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             choices: DAY_CHOICES,
                         }
                     ]
@@ -44,13 +41,13 @@ module.exports = {
                 {
                     name: 'pause',
                     description: 'Pause incoming requests.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'day',
                             description: 'Which day would you like to pause?',
                             required: true,
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             choices: DAY_CHOICES,
                         }
                     ],
@@ -58,13 +55,13 @@ module.exports = {
                 {
                     name: 'unpause',
                     description: 'Resume incoming requests.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'day',
                             description: 'Which day would you like to unpause?',
                             required: true,
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             choices: DAY_CHOICES,
                         }
                     ],
@@ -74,18 +71,18 @@ module.exports = {
         {
             name: 'audit',
             description: '(🔒 ADMINISTRATOR ONLY) Perform audits',
-            type: dTypes.SubcommandGroup,
+            type: CommandTypes.SubcommandGroup,
             options: [
                 {
                     name: 'excuses',
                     description: 'Audit all excuses for a given day',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'day',
                             description: 'Which day to audit',
                             required: true,
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             choices: DAY_CHOICES,
                         }
                     ]
@@ -93,12 +90,12 @@ module.exports = {
                 {
                     name: 'registration',
                     description: '(🔒 ADMINISTRATOR ONLY) Check to see which users are not registered for the bot.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'ping-them',
                             description: '❗(🔒) If you wish to ping them all: YES. If you want to view quietly: NO.',
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             required: true,
                             choices: [
                                 {
@@ -114,7 +111,7 @@ module.exports = {
                         {
                             name: 'view-privately',
                             description: '❗(🔒) If you wish to view this in a private message.',
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             required: true,
                             choices: [
                                 {
@@ -134,17 +131,17 @@ module.exports = {
         {
             name: 'hunting',
             description: '(🔒 ADMINISTRATOR ONLY) Configure hunting.',
-            type: dTypes.SubcommandGroup,
+            type: CommandTypes.SubcommandGroup,
             options: [
                 {
                     name: 'dc',
                     description: 'Change the Hunting DC (roll needed to successfully hunt)',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'value',
                             description: 'Please enter a positive value for Hunting DC.',
-                            type: dTypes.Integer,
+                            type: CommandTypes.Integer,
                             required: true,
                         }
                     ]
@@ -152,12 +149,12 @@ module.exports = {
                 {
                     name: 'starve-everyone',
                     description: '(🔒 ADMINISTRATOR ONLY) Set all player\'s hunger to 0.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'are-you-sure',
                             description: '❗(🔒) Please ensure you are not calling this command by mistake.',
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             required: true,
                             choices: [
                                 {
@@ -171,12 +168,12 @@ module.exports = {
                 {
                     name: 'spoil-everything',
                     description: '(🔒 ADMINISTRATOR ONLY) Spoil all food in all prey piles.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'are-you-sure',
                             description: '❗(🔒) Please ensure you are not calling this command by mistake.',
-                            type: dTypes.String,
+                            type: CommandTypes.String,
                             required: true,
                             choices: [
                                 {
@@ -190,13 +187,38 @@ module.exports = {
                 {
                     name: 'lock',
                     description: '(🔒 ADMINISTRATOR ONLY) Lock all the prey piles.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                 },
                 {
                     name: 'unlock',
                     description: '(🔒 ADMINISTRATOR ONLY) Unlock all the prey piles.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                 }
+            ]
+        },
+        {
+            name: 'stats',
+            description: '(🔒 ADMINISTRATOR ONLY) Configure stats.',
+            type: CommandTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'lock',
+                    description: 'Re-lock everyone\'s stats.',
+                    type: CommandTypes.Subcommand,
+                },
+                {
+                    name: 'unlock',
+                    description: 'Unlock someone\'s stats to allow a quick edit.',
+                    type: CommandTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'user',
+                            description: 'Who to allow to /edit their stats.',
+                            type: CommandTypes.User,
+                            required: true,
+                        }
+                    ]
+                },
             ]
         }
     ],
@@ -226,6 +248,8 @@ module.exports = {
                 return require('./admin-routes/admin-audit')(interaction, subcommand);
             case 'hunting':
                 return require('./admin-routes/admin-hunting')(interaction, subcommand);
+            case 'stats':
+                return require('./admin-routes/admin-stats')(interaction, subcommand);
         }
 
     },

@@ -1,70 +1,39 @@
 const { ModalSubmitInteraction, MessageEmbed } = require('discord.js');
-const Excuse = require('../../util/Excused/Excuse');
-const COLLECT_TIME = 5 * 60 * 1000; // 5 minutes
+const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
+const Excuse = require('../../database/schemas/excuse');
 
 module.exports = async (/**@type {ModalSubmitInteraction}*/ interaction) => {
-    switch (interaction.customId) {
-        case 'excused_modal': {
+    const [MODAL_ID, ...ARGS] = interaction.customId.split(':');
+    switch (MODAL_ID) {
+        case 'EXCUSE': {
+
+            interaction.deferReply({ ephemeral: true });
             
             console.log(`Submitted ${interaction.customId}; received: `);
             console.log({
-                TYPE: interaction.fields.getTextInputValue('excused_type'),
-                DAY: interaction.fields.getTextInputValue('excused_day'),
+                DAY: ARGS[0],
+                TYPE: ARGS[1],
                 REASON: interaction.fields.getTextInputValue('excused_reason'),
             });
 
             // extract values
-            const day = Excuse.parseDay(interaction.fields.getTextInputValue('excused_day'));
-            const type = Excuse.parseType(interaction.fields.getTextInputValue('excused_type'));
+            const [day, type] = ARGS;
             const reason = interaction.fields.getTextInputValue('excused_reason');
 
-            // validate incoming data (! will change when Select Menus are supported in Discord v14)
-            if (!type) {
-                return interaction.reply({
-                    ephemeral: true,
-                    embeds: [new MessageEmbed({
-                        color: 'YELLOW',
-                        title: '⚠️ Hm, that doesn\'t look right...',
-                        description: 'Please enter a valid type.',
-                        fields: [
-                            {
-                                name: 'Expected',
-                                value: '> ' + Excuse.types.join(' `or` '),
-                            },
-                            {
-                                name: 'Input',
-                                value: '> ' + interaction.fields.getTextInputValue('excused_type'),
-                            }
-                        ]
-                    })]
-                })
-            }
-            if (!day) {
-                return interaction.reply({
-                    ephemeral: true,
-                    embeds: [new MessageEmbed({
-                        color: 'YELLOW',
-                        title: '⚠️ Hm, that doesn\'t look right...',
-                        description: 'Please enter a valid day.',
-                        fields: [
-                            {
-                                name: 'Expected',
-                                value: '> ' + Excuse.days.join(' `or` '),
-                            },
-                            {
-                                name: 'Input',
-                                value: '> ' + interaction.fields.getTextInputValue('excused_day'),
-                            }
-                        ]
-                    })]
-                })
-            }
-
-            // post the excuse pending moderator approval
-            Excuse.post(type, day, reason);
-
+            // create and post the excuse, pending moderator approval
+            const createdExcuse = new Excuse({
+                guildId: interaction.guild.id,
+                userId: interaction.user.id,
+                day,
+                type,
+                reason,
+            });
+            const processingMessage = await ExcuseHandler.post(interaction, createdExcuse);
+            createdExcuse.processingMessageId = processingMessage.id;
+            await createdExcuse.save();
+            
             // notify
-            interaction.reply({
+            interaction.editReply({
                 ephemeral: true,
                 embeds: [new MessageEmbed({
                     color: 'GREEN',

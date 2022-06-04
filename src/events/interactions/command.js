@@ -36,16 +36,10 @@ module.exports = async ( interaction ) => {
             + `${error.stack}` );
 
         // send error message
-        try {
-            console.error(error);
-            // if (!interaction.replied)
-            //     await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-            // else
-            //     await interaction.editReply({ content: 'There was an error while executing this command!' });
-        }
-        catch {
-            // await interaction.editReply({ content: 'There was an error while executing this command!' });
-        }
+        if (!interaction.replied)
+            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+        else
+            await interaction.editReply({ content: 'There was an error while executing this command!' });
 
     }
 }

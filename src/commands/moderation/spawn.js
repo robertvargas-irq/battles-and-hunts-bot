@@ -39,29 +39,59 @@ module.exports = {
                     required: true,
                 }
             ],
+        },
+        {
+            name: 'prey-pile',
+            description: '(🔒 ADMINISTRATOR ONLY) Spawn in a visual prey pile.',
+            type: dTypes.Subcommand,
+            options: [
+                {
+                    name: 'clan',
+                    description: 'The clan you wish to spawn the pile visual in.',
+                    type: dTypes.String,
+                    required: true,
+                    choices: [
+                        {
+                            name: 'The Unforgiven',
+                            value: 'unforgiven'
+                        },
+                        {
+                            name: 'River-Clan',
+                            value: 'riverclan'
+                        },
+                        {
+                            name: 'Shadow-Clan',
+                            value: 'shadowclan'
+                        },
+                        {
+                            name: 'Thunder-Clan',
+                            value: 'thunderclan'
+                        },
+                    ],
+                },
+            ],
         }
     ],
     /**@param {BaseCommandInteraction} interaction */
     async execute(interaction) {
 
+        // filter out non-administrators
+        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
+            return interaction.editReply({
+                embeds: [new MessageEmbed()
+                    .setColor('RED')
+                    .setTitle('❗ Woah wait-!')
+                    .setDescription(
+                        `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
+                    )
+                ]
+            });
+        }
+
         switch (interaction.options.getSubcommand()) {
             case 'excuses': {
                 // grab choice
                 const processingChannel = interaction.options.getChannel('excuse-processing-channel');
-
-                // filter out non-administrators
-                if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-                    return interaction.reply({
-                        ephemeral: true,
-                        embeds: [new MessageEmbed()
-                            .setColor('RED')
-                            .setTitle('❗ Woah wait-!')
-                            .setDescription(
-                                `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
-                            )
-                        ]
-                    });
-                }
 
                 // ensure the channel is valid
                 if (processingChannel.type !== 'GUILD_TEXT') {
@@ -115,19 +145,6 @@ module.exports = {
                 const requestChannel = interaction.channel;
                 const processingChannel = interaction.options.getChannel('request-processing-channel');
                 const adultRole = interaction.options.getRole('adult-role');
-
-                // filter out non-administrators
-                if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-                    return interaction.editReply({
-                        embeds: [new MessageEmbed()
-                            .setColor('RED')
-                            .setTitle('❗ Woah wait-!')
-                            .setDescription(
-                                `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
-                            )
-                        ]
-                    });
-                }
                 
                 // pull server from the database
                 const server = await VerificationHandler.FetchServer(interaction.guild.id);
@@ -147,6 +164,35 @@ module.exports = {
                         + '\n`Processing Channel`: <#' + processingChannel.id + '>'
                         + '\n`Adult Role`: <@&' + adultRole.id + '>'
                         )
+                    ]
+                });
+            }
+
+            case 'prey-pile': {
+
+                // defer
+                await interaction.deferReply({ ephemeral: true });
+
+                // grab choice
+                const clan = interaction.options.getString('clan');
+                
+                // pull server from the database
+                const server = await PreyPile.FetchServer(interaction.guild.id);
+
+                // set current channel to the corresponding clan's preyPileChannelId
+                await PreyPile.setPreyPileChannelAndSpawn(interaction, server, clan);
+                await server.save()
+                    .then(console.log)
+                    .catch(console.error);
+
+                // notify successful set
+                return interaction.editReply({
+                    embeds: [new MessageEmbed()
+                        .setColor('GREEN')
+                        .setTitle('✅ Successfully spawned the prey pile')
+                        .setDescription(`The prey pile for \`${clan.toUpperCase()}\` has been successfully spawned.\
+                        \nBoth the channel and message have been saved, and any updates to it will be recorded within this channel and the existing message.\
+                        \nThere are fall-backs in case there is any deletion.`)
                     ]
                 });
             }

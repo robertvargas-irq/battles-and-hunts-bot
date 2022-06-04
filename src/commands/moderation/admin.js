@@ -125,6 +125,11 @@ module.exports = {
                             ],
                         },
                     ],
+                },
+                {
+                    name: 'starvation',
+                    description: '(🔒 ADMINISTRATOR ONLY) Check to see which characters are about to starve...',
+                    type: CommandTypes.Subcommand,
                 }
             ]
         },

@@ -57,15 +57,15 @@ module.exports = {
         if (!found) {
             if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
             else interaction.editReply({
-                    embeds: [new MessageEmbed()
-                        .setColor('AQUA')
-                        .setTitle('⚠️ Woah!')
-                        .setDescription('**That user has not set up their stats yet!**\nCome back later or bug them to do so! 🌟')
-                    ]
-                });
+                embeds: [new MessageEmbed()
+                    .setColor('AQUA')
+                    .setTitle('⚠️ Woah!')
+                    .setDescription('**That user has not set up their stats yet!**\nCome back later or bug them to do so! 🌟')
+                ]
+            });
             return;
         }
-        
+
         // display the requested stats
         switch (statsType) {
             case 'general': {

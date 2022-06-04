@@ -1,17 +1,16 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
 
 const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
-const MAX_ROLL = 1000;
 
 module.exports = {
-    name: 'who-goes-first',
-    description: 'Attack another user!',
+    name: 'who-first',
+    description: 'Flip a coin to see who goes first in battle!',
     options: [
         {
             name: 'opponent',
             description: 'The target of this attack.',
-            type: dTypes.User,
+            type: CommandTypes.User,
             required: true,
         },
     ],

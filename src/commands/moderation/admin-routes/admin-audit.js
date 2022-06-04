@@ -122,19 +122,6 @@ module.exports = async (interaction, subcommand) => {
             
             // get roles
             const roles = require('./roles.json');
-            
-            // filter out non-administrators
-            if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-                return interaction.editReply({
-                    embeds: [new MessageEmbed()
-                        .setColor('RED')
-                        .setTitle('❗ Woah wait-!')
-                        .setDescription(
-                            `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
-                        )
-                    ]
-                });
-            }
 
             // get all users from the database and members from the guild
             const [allUsers, Members] = await Promise.all([
@@ -184,6 +171,59 @@ module.exports = async (interaction, subcommand) => {
                     )
                 ]
             });
+        }
+
+        case 'starvation': {
+            await interaction.deferReply();
+
+            const [{ users }, guildMembers] = await Promise.all([
+                CoreUtil.FetchAllUsers(),
+                interaction.guild.members.fetch(),
+            ]);
+            const starvingMembers = [];
+            const oneAwayMembers = [];
+
+            // organize members based on hunger status
+            for (const user of users) {
+                // if user is not in the current server, continue
+                if (!guildMembers.has(user.userId)) continue;
+
+                // if hunger is satiated, continue
+                if (user.currentHunger === 0) continue;
+
+                // begin fetching members based on starving or one away from starving
+                if (user.stats.cat_size <= user.currentHunger) starvingMembers.push(guildMembers.get(user.userId));
+                else if (userStats.cat_size - user.currentHunger === 1) oneAwayMembers.push(guildMembers.get(user.userId));
+            }
+
+            // generate embeds with the final audit
+            const headerEmbed = new MessageEmbed({
+                color: 'DARK_GREY',
+                title: '🦴 Starvation lingers...',
+                description: '> This audit contains the most up-to-date information available upon request.',
+                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL() },
+                timestamp: Date.now(),
+            });
+            const starvingEmbed = new MessageEmbed({
+                color: 'DARK_RED',
+                title: '⌛️ The rumbling aches... starvation is imminent.',
+                description: starvingMembers.length > 0 ? starvingMembers.map(member =>
+                    '> **' + member.displayName + '** (<@' + member.user.id + '>)'
+                ).join('\n') : '> None to list... my, many here got lucky...'
+            });
+            const oneAwayEmbed = new MessageEmbed({
+                color: 'DARK_PURPLE',
+                title: '⏳ One away from starving...',
+                description: oneAwayMembers.length > 0 ? oneAwayMembers.map(member =>
+                    '> **' + member.displayName + '** (<@' + member.user.id + '>)'
+                ).join('\n') : '> None to list... my, many here got lucky...'
+            })
+
+            // display audit result
+            return interaction.editReply({
+                embeds: [starvingEmbed, oneAwayEmbed, headerEmbed]
+            });
+
         }
     }
 

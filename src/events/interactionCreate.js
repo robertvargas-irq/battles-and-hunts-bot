@@ -3,11 +3,18 @@ module.exports = {
     async execute( interaction ) {
 
         // route interactions
-        if (interaction.isCommand())
-            return require('./interactions/command')(interaction);
-        if (interaction.isButton() && interaction.customId.startsWith('GLOBAL_'))
-            return require('./interactions/button')(interaction);
-        if (interaction.isModalSubmit())
-            return require('./interactions/modalSubmit')(interaction);
+        try {
+            if (interaction.isCommand())
+                return require('./interactions/command')(interaction);
+            if (interaction.isButton() && interaction.customId.startsWith('GLOBAL_'))
+                return require('./interactions/button')(interaction);
+            if (interaction.isButton() && interaction.customId.startsWith('EXCUSEBUTTON'))
+                return require('./interactions/excuses')(interaction);
+            if (interaction.isModalSubmit())
+                return require('./interactions/modalSubmit')(interaction);
+        }
+        catch (e) {
+            console.error(e);
+        }
     }
 }

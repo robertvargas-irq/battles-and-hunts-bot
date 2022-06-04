@@ -15,9 +15,19 @@ module.exports = {
         // defer
         await interaction.deferReply({ ephemeral: true });
         
-        // if user is registered
+        // check if user is registered
         const found = await CoreUtil.FetchUser(interaction.user.id);
         if (!found) return CoreUtil.NotRegistered(interaction);
+
+        // ensure the user is able to edit
+        if (!Player.allowedToEdit(interaction.guild.id, interaction.user.id)) return interaction.editReply({
+            embeds: [new MessageEmbed({
+                color: 'RED',
+                title: '⚠️ Woah there-!',
+                description: '> **`/edit` is only usable upon request.** Please contact an administrator if you wish to edit your stats.'
+                + '\n\nAs a fair warning, this is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.'
+            })]
+        });
 
         // create translator
         const translator = new Translator(interaction.user.id, FILE_LANG_ID);

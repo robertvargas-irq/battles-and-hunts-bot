@@ -1,6 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
-
 const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
 
 module.exports = {
@@ -81,41 +80,4 @@ function denyBotAttack(interaction) {
         ]
     });
     return false;
-}
-
-/**
- * Inform the user that their target is not registered.
- * @param {BaseCommandInteraction} interaction 
- */
-function targetNotRegistered(interaction) {
-    interaction.editReply({
-        embeds : [new MessageEmbed()
-            .setColor('BLURPLE')
-            .setTitle('🛡️ WOAH THERE')
-            .setDescription('You can\'t attack a cat that doesn\'t exist!\nLet them know to sign up by trying to ')
-        ]
-    });
-    return false;
-}
-
-/**
- * Initiate rolls.
- * @param {BaseCommandInteraction} interaction 
- * @param {userSchema} attacker 
- * @param {userSchema} target 
- * @param {GuildMember} targetSnowflake
- */
-async function battle(interaction, attacker, target, targetSnowflake) {
-
-    // calculate rolls
-    const d1Hit = getRandom(1, 100);
-    const d2Crit = getRandom(1, 100);
-    
-    const response = new MessageEmbed({
-        color: (hit && crit) ? 'YELLOW' : (hit) ? 'GREEN' : 'RED',
-        title: '🎲 __**Attack Roll Results**__ 🎲',
-        description: descriptionFormat,
-    }).setFooter('Target: ' + targetSnowflake.displayName, targetSnowflake.displayAvatarURL());
-
-    await interaction.editReply({ embeds: [response] });
 }

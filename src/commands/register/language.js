@@ -7,7 +7,7 @@ const Language = require('../../util/Language');
 const Translator = require('../../util/Translator');
 
 module.exports = {
-    name: 'preferred-language',
+    name: 'language',
     description: 'Have the bot respond to you in your preferred language!',
     options: [
         {
@@ -40,7 +40,7 @@ module.exports = {
         }
     ],
     /**@param {BaseCommandInteraction} interaction */
-    async execute( interaction ) {
+    async execute(interaction) {
         
         // defer
         await interaction.deferReply({ ephemeral: true });

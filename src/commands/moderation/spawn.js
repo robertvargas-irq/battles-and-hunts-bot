@@ -5,11 +5,11 @@ const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 
 module.exports = {
     name: 'spawn',
-    description: '(🔒 ADMINISTRATOR ONLY) Spawn in a specific prompt.',
+    description: 'Spawn in a specific prompt.',
     options: [
         {
             name: 'excuses',
-            description: '(🔒 ADMINISTRATOR ONLY) Spawn and configure Excuses.',
+            description: 'Spawn and configure Excuses.',
             type: dTypes.Subcommand,
             options: [
                 {
@@ -22,7 +22,7 @@ module.exports = {
         },
         {
             name: 'adult-verification',
-            description: '(🔒 ADMINISTRATOR ONLY) Spawn in adult role request prompt.',
+            description: 'Spawn in adult role request prompt.',
             type: dTypes.Subcommand,
             options: [
                 {
@@ -41,7 +41,7 @@ module.exports = {
         },
         {
             name: 'prey-pile',
-            description: '(🔒 ADMINISTRATOR ONLY) Spawn in a visual prey pile.',
+            description: 'Spawn in a visual prey pile.',
             type: dTypes.Subcommand,
             options: [
                 {

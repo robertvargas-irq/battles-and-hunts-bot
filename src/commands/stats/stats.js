@@ -1,6 +1,7 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed, GuildMember } = require('discord.js');
-const { formatStats } = require('../../util/Account/Player');
+const Player = require('../../util/Account/Player');
+const HuntManager = require('../../util/Hunting/HuntManager');
 const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
@@ -8,17 +9,38 @@ module.exports = {
     description: 'Check out your stats (default)! Or another\'s (player)!',
     options: [
         {
-            name: 'player',
-            description: '(DEFAULT: YOURSELF) Examine your enemy.',
-            type: dTypes.User,
-            required: false,
+            name: 'general',
+            description: 'Check out you or another\'s general character stats!',
+            type: CommandTypes.Subcommand,
+            options: [
+                {
+                    name: 'player',
+                    description: '(DEFAULT: YOURSELF) Examine your enemy.',
+                    type: CommandTypes.User,
+                    required: false,
+                },
+            ]
         },
+        {
+            name: 'hunting',
+            description: 'Check out you or another\'s hunting stats and contributions!',
+            type: CommandTypes.Subcommand,
+            options: [
+                {
+                    name: 'player',
+                    description: '(DEFAULT: YOURSELF) Examine another\'s contributions.',
+                    type: CommandTypes.User,
+                    required: false,
+                },
+            ]
+        }
     ],
     /**@param {BaseCommandInteraction} interaction */
-    async execute( interaction ) {
+    async execute(interaction) {
 
-        // defer reply
+        // defer reply and get stat type requested
         await interaction.deferReply({ ephemeral: true });
+        const statsType = interaction.options.getSubcommand();
 
         /**
          * @type {GuildMember}
@@ -43,17 +65,23 @@ module.exports = {
                 });
             return;
         }
+        
+        // display the requested stats
+        switch (statsType) {
+            case 'general': {
+                // display general character stats
+                return interaction.editReply({
+                    embeds: [ Player.formatStats(playerMember, found, interaction.user.id) ]
+                });
+            }
 
-        // show success message
-        let pseudoInteraction = interaction;
-        if (playerMember) pseudoInteraction = {
-            member: playerMember,
-            user: playerMember.user,
-            guild: playerMember.guild
-        };
-        return interaction.editReply({
-            embeds: [ formatStats(pseudoInteraction, found, interaction.user.id) ]
-        });
+            case 'hunting': {
+                return interaction.editReply({
+                    embeds: [ HuntManager.formatStats(found, playerMember) ]
+                });
+            }
+        }
+
     
     },
 };

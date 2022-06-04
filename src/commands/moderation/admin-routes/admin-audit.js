@@ -8,8 +8,7 @@ const CoreUtil = require('../../../util/CoreUtil');
  * @param {string} subcommand 
  */
 module.exports = async (interaction, subcommand) => {
-    console.log({interactionINAUDIT: interaction});
-    console.log({subcommand});
+
     // route subcommand
     switch (subcommand) {
         case 'excuses': {

@@ -2,6 +2,7 @@ const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const HuntManager = require('../../../util/Hunting/HuntManager');
 const PreyPile = require('../../../util/Hunting/PreyPile');
 
+
 /**
  * @param {BaseCommandInteraction} interaction 
  * @param {string} subcommand 

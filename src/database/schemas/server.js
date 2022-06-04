@@ -98,12 +98,16 @@ const serverSchema = new Schema({
             default: new Map(),
         }
     },
+    excusesChannelId: {
+        type: String,
+        default: null,
+    },
     roles: {
         adult: {
             type: String,
             default: null,
         }
-    }
+    },
 });
 
 module.exports = serverSchema;

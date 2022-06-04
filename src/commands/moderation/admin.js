@@ -17,11 +17,11 @@ const DAY_CHOICES = [
 
 module.exports = {
     name: 'admin',
-    description: '(🔒 ADMINISTRATOR ONLY) Administrator toolkit.',
+    description: 'Administrator toolkit.',
     options: [
         {
             name: 'excuses',
-            description: '(🔒 ADMINISTRATOR ONLY) Spawn and configure Excuses.',
+            description: 'Spawn and configure Excuses.',
             type: CommandTypes.SubcommandGroup,
             options: [
                 {
@@ -70,7 +70,7 @@ module.exports = {
         },
         {
             name: 'audit',
-            description: '(🔒 ADMINISTRATOR ONLY) Perform audits',
+            description: 'Perform audits',
             type: CommandTypes.SubcommandGroup,
             options: [
                 {
@@ -89,7 +89,7 @@ module.exports = {
                 },
                 {
                     name: 'registration',
-                    description: '(🔒 ADMINISTRATOR ONLY) Check to see which users are not registered for the bot.',
+                    description: 'Check to see which users are not registered for the bot.',
                     type: CommandTypes.Subcommand,
                     options: [
                         {
@@ -128,14 +128,14 @@ module.exports = {
                 },
                 {
                     name: 'starvation',
-                    description: '(🔒 ADMINISTRATOR ONLY) Check to see which characters are about to starve...',
+                    description: 'Check to see which characters are about to starve...',
                     type: CommandTypes.Subcommand,
                 }
             ]
         },
         {
             name: 'hunting',
-            description: '(🔒 ADMINISTRATOR ONLY) Configure hunting.',
+            description: 'Configure hunting.',
             type: CommandTypes.SubcommandGroup,
             options: [
                 {
@@ -153,7 +153,7 @@ module.exports = {
                 },
                 {
                     name: 'starve-everyone',
-                    description: '(🔒 ADMINISTRATOR ONLY) Set all player\'s hunger to 0.',
+                    description: 'Set all player\'s hunger to 0.',
                     type: CommandTypes.Subcommand,
                     options: [
                         {
@@ -172,7 +172,7 @@ module.exports = {
                 },
                 {
                     name: 'spoil-everything',
-                    description: '(🔒 ADMINISTRATOR ONLY) Spoil all food in all prey piles.',
+                    description: 'Spoil all food in all prey piles.',
                     type: CommandTypes.Subcommand,
                     options: [
                         {
@@ -191,19 +191,19 @@ module.exports = {
                 },
                 {
                     name: 'lock',
-                    description: '(🔒 ADMINISTRATOR ONLY) Lock all the prey piles.',
+                    description: 'Lock all the prey piles.',
                     type: CommandTypes.Subcommand,
                 },
                 {
                     name: 'unlock',
-                    description: '(🔒 ADMINISTRATOR ONLY) Unlock all the prey piles.',
+                    description: 'Unlock all the prey piles.',
                     type: CommandTypes.Subcommand,
                 }
             ]
         },
         {
             name: 'stats',
-            description: '(🔒 ADMINISTRATOR ONLY) Configure stats.',
+            description: 'Configure stats.',
             type: CommandTypes.SubcommandGroup,
             options: [
                 {

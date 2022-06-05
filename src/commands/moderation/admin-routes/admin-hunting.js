@@ -56,7 +56,7 @@ module.exports = async (interaction, subcommand) => {
             const { UserModel, users } = await HuntManager.FetchAllUsers();
 
             // set all user's hunger to their size
-            for (let user of users) user.currentHunger = user.stats.cat_size;
+            for (let user of users) user.currentHunger = user.morph_size;
 
             // save all user documents
             await UserModel.bulkSave(users);

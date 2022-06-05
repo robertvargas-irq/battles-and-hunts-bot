@@ -6,7 +6,7 @@ const Language = require('../../util/Language');
  *      userId: string,
  *      preferredLanguage: string,
  *      stats: {
- *          cat_size: number,
+ *          morph_size: number,
  *          strength: number,
  *          dexterity: number,
  *          constitution: number,
@@ -48,11 +48,11 @@ const userSchema = new Schema({
         required: true,
         default: 'en',
     },
-    stats: {      // dunno if I should split into diff
-        cat_size: {
-            type: Number,
-            default: 0,
-        },
+    morph_size: {
+        type: Number,
+        default: 0,
+    },
+    stats: {      // might become its own schema
         strength: {
             type: Number,
             default: 0,
@@ -110,6 +110,10 @@ const userSchema = new Schema({
             }
         },
         hunts: {
+            perfect: {
+                type: Number,
+                default: 0,
+            },
             successful: {
                 type: Number,
                 default: 0,

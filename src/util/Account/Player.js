@@ -40,8 +40,8 @@ function formatStats(member, userData, originalCallerId) {
             },
             {
                 name: translator.getGlobal('CURRENT_HUNGER') + ' '
-                + ['🍖', '🦴'][userData.currentHunger == userData.stats.cat_size ? 1 : 0],
-                value: `> ↣ \`${userData.stats.cat_size - userData.currentHunger}\` / \`${userData.stats.cat_size}\``,
+                + ['🍖', '🦴'][userData.currentHunger == userData.morph_size ? 1 : 0],
+                value: `> ↣ \`${userData.morph_size - userData.currentHunger}\` / \`${userData.morph_size}\``,
                 inline: true,
             },
             ...Object.keys(userData.stats).map(stat => {

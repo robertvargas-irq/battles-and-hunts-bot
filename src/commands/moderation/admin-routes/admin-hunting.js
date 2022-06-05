@@ -68,7 +68,7 @@ module.exports = async (interaction, subcommand) => {
                     .setTitle('✅ Successfully set all user hungers to max.')
                     .setDescription(
                     `> **Hunger begins to bear down upon warriors great and small, leaders and young, and everyone in-between.**` +
-                    `\n\n > It is inescapable, as time ticks by, finding something suitable to \`/eat\` grows prevalent to satiate this growing \`/hunger\`...`
+                    `\n\n > It is inescapable, as time ticks by, finding something suitable to \`/eat-from\` grows prevalent to satiate this growing \`/hunger\`...`
                     )
                 ]
             });
@@ -134,7 +134,7 @@ module.exports = async (interaction, subcommand) => {
                     .setTitle('🔒 Hunting has been heavily restricted.')
                     .setDescription(
                         '> We hope you had a wonderful roleplay session, hunting is now restricted.'
-                        + '\n\n`/carry` `/deposit` `/eat` are now `disabled`.'
+                        + '\n\n`/carry` `/deposit` `/eat-from` are now `disabled`.'
                     )
                 ]
             });
@@ -166,7 +166,7 @@ module.exports = async (interaction, subcommand) => {
                     .setTitle('🔓 Hunting is now fully available.')
                     .setDescription(
                         '> This probably means that a session is about to start, **happy roleplaying!**'
-                        + '\n\n`/carry` `/deposit` `/eat` are now `enabled`.'
+                        + '\n\n`/carry` `/deposit` `/eat-from` are now `enabled`.'
                     )
                 ]
             });

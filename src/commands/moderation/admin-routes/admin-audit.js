@@ -192,8 +192,8 @@ module.exports = async (interaction, subcommand) => {
                 if (user.currentHunger === 0) continue;
 
                 // begin fetching members based on starving or one away from starving
-                if (user.morph_size <= user.currentHunger) starvingMembers.push(guildMembers.get(user.userId));
-                else if (usermorph_size - user.currentHunger === 1) oneAwayMembers.push(guildMembers.get(user.userId));
+                if (user.stats.cat_size <= user.currentHunger) starvingMembers.push(guildMembers.get(user.userId));
+                else if (userstats.cat_size - user.currentHunger === 1) oneAwayMembers.push(guildMembers.get(user.userId));
             }
 
             // generate embeds with the final audit

@@ -18,9 +18,9 @@ module.exports = {
         interaction.editReply({
             embeds: [
                 new MessageEmbed()
-                    .setColor(getColor(found.currentHunger, found.morph_size))
-                    .setTitle(getTitle(found.currentHunger, found.morph_size))
-                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.morph_size ? '🍖' : '🦴'), `> ↣ \`${found.morph_size - found.currentHunger}\` / \`${found.morph_size}\``)
+                    .setColor(getColor(found.currentHunger, found.stats.cat_size))
+                    .setTitle(getTitle(found.currentHunger, found.stats.cat_size))
+                    .addField('CURRENT HUNGER ' + (found.currentHunger < found.stats.cat_size ? '🍖' : '🦴'), `> ↣ \`${found.stats.cat_size - found.currentHunger}\` / \`${found.stats.cat_size}\``)
                     .setFooter({ text: '🍃 This hunger stat is canon.' }),
             ]
         });
@@ -44,16 +44,16 @@ const titles = [
     '🦴 I might starve soon...'
 ]
 
-function getColor(hunger, morph_size) {
+function getColor(hunger, cat_size) {
     if (hunger == 0) return colors[0];
-    if (hunger == morph_size) return colors[3];
-    if (hunger == morph_size - 1) return colors[2];
+    if (hunger == cat_size) return colors[3];
+    if (hunger == cat_size - 1) return colors[2];
     return colors[1];
 }
 
-function getTitle(hunger, morph_size) {
+function getTitle(hunger, cat_size) {
     if (hunger == 0) return titles[0];
-    if (hunger == morph_size) return titles[3];
-    if (hunger == morph_size - 1) return titles[2];
+    if (hunger == cat_size) return titles[3];
+    if (hunger == cat_size - 1) return titles[2];
     return titles[1];
 }

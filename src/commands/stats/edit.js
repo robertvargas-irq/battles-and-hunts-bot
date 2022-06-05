@@ -41,8 +41,8 @@ module.exports = {
             found.currentHealth = Player.calculateMaxHealth(catStats.constitution);
 
         // handle new hunger
-        if (found.morph_size < found.currentHunger)
-            found.currentHunger = found.morph_size;
+        if (found.stats.cat_size < found.currentHunger)
+            found.currentHunger = found.stats.cat_size;
         
         // save to the database
         found.stats = catStats;

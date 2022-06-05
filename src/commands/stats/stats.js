@@ -71,7 +71,7 @@ module.exports = {
             case 'general': {
                 // display general character stats
                 return interaction.editReply({
-                    embeds: [ Player.formatStats(playerMember, found, interaction.user.id) ]
+                    embeds: Player.formatStats(playerMember, found, interaction.user.id)
                 });
             }
 

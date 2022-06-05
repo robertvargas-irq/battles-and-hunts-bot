@@ -40,7 +40,7 @@ async function collectCharacterStats(interaction, promptMessage) {
     const filter = (/**@type {Message}*/ message) => message.author.id === interaction.user.id;
     let field = 0;
     let stats = {
-        morph_size: 0,
+        cat_size: 0,
         strength: 0,
         dexterity: 0,
         constitution: 0,

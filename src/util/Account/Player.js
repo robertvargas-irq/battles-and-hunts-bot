@@ -22,17 +22,11 @@ function formatStats(member, userData, originalCallerId) {
 
     const translator = new Translator(originalCallerId, FILE_LANG_ID);
     
-    let i = 0;
-    return new MessageEmbed()
-        .setColor('LUMINOUS_VIVID_PINK')
-        .setAuthor({
-            name: member.displayName + ' ' + translator.get('STATS_HEADER'),
-            iconURL: member.guild.iconURL()
-        })
-        .setImage(STATS_BANNER)
-        .setThumbnail(member.displayAvatarURL())
-        .setDescription('**- - - - -**')
-        .setFields([
+    const generalStats = new MessageEmbed({
+        color: '680d2b',
+        title: translator.get('STATS_HEADER'),
+        thumbnail: { url: member.displayAvatarURL() },
+        fields: [
             {
                 name: translator.getGlobal('CURRENT_HEALTH') + ' 💘',
                 value: `> ↣ \`${userData.currentHealth}\` / \`${userData.stats.constitution * 5 + 50}\``,
@@ -40,19 +34,33 @@ function formatStats(member, userData, originalCallerId) {
             },
             {
                 name: translator.getGlobal('CURRENT_HUNGER') + ' '
-                + ['🍖', '🦴'][userData.currentHunger == userData.morph_size ? 1 : 0],
-                value: `> ↣ \`${userData.morph_size - userData.currentHunger}\` / \`${userData.morph_size}\``,
+                + ['🍖', '🦴'][userData.currentHunger == userData.stats.cat_size ? 1 : 0],
+                value: `> ↣ \`${userData.stats.cat_size - userData.currentHunger}\` / \`${userData.stats.cat_size}\``,
                 inline: true,
             },
-            ...Object.keys(userData.stats).map(stat => {
-                return {
-                    name: (i == 1 ? '- - - - -\n' : '') +
-                        translator.getFromObject(name_translations[i]).toUpperCase() + ' ' + flairs[i],
-                    value: `> ↣ \`${userData.stats[stat]}\` / \`${ranges[i++][1]}\``
-                }
-            })
-        ])
-        .setFooter({text:'⇸ ' + translator.get('CLAN_AFFILIATION') + `: ${userData.clan.toUpperCase()}`});
+            {
+                name: translator.getGlobal('BATTLE_POWER') + ' 💪',
+                value: `> ↣ \`${userData.stats.strength + userData.stats.dexterity + userData.stats.constitution + userData.stats.speed}\` / \`40\``,
+            }
+        ]
+    });
+
+    let i = 0;
+    const listedStats = new MessageEmbed({
+        color: 'LUMINOUS_VIVID_PINK',
+        image: { url: STATS_BANNER },
+        fields: Object.keys(userData.stats).map(stat => {
+            return {
+                name: translator.getFromObject(name_translations[i]).toUpperCase() + ' ' + flairs[i],
+                value: `> ↣ \`${userData.stats[stat]}\` / \`${ranges[i++][1]}\``
+            }
+        }),
+        footer: {
+            text:'⇸ ' + translator.get('CLAN_AFFILIATION') + `: ${userData.clan.toUpperCase()}`,
+            iconURL: member.guild.iconURL(),
+        },
+    });
+    return [generalStats, listedStats];
 }
 
 const allowEditing = (guildId, userId) => {

@@ -130,6 +130,11 @@ module.exports = {
                     name: 'starvation',
                     description: 'Check to see which characters are about to starve...',
                     type: CommandTypes.Subcommand,
+                },
+                {
+                    name: 'list-members',
+                    description: 'List every single member registered to the bot.',
+                    type: CommandTypes.Subcommand,
                 }
             ]
         },

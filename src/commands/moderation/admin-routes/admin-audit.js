@@ -120,7 +120,7 @@ module.exports = async (interaction, subcommand) => {
                 ephemeral: private
             });
             
-            // get roles
+            // get special exemption roles
             const roles = require('./roles.json');
 
             // get all users from the database and members from the guild
@@ -193,7 +193,7 @@ module.exports = async (interaction, subcommand) => {
 
                 // begin fetching members based on starving or one away from starving
                 if (user.stats.cat_size <= user.currentHunger) starvingMembers.push(guildMembers.get(user.userId));
-                else if (userstats.cat_size - user.currentHunger === 1) oneAwayMembers.push(guildMembers.get(user.userId));
+                else if (user.stats.cat_size - user.currentHunger === 1) oneAwayMembers.push(guildMembers.get(user.userId));
             }
 
             // generate embeds with the final audit
@@ -208,14 +208,14 @@ module.exports = async (interaction, subcommand) => {
                 color: 'DARK_RED',
                 title: '⌛️ The rumbling aches... starvation is imminent.',
                 description: starvingMembers.length > 0 ? starvingMembers.map(member =>
-                    '> **' + member.displayName + '** (<@' + member.user.id + '>)'
+                    '> ⊗ **' + member.displayName + '** (<@' + member.user.id + '>)'
                 ).join('\n') : '> None to list... my, many here got lucky...'
             });
             const oneAwayEmbed = new MessageEmbed({
                 color: 'DARK_PURPLE',
                 title: '⏳ One away from starving...',
                 description: oneAwayMembers.length > 0 ? oneAwayMembers.map(member =>
-                    '> **' + member.displayName + '** (<@' + member.user.id + '>)'
+                    '> ⊕ **' + member.displayName + '** (<@' + member.user.id + '>)'
                 ).join('\n') : '> None to list... my, many here got lucky...'
             })
 
@@ -224,6 +224,64 @@ module.exports = async (interaction, subcommand) => {
                 embeds: [starvingEmbed, oneAwayEmbed, headerEmbed]
             });
 
+        }
+
+        case 'list-members': {
+            // defer reply and get special exemption roles
+            await interaction.deferReply({ ephemeral: true });
+            const roles = require('./roles.json');
+
+            // get all users from the database and members from the guild
+            const [allUsers, Members] = await Promise.all([
+                CoreUtil.FetchAllUsers().then(({users}) => { return new Map(users.map(o => [o.userId, o])) }),
+                interaction.guild.members.fetch(),
+            ]);
+
+            // compare and only push members that are registered
+            const registered = new Map();
+            for (let [id, member] of Members) {
+                
+                // filter out any users not registered to the bot or not in the server
+                if (!allUsers.has(id) || !Members.has(id)) continue;
+
+                // filter out bots, testing account, and any special roles exempting registration
+                if (member.user.bot || member.user.id === '964281330609315872') continue;
+                if (roles[member.guild.id]) {
+                    if (member.roles.cache.hasAny([
+                        roles[member.guild.id].spectator,
+                        roles[member.guild.id].partner,
+                    ])) continue;
+                }
+
+
+                // push to the appropriate clan
+                const clan = allUsers.get(id).clan;
+                if (!registered.has(clan)) registered.set(clan, []);
+                registered.get(clan).push(Members.get(id));
+            }
+
+            // create embeds for each clan
+            const embeds = [];
+            const registeredList = Array.from(registered);
+            for (let i = 0; i < registeredList.length && i < 9; i++) {
+                embeds.push(new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: registeredList[i][0].toUpperCase(),
+                    description: registeredList[i][1].map(member => '> ↣ **' + member.displayName + '** (<@' + member.user.id + '>)').join('\n'),
+                }));
+            }
+
+            // generate summary
+            embeds.push(new MessageEmbed({
+                color: 'AQUA',
+                title: '📝 All members registered to the bot',
+                description: '> This audit contains the most up-to-date information available upon request.',
+                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL() },
+                timestamp: Date.now(),
+            }));
+
+            // display the members in an embed
+            return interaction.editReply({ embeds });
         }
     }
 

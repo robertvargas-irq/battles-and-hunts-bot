@@ -21,16 +21,16 @@ module.exports = {
                     required: true,
                     choices: [
                         {
-                            name: 'Outpost Rock',
-                            value: 'outpost-rock',
+                            name: 'Barn',
+                            value: 'barn',
                         },
                         {
-                            name: 'By the gorge',
+                            name: 'By the Gorge',
                             value: 'gorge',
                         },
                         {
-                            name: 'Barn',
-                            value: 'barn',
+                            name: 'Outpost Rock',
+                            value: 'outpost-rock',
                         },
                     ]
                 }
@@ -48,12 +48,12 @@ module.exports = {
                     required: true,
                     choices: [
                         {
-                            name: 'Snake Rocks',
-                            value: 'snake-rocks',
-                        },
-                        {
                             name: 'Sandy Hollow',
                             value: 'sandy-hollow',
+                        },
+                        {
+                            name: 'Snake Rocks',
+                            value: 'snake-rocks',
                         },
                         {
                             name: 'By the Thunderpath',
@@ -79,16 +79,16 @@ module.exports = {
                             value: 'burnt-sycamore',
                         },
                         {
+                            name: 'Carrion Place',
+                            value: 'carrion-place',
+                        },
+                        {
                             name: 'Pond',
                             value: 'pond',
                         },
                         {
                             name: 'Stream',
                             value: 'river',
-                        },
-                        {
-                            name: 'Carrion Place',
-                            value: 'carrion-place',
                         },
                     ]
                 }

@@ -54,14 +54,13 @@ class AttackManager extends CoreUtil {
         embeds.push(new MessageEmbed({
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#abfa7a' : '#fa877a',
             image: { url: interaction.member.displayAvatarURL() },
-            // thumbnail: { url: interaction.member.displayAvatarURL() },
-            title: '🗡️ ' + interaction.member.displayName + ' has launched an attack!',
+            author: { name: '🗡️ ' + interaction.member.displayName + ' has launched an attack!' },
         }));
 
         // break down attack roll
         embeds.push(new MessageEmbed({ 
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#7afabc' : '#faad7a',
-            title: hit ? '🎯 They manage to catch an opening-!' : '🍃 Their enemy, however, slipped away',
+            author: { name: hit ? '🎯 They manage to catch an opening-!' : '🍃 Their enemy, however, slipped away' },
             description: '> **Enemy Dodge Chance**: `' + target.stats.speed * 4 + '`'
             + '\n> **Rolled**: `' + d1Hit + '`/`100`'
         }));
@@ -69,7 +68,7 @@ class AttackManager extends CoreUtil {
         // if the user hit, then display crit results
         if (hit) embeds.push(new MessageEmbed({
             color: (hit && crit) ? '#fa7acb' : (crit) ? '#7afabc' : '#faad7a',
-            title: crit ? '🪨 They wind up for a critical blow-!' : '🍃 They opt for a normal attack',
+            author: { name: crit ? '🪨 They wind up for a critical blow-!' : '🍃 They opt for a normal attack' },
             description: '> **Attacker\'s Critical Threshold**: `0`-`' + attacker.stats.dexterity * 3 + '`'
             + '\n> **Rolled**: `' + d2Crit + '`/`100`'
         }));

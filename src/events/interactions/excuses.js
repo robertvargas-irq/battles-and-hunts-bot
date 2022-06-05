@@ -66,8 +66,8 @@ module.exports = async (button) => {
                             customId: 'excused_reason',
                             label: 'Reason',
                             style: 'PARAGRAPH',
-                            minLength: 1,
-                            maxLength: 25,
+                            minLength: 10,
+                            maxLength: 30,
                             required: true,
                         })
                     ],

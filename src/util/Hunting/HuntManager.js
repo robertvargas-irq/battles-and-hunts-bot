@@ -1,12 +1,18 @@
 const serverSchema = require('../../database/schemas/server');
-const clanPrey = require('./prey.json');
+const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const userSchema = require('../../database/schemas/user');
 const { Collection, MessageEmbed, BaseCommandInteraction, GuildMember } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
-/**@typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans */
-/**@typedef {{name: string, size: number, bites_remaining: number}} prey */
+/**
+ * Type definitions
+ * @typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans
+ * @typedef {{name: string, size: number, bites_remaining: number}} prey
+ * @typedef {
+ * 'outpost-rock'|'gorge'|'barn'|'snake-rocks'|'sandy-hollow'|'thunderpath'|'burnt-sycamore'|'pond'|'river'|'carrion-place'
+ * } locations
+ */
 
 
 class HuntManager extends CoreUtil {
@@ -25,7 +31,7 @@ class HuntManager extends CoreUtil {
     static #playerIdToRecentlyCaught = new Map();
 
     /**
-     * @type {Map<string, [weight, prey[]]>}
+     * @type {Map<string, [weight: number, prey[]]>}
      * Player ID to their inventory */
     static #playerIdToInventory = new Map();
 
@@ -140,17 +146,17 @@ class HuntManager extends CoreUtil {
 
     /**
      * Generate a random prey object
-     * @param {clans} territory
+     * @param {locations} location
      * @returns {prey}
      */
-    static generatePrey(territory, maxSize) {
+    static generatePrey(location, maxSize) {
         let sizeRoll = this.#Random(1, maxSize);
-        let preyName = this.#RandomFromArray(clanPrey[territory]);
+        let preyName = this.#RandomFromArray(preyFromLocations[location]);
         return {
             name: preyName,
             size: sizeRoll,
             bites_remaining: sizeRoll,
-            visual: clanPrey.visuals[preyName]
+            visual: preyFromLocations.visuals[preyName]
         }
     }
 
@@ -160,18 +166,20 @@ class HuntManager extends CoreUtil {
      * @param {userSchema} hunter User information from the database.
      * @param {serverSchema} server Server information from the database. 
      * @param {clans} territory The current territory being hunted in.
+     * @param {locations} location The location type within the territory being hunted in.
      * @param {number} trackRoll Result of a track roll.
      * @param {number} catchRoll Result of a catch roll.
      * @param {prey} prey The prey that would have been caught.
      */
-    static generateAndDisplayResults(interaction, hunter, server, territory, trackRoll, catchRoll, prey) {
+    static generateAndDisplayResults(interaction, hunter, server, territory, location, trackRoll, catchRoll, prey) {
         // get proficiencies for current territory
-        const trackProf = hunter.stats[huntChecks[territory][0]];
-        const catchProf = hunter.stats[huntChecks[territory][1]];
+        const [trackProfName, catchProfName] = huntChecks[territory];
+        const trackProf = Math.floor(hunter.stats[trackProfName] / 2);
+        const catchProf = Math.floor(hunter.stats[catchProfName] / 2);
 
         // check if DC's pass
-        const tracked = trackRoll + Math.floor(trackProf / 2) >= server.hunting.seasonDC;
-        const caught = catchRoll + Math.floor(catchProf / 2) >= server.hunting.seasonDC;
+        const tracked = trackRoll + trackProf >= server.hunting.seasonDC;
+        const caught = catchRoll + catchProf >= server.hunting.seasonDC;
 
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) { // (if canon)
@@ -185,52 +193,62 @@ class HuntManager extends CoreUtil {
             hunter.save(); // save to the database
         }
 
-        // display the results of the roll
-        const results = new MessageEmbed()
-            .setColor(tracked ? caught ? 'GREEN' : 'YELLOW' : 'RED')
-            .setTitle('🎲 __Hunt Roll Results__ 🎲')
-            .setThumbnail(interaction.member.displayAvatarURL())
-            .setImage(tracked ? prey.visual : '')
-            .setDescription(
-            // track roll breakdown
-            'Roll Breakdowns:\n**- - - - - -**'
-            + `\n__(1d20 + Floor(${trackProf} / 2)) Track Roll__: ${tracked ? '✅' : '⛔'}`
-            + `\n> **Rolled**: \`${trackRoll}\` / \`20\``
-            + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+Floor(${huntChecks[territory][0].toUpperCase()} / 2)\`)`
-            + `\n> **Season DC**: \`${server.hunting.seasonDC}\``
-            + `\n> \`${trackRoll + trackProf}\` ${tracked ? '≥' : '<'} \`${server.hunting.seasonDC}\``
-            + ( // roll breakdown
-                tracked
-                ? `\n__(1d20 + Floor(${catchProf} / 2)) Catch Roll__: ${caught ? '✅' : '⛔'}`
-                + `\n> **Rolled**: \`${catchRoll}\` / \`20\``
-                + `\n> **Current Territory**: \`${territory.toUpperCase()}\` (\`+Floor(${huntChecks[territory][1].toUpperCase()} / 2)\`)`
-                + `\n> **Season DC**: \`${server.hunting.seasonDC}\``
-                + `\n> \`${catchRoll + catchProf}\` ${caught ? '≥' : '<'} \`${server.hunting.seasonDC}\``
-                : ''
-            )
-            + '\n**- - - - - -**\n'
-            + ( // display a success message if tracked and caught
-                (tracked && caught)
-                ? `\n> 🍽️ **${interaction.member.displayName}, you have caught dinner!**`
-                + `\n> You have caught a(n) \`${prey.name.toUpperCase()}\`, and it looks rather ${clanPrey.descriptors[prey.size - 1]}! (\`size\`: \`${prey.size}\`)`
-                + '\n> '
-                + ( // display a message if hunting is locked in the server
-                    server.hunting.locked
-                    ? '\n> 🔒 **Hunting is currently restricted.**'
-                    + '\n> Due to no current active session, prey __cannot__ be carried or deposited. If you believe this is a mistake, please contact an administrator.'
-                    : '\n> **⚠️ IF YOU WISH TO \`CARRY\` THIS ON YOUR BACK, USE \`/carry\`**'
-                    + '\n> **➡️ TO \`DEPOSIT\` ANY PREY BEING CARRIED TO THE PREY PILE, USE \`/deposit\`**'
-                )
-            : ( // display a message if only tracked or neither tracked nor caught
-                (tracked)
-                ? `\n> 🔍❗ **You spotted a(n) ${clanPrey.descriptors[prey.size - 1]}-sized \`${prey.name.toUpperCase()}\`!**`
-                + '\n> Unfortunately, it scurries away before you could catch it!'
-                : '\n> 🍃 **You were unable to find any prey!**'
-                + '\n> Nothing but the sound of the breeze.'
-            ))).setFooter({ text: server.hunting.locked ? '🔒 Hunting is heavily restricted.' : '🍃 This hunt is canon.' });
+        // embeds will be split to show results more clearly; start with header
+        const embeds = [];
+
+        // display tracked result
+        embeds.push(new MessageEmbed({
+            color: tracked ? 'GREEN' : 'RED',
+            title: '🧭 ' + (tracked ? 'Tracked and spotted prey' : 'No prey has made itself known'),
+            description: '**Territory Bonus**: +`' + trackProfName.toUpperCase() + '`/`2`'
+            + '\n**Hunting DC**: `' + server.hunting.seasonDC + '`'
+            + '\n\n**Rolled**: `' + trackRoll + '`/`20` + `' + trackProf + '`'
+        }));
+
+        // if tracked, display catch result
+        if (tracked) embeds.push(new MessageEmbed({
+            color: caught ? 'GREEN' : 'RED',
+            title: '🪝 ' + (caught ? 'Caught and collected prey' : 'Unfortunately, the prey ran off'),
+            description: '**Territory Bonus**: +`' + catchProfName.toUpperCase() + '`/`2`'
+            + '\n**Hunting DC**: `' + server.hunting.seasonDC + '`'
+            + '\n\n**Rolled**: `' + catchRoll + '`/`20` + `' + catchProf + '`'
+        }));
+
+        // attach final summary of the hunt
+        embeds.push(new MessageEmbed({
+            color: 'FUCHSIA',
+            thumbnail: { url: tracked ? prey.visual : undefined },
+            footer: {
+                text: 'Hunt Results for ' + interaction.member.displayName,
+                iconURL: interaction.member.displayAvatarURL()
+            },
+            description: generateBriefDescription(tracked, caught, preyFromLocations.descriptors[prey.size - 1], prey)
+            + '\n\n' + (
+                server.hunting.locked
+                ? '🔒 **Hunting is currently restricted.**\n> `/eat-from` `/carry` and `/deposit` are unavailable.'
+                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '> You may use `/carry` to carry it on your back, and `/deposit` when you return to camp.\n> *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
+            ),
+        }));
+
+        // display results
         return interaction.editReply({
-            embeds: [results]
+            embeds: embeds
         });
+
+        // generates a brief summary of the hunt
+        function generateBriefDescription(tracked, caught, preySizeDescriptor, prey) {
+
+            // if not tracked then caught is not needed
+            if (!tracked) return 'Unfortunately, it appears the ground below you is the only thing you see. No prey was located.';
+    
+            // construct brief summary
+            const trackedHeader = 'Wandering in the distance, you see a rather **' + preySizeDescriptor + '** `' + prey.name.toUpperCase() + '`!';
+            return trackedHeader + (
+                caught
+                ? '\nYou take it within your maw and tear into it, before pondering on what to do next.'
+                : '\nHowever, before you can even lunge at it, it spots you, and rapidly flees the scene.'
+            )
+        }
     }
 
     /**
@@ -262,6 +280,63 @@ class HuntManager extends CoreUtil {
     static getRecentlyCaught(userId) {
         console.log(this.#playerIdToRecentlyCaught);
         return this.#playerIdToRecentlyCaught.get(userId);
+    }
+
+    /**
+     * Pull from a player's carrying inventory
+     * @param {[weight: number,prey[]]} inventory Player's inventory entry.
+     * @param {number} bitesToSatisfy The amount of bites needed to satisfy hunger.
+     * @returns {{bites_taken: number, consumed: {name:string, totalEaten:number}[]}} The prey that was required to facilitate 
+     */
+    static pullFromCarrying(inventory, bitesToSatisfy) {
+
+        // iterate through the pile until prey is depleted or bites satisfied
+        /**@type {prey} */
+        let pulled = null;
+        let bites_taken = 0;
+        let total_bites_taken = 0;
+        let eatenPrey = new Map();
+        while (inventory[1].length > 0 && bitesToSatisfy > 0) {
+
+            // unenqueue prey item
+            pulled = inventory[1].shift();
+            console.log({pulled});
+            
+            // see how many bites needed; either the full thing or bites needed to satisfy
+            const originalBitesRemaining = pulled.bites_remaining;
+            bites_taken = Math.min(pulled.bites_remaining, bitesToSatisfy);
+            pulled.bites_remaining -= bites_taken;
+            bitesToSatisfy -= bites_taken;
+            total_bites_taken += bites_taken;
+            
+            // record to eaten prey
+            eatenPrey.set(
+                pulled.name,
+                (eatenPrey.get(pulled.name) || 0)
+                    + 1 * (bites_taken / originalBitesRemaining)
+            );
+        }
+
+        // format the prey eaten
+        console.log(eatenPrey);
+        const eaten = Array.from(eatenPrey.entries()).map(([p, count]) => { return {name: p, amountEaten: count} })
+
+        // return the prey needed to eat
+        return { bitesTaken: total_bites_taken, consumed: eaten };
+
+    }
+
+    /**
+     * Get all the items being carried
+     * @param {string} userId The player's inventory to grab
+     * @returns {[weight: number,prey[]]} All the prey in their inventory
+     */
+    static getCarrying(userId) {
+        const inventory = this.#playerIdToInventory.get(userId);
+        if (!inventory) return [0, []];
+
+        // return the inventory from index 1
+        return inventory;
     }
 
     /**
@@ -331,6 +406,16 @@ class HuntManager extends CoreUtil {
 
         // return inventory
         return inventoryItems;
+    }
+
+    /**
+     * Override a player's inventory
+     * @param {string} userId The player to modify
+     * @param {[weight: number, prey[]]} newInventory Inventory to replace the original
+     * @returns {Map<string, [weight: number, prey[]]>} New Map of player inventories
+     */
+    static setCarrying(userId, newInventory) {
+        return this.#playerIdToInventory.set(userId, newInventory);
     }
 
     /**

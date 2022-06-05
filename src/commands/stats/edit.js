@@ -2,7 +2,7 @@ const FILE_LANG_ID = 'EDIT';
 
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const collectCharacterStats = require('../../util/Account/collectCharacterStats');
-const { formatStats, calculateMaxHealth } = require('../../util/Account/Player');
+const Player = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');
 const Translator = require('../../util/Translator');
 
@@ -15,9 +15,19 @@ module.exports = {
         // defer
         await interaction.deferReply({ ephemeral: true });
         
-        // if user is registered
+        // check if user is registered
         const found = await CoreUtil.FetchUser(interaction.user.id);
         if (!found) return CoreUtil.NotRegistered(interaction);
+
+        // ensure the user is able to edit
+        if (!Player.allowedToEdit(interaction.guild.id, interaction.user.id)) return interaction.editReply({
+            embeds: [new MessageEmbed({
+                color: 'RED',
+                title: '⚠️ Woah there-!',
+                description: '> **`/edit` is only usable upon request.** Please contact an administrator if you wish to edit your stats.'
+                + '\n\nAs a fair warning, this is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.'
+            })]
+        });
 
         // create translator
         const translator = new Translator(interaction.user.id, FILE_LANG_ID);
@@ -27,8 +37,8 @@ module.exports = {
         if (!catStats) return; // error already handled inside collect()
 
         // handle new max health
-        if (found.currentHealth > calculateMaxHealth(catStats.constitution))
-            found.currentHealth = calculateMaxHealth(catStats.constitution);
+        if (found.currentHealth > Player.calculateMaxHealth(catStats.constitution))
+            found.currentHealth = Player.calculateMaxHealth(catStats.constitution);
 
         // handle new hunger
         if (found.stats.cat_size < found.currentHunger)
@@ -47,7 +57,7 @@ module.exports = {
                             .setColor('AQUA')
                             .setTitle('🌟 ' + translator.getGlobal('STATS_SAVED'))
                             .setDescription(translator.getGlobal('MENU_DISMISS')),
-                        formatStats(interaction, found)
+                        Player.formatStats(interaction, found)
                     ]
                 });
             })

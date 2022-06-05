@@ -1,5 +1,4 @@
 const { MessageEmbed, Permissions, BaseCommandInteraction } = require('discord.js');
-const fs = require('fs');
 
 const restrictions = require('./restrictions.json');
 
@@ -8,9 +7,14 @@ module.exports = async ( interaction ) => {
 
     if ( !interaction.client.commands.has( interaction.commandName ) ) return;
 
+    const SubcommandGroup = interaction.options.getSubcommandGroup(false) || null;
+    const Subcommand = interaction.options.getSubcommand(false) || null;
+
     console.log({
-        commandName: interaction.commandName,
         commandId: interaction.commandId,
+        commandName: interaction.commandName,
+        subcommandGroup: SubcommandGroup,
+        subcommand: Subcommand,
         calledBy: ( interaction.commandName == 'feedback' )
             ? '# Anonymized #'
             : interaction.user.tag + ' (' + interaction.user.id + ')',
@@ -25,26 +29,24 @@ module.exports = async ( interaction ) => {
         // console.log({wrongId});
         if (wrongId) return wrongChannelMessage(interaction, wrongId);
 
-        await interaction.client.commands.get( interaction.commandName ).execute( interaction ).catch();
+        await interaction.client.commands.get(interaction.commandName).execute(interaction).catch(console.error);
     }
-    catch ( error ) {
-        console.error( error );
+    catch (error) {
+        console.error(error);
 
-        // const write = fs.createWriteStream( `./logs/Error Log - ${Date().replace(/:/g, "-")}.txt` );
         console.error( `${Date()}\n\n`
             + `Command: ${interaction.commandName}\n`
+            + `Subcommand Group: ${SubcommandGroup}\n`
+            + `Subcommand: ${Subcommand}\n`
             + `Guild: ${interaction.guild.name} (${interaction.guild.id})\n`
             + `Caller: ${interaction.user.tag} (${interaction.user.id})\n`
             + `${error.stack}` );
-        // write.close();
 
         // send error message
-        try {
+        if (!interaction.replied)
             await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-        }
-        catch {
+        else
             await interaction.editReply({ content: 'There was an error while executing this command!' });
-        }
 
     }
 }
@@ -78,8 +80,6 @@ function wrongChannel(interaction) {
 }
 
 async function wrongChannelMessage(interaction, [code, list]) {
-    // console.log({code, list});
-    // console.log(map);
     const description = (
         code == 1
         ? '**This channel is only for the following commands:**\n'
@@ -89,11 +89,16 @@ async function wrongChannelMessage(interaction, [code, list]) {
         + list.map(v => "<#" + v + ">").join('\n')
         + "\n\n**Please only use these commands in this channel!**\nThank you! ❣️"
     )
-    return await interaction.reply({
+
+    const messagePayload = {
         ephemeral: true,
         embeds: [new MessageEmbed()
             .setColor('BLUE')
             .setTitle('❗ __Woah There!__')
             .setDescription(description)]
-    })
+    };
+
+    // notify
+    if (!interaction.replied) return await interaction.reply(messagePayload);
+    return await interaction.editReply(messagePayload);
 }

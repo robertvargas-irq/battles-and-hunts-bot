@@ -18,7 +18,6 @@ const {healingAction, healingResponse} = require('./medicinePrompts.json');
 class AttackManager extends CoreUtil {
     static MAX_WEIGHT = 3;
     static INVENTORY_MAX_WEIGHT = 7;
-    // static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
     static #Random = (min, max) => {
         const ROLL_COUNT = 13;
         let rolls = [];
@@ -36,9 +35,8 @@ class AttackManager extends CoreUtil {
 
 
     };
-    static #RandomFromArray = (a) => { return a[this.#Random(0, a.length - 1)] }
 
-    static async rollAndGiveAttackResult(interaction, attacker, target, targetSnowflake) {
+    static async rollAndGiveAttackResult(interaction, attacker, target, targetMember) {
 
         // calculate rolls
         const d1Hit = this.#Random(1, 100);
@@ -49,49 +47,59 @@ class AttackManager extends CoreUtil {
         const crit = d2Crit <= attacker.stats.dexterity * 3; // successful crit DC
         const damage = attacker.stats.strength * 4 * (crit ? 2 : 1); // attack damage
 
-        // inform user
-        const descriptionFormat = `
-        Roll Breakdowns:\n**- - - - - -**
-        __(1d100) Attack Hit__: ${hit ? '✅' : '⛔'}
-        > **Rolled**: \`${d1Hit}\` / \`100\`
-        > **Enemy Dodge Chance**: \`${target.stats.speed * 4}\`
-        > \`${d1Hit}\` ${hit ? '>' : '≤'} \`${target.stats.speed * 4}\`
-        
-        __(1d100) Critical Hit__: ${crit ? '✅' : '⛔'}
-        > **Rolled**: \`${d2Crit}\` / \`100\`
-        > **Your Crit. Range**: \`0\` - \`${attacker.stats.dexterity * 3}\`
-        > \`${d2Crit}\` ${crit ? '≤' : '>'} \`${attacker.stats.dexterity * 3}\`\n\n**- - - - - -**
+        // populate embeds relative to rolls
+        const embeds = [];
 
-        > ⚔️ **${this.#getRandomDescription(hit, crit)}**\n\n**- - - - - -**
-        ` + ( hit ?
-        `
-        > **<@${targetSnowflake.user.id}> has endured \`${damage}\`${crit ? ' CRITICAL ' : ' '}damage!!**
-        > 
-        > ⚠️ **They must use the \`/take-damage\` command with amount \`${damage}\`!!**
-        > ➡️ \`/take-damage amount: ${damage}\`
-        ` : '');
-        const response = new MessageEmbed({
-            color: (hit && crit) ? 'YELLOW' : (hit) ? 'GREEN' : 'RED',
-            title: '🎲 __**Attack Roll Results**__ 🎲',
-            description: descriptionFormat,
-            thumbnail: {url: interaction.member.displayAvatarURL()},
-            footer: {text: 'Target: ' + targetSnowflake.displayName, icon_url: targetSnowflake.displayAvatarURL()}
-        });
+        // create attack header with attacker
+        embeds.push(new MessageEmbed({
+            color: (hit && crit) ? '#fa7acb' : (hit) ? '#abfa7a' : '#fa877a',
+            image: { url: interaction.member.displayAvatarURL() },
+            author: { name: '🗡️ ' + interaction.member.displayName + ' has launched an attack!' },
+        }));
 
-        await interaction.editReply({ embeds: [response] });
-    }
+        // break down attack roll
+        embeds.push(new MessageEmbed({ 
+            color: (hit && crit) ? '#fa7acb' : (hit) ? '#7afabc' : '#faad7a',
+            author: { name: hit ? '🎯 They manage to catch an opening-!' : '🍃 Their enemy, however, slipped away' },
+            description: '> **Enemy Dodge Chance**: `' + target.stats.speed * 4 + '`'
+            + '\n> **Rolled**: `' + d1Hit + '`/`100`'
+        }));
 
-    static #getRandomQuote = (quotes) => quotes[Math.floor(Math.random() * quotes.length)]
-    static #getRandomDescription(hit, crit) {
-        if (hit && crit)
-            return this.#getRandomQuote(p_hit_and_crit);
-        if (hit)
-            return this.#getRandomQuote(p_hit);
-        if (crit)
-            return this.#getRandomQuote(p_crit_but_miss);
-        
-        // miss if no conditions met
-        return this.#getRandomQuote(p_miss);
+        // if the user hit, then display crit results
+        if (hit) embeds.push(new MessageEmbed({
+            color: (hit && crit) ? '#fa7acb' : (crit) ? '#7afabc' : '#faad7a',
+            author: { name: crit ? '🪨 They wind up for a critical blow-!' : '🍃 They opt for a normal attack' },
+            description: '> **Attacker\'s Critical Threshold**: `0`-`' + attacker.stats.dexterity * 3 + '`'
+            + '\n> **Rolled**: `' + d2Crit + '`/`100`'
+        }));
+
+        // provide a brief summary
+        embeds.push(new MessageEmbed({
+            color: hit ? '#fa877a' : '#abfa7a',
+            thumbnail: { url: targetMember.displayAvatarURL() },
+            title: (hit && crit ? '💥 CRITICAL HIT\n' : hit ? '⚔️ ' : '🍃 ')
+            + targetMember.displayName + ' ' + (hit ? 'has endured `' + damage + '` damage!' : 'has avoided the blow'),
+            description: '> **' + interaction.member.displayName + '** ' + getRandomDescription(hit, crit)
+            + (hit ? '\n\n**' + targetMember.displayName + ' must now use `/take-damage` `' + damage + '`.' + '**' : ''),
+        }));
+
+        // display roll breakdowns and summary to the user
+        return await interaction.editReply({ embeds });
+
+        // random quote handler
+        function getRandomQuote(quotes) { return quotes[Math.floor(Math.random() * quotes.length)]; }
+        function getRandomDescription(hit, crit) {
+            if (hit && crit)
+                return getRandomQuote(p_hit_and_crit);
+            if (hit)
+                return getRandomQuote(p_hit);
+            if (crit)
+                return getRandomQuote(p_crit_but_miss);
+            
+            // miss if no conditions met
+            return getRandomQuote(p_miss);
+        }
+
     }
 
     /**

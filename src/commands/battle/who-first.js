@@ -1,17 +1,15 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
-
 const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
-const MAX_ROLL = 1000;
 
 module.exports = {
-    name: 'who-goes-first',
-    description: 'Attack another user!',
+    name: 'who-first',
+    description: 'Flip a coin to see who goes first in battle!',
     options: [
         {
             name: 'opponent',
-            description: 'The target of this attack.',
-            type: dTypes.User,
+            description: 'Your opponent.',
+            type: CommandTypes.User,
             required: true,
         },
     ],
@@ -82,41 +80,4 @@ function denyBotAttack(interaction) {
         ]
     });
     return false;
-}
-
-/**
- * Inform the user that their target is not registered.
- * @param {BaseCommandInteraction} interaction 
- */
-function targetNotRegistered(interaction) {
-    interaction.editReply({
-        embeds : [new MessageEmbed()
-            .setColor('BLURPLE')
-            .setTitle('🛡️ WOAH THERE')
-            .setDescription('You can\'t attack a cat that doesn\'t exist!\nLet them know to sign up by trying to ')
-        ]
-    });
-    return false;
-}
-
-/**
- * Initiate rolls.
- * @param {BaseCommandInteraction} interaction 
- * @param {userSchema} attacker 
- * @param {userSchema} target 
- * @param {GuildMember} targetSnowflake
- */
-async function battle(interaction, attacker, target, targetSnowflake) {
-
-    // calculate rolls
-    const d1Hit = getRandom(1, 100);
-    const d2Crit = getRandom(1, 100);
-    
-    const response = new MessageEmbed({
-        color: (hit && crit) ? 'YELLOW' : (hit) ? 'GREEN' : 'RED',
-        title: '🎲 __**Attack Roll Results**__ 🎲',
-        description: descriptionFormat,
-    }).setFooter('Target: ' + targetSnowflake.displayName, targetSnowflake.displayAvatarURL());
-
-    await interaction.editReply({ embeds: [response] });
 }

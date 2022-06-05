@@ -1,21 +1,21 @@
 {
     "p_hit_and_crit": [
-        "You land a thunderous blow!",
-        "You savaged the enemy!"
+        "has landed a thunderous blow!",
+        "has savaged their enemy!"
     ],
     "p_hit": [
-        "You managed to land a blow!",
-        "You land a strike!"
+        "has managed to land a blow!",
+        "has managed to land a strike!"
     ],
     "p_crit_but_miss": [
-        "You are able to crit! But what a waste as you miss such a devastating attack!",
-        "With such thunderous swipe; you unfortunately miss.",
-        "With all of your might, you swipe at the enemy, and go wide; you miss!"
+        "was able to crit! But what a waste- they missed such a devastating attack!",
+        "lunged with such thunderous swipe; but missed.",
+        ", with all of their might, swiped at the enemy; but what a miss!"
     ],
     "p_miss": [
-        "You have missed!",
-        "You have stumbled!",
-        "You trip over your paws!",
-        "You weren't paying attention! What a miss!"
+        "has missed!",
+        "has stumbled!",
+        "has tripped over their paws!",
+        "wasn't fully paying attention! What a miss!"
     ]
 }

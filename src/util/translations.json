@@ -14,6 +14,9 @@
             "pol":"OBECNY GŁÓD",
             "de":"AKTUELLER HUNGERSTAND"
         },
+        "BATTLE_POWER":{
+            "en":"BATTLE POWER"
+        },
         "STATS_SAVED":{
             "en":"Your stats have been successfully saved!",
             "es":"¡Tus estadísticas se han guardado con éxito!",

@@ -1,18 +1,18 @@
 const { ButtonInteraction, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
-const mongoose = require('mongoose');
-const serverSchema = require('../../database/schemas/server');
+const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 
 /**
  * GLOBAL buttons handler
  * @param {ButtonInteraction} button Passed button interaction
  */
 module.exports = async (button) => {
-
     console.log(button.customId);
+    if (!button.customId.startsWith('GLOBAL')) return;
+    
 
     // route to the global request
-    switch (button.customId.slice(7)) {
+    switch (button.customId.slice(button.customId.indexOf('_') + 1)) {
         case 'VERIFY_AGE': {
             // defer reply
             await button.deferReply({ ephemeral: true });
@@ -235,5 +235,22 @@ module.exports = async (button) => {
             break;
         }
 
+        case 'ACCEPT_EXCUSE': {
+            const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
+            if (!excuse) return button.message.delete().catch();
+            await ExcuseHandler.approveAndDM(excuse, button.message, button.member, await button.guild.members.fetch(excuse.userId));
+            break;
+        }
+    
+        case 'DENY_EXCUSE': {
+            const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
+            if (!excuse) return button.message.delete().catch();
+            await ExcuseHandler.denyAndDM(excuse, button.message, button.member, await button.guild.members.fetch(excuse.userId));
+            break;
+        }
+    }
+
+    // route excuse requests
+    switch (button.customId.split(':')[0]) {
     }
 }

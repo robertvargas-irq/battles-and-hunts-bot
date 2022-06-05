@@ -15,7 +15,7 @@ module.exports = {
         client.user.setPresence({
             activities: [
                 {
-                    name: 'LOCALIZATION UPDATE|v2.0|🌍🌎🌏',
+                    name: 'ɧɛ\'ʂ Ɩıŋɠɛཞıŋɠ|v2.666|⽍',
                     type: 'PLAYING',
                 },
             ],

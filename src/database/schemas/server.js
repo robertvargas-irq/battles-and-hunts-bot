@@ -21,6 +21,9 @@ const { Schema } = require("mongoose");
  *          pendingToMessageId: Map<string, string>
  *          messageIdToPending: Map<string, string>
  *      },
+ *      excusesChannelId: string,
+ *      excusesThreads: Map<string, string>,
+ *      excusesPaused: Map<string, string>,
  *      roles: {
  *          adult: string
  *      }
@@ -98,12 +101,26 @@ const serverSchema = new Schema({
             default: new Map(),
         }
     },
+    excusesChannelId: {
+        type: String,
+        default: null,
+    },
+    excusesThreads: {
+        type: Map,
+        of: String,
+        default: new Map(),
+    },
+    excusesPaused: {
+        type: Map,
+        of: String,
+        default: new Map(),
+    },
     roles: {
         adult: {
             type: String,
             default: null,
         }
-    }
+    },
 });
 
 module.exports = serverSchema;

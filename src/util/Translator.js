@@ -1,6 +1,6 @@
 class Translator {
-    constructor(userId, fileId = null) {
-        this.language = require('./Language').CachedLanguages.get(userId);
+    constructor(userId = null, fileId = null) {
+        this.language = require('./Language').CachedLanguages.get(userId) || require('./Language').Languages.English;
         this.fileId = fileId;
     }
 
@@ -20,7 +20,6 @@ class Translator {
      * @returns {string} Translation
      */
     getGlobal = (textId) => {
-        if (!this.fileId) throw new Error('No fileId defined for the translator.');
         return require('./Language').getGlobal(this.language, textId);
     }
 

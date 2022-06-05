@@ -48,7 +48,7 @@ const userSchema = new Schema({
         required: true,
         default: 'en',
     },
-    stats: {      // dunno if I should split into diff
+    stats: {      // might become its own schema
         cat_size: {
             type: Number,
             default: 0,
@@ -110,6 +110,10 @@ const userSchema = new Schema({
             }
         },
         hunts: {
+            perfect: {
+                type: Number,
+                default: 0,
+            },
             successful: {
                 type: Number,
                 default: 0,

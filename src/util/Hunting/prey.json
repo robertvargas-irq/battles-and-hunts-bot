@@ -1,14 +1,58 @@
 {
-    "unforgiven":[
+    "outpost-rock":[
         "rabbit",
         "field mouse",
         "vole",
         "robin",
+        "goldfinch"
+    ],
+    "gorge":[
         "goldfinch",
-        "toad",
+        "robin",
+        "blackbird",
+        "squirrel",
+        "field mouse"
+    ],
+    "barn":[
+        "mouse",
+        "field mouse",
+        "vole",
+        "adder",
         "lizard"
     ],
-    "riverclan":[
+    "snake-rocks":[
+        "vole",
+        "adder"
+    ],
+    "sandy-hollow":[
+        "rabbit",
+        "field mouse",
+        "vole",
+        "goldfinch"
+    ],
+    "thunderpath":[
+        "rabbit",
+        "robin",
+        "squirrel",
+        "goldfinch",
+        "blackbird"
+    ],
+    "burnt-sycamore":[
+        "rabbit",
+        "field mouse",
+        "vole",
+        "robin",
+        "goldfinch"
+    ],
+    "pond":[
+        "toad",
+        "frog",
+        "lizard",
+        "newt",
+        "minnow",
+        "salamander"
+    ],
+    "river":[
         "trout",
         "carp",
         "chub",
@@ -16,28 +60,13 @@
         "rabbit",
         "minnow",
         "toad"
-        
     ],
-    "shadowclan":[
-        "toad",
-        "frog",
-        "lizard",
-        "field mouse"
-    ],
-    "thunderclan":[
-        "goldfinch",
-        "robin",
-        "blackbird",
-        "squirrel",
-        "vole",
+    "carrion-place":[
         "mouse",
-        "lizard",
+        "field mouse",
+        "vole",
         "adder",
-        "rabbit",
-        "trout",
-        "carp",
-        "chub",
-        "water vole"
+        "lizard"
     ],
     "descriptors":[
         "scrawny",
@@ -45,8 +74,11 @@
         "fat"
     ],
     "visuals":{
+        "newt":"https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Taricha_torosa%2C_Napa_County%2C_CA.jpg/1920px-Taricha_torosa%2C_Napa_County%2C_CA.jpg",
+        "salamander":"https://www.wwt.org.uk/uploads/images/2019-05-09/1557426651-717x403-great-crested-newt.jpg",
         "rabbit":"https://static.wikia.nocookie.net/warriors/images/0/0b/Rabbit.jpg/revision/latest/scale-to-width-down/150?cb=20110811022523",
         "mouse":"https://static.wikia.nocookie.net/warriors/images/b/b7/Mouse.jpg/revision/latest/scale-to-width-down/150?cb=20110811015349",
+        "field mouse":"https://static.wikia.nocookie.net/warriors/images/b/b7/Mouse.jpg/revision/latest/scale-to-width-down/150?cb=20110811015349",
         "vole":"https://static.wikia.nocookie.net/warriors/images/e/e5/Vole.jpg/revision/latest/scale-to-width-down/150?cb=20110811030826",
         "robin":"https://static.wikia.nocookie.net/warriors/images/2/2f/Robin.jpg/revision/latest/scale-to-width-down/150?cb=20160504204516",
         "goldfinch":"https://static.wikia.nocookie.net/warriors/images/b/b0/Finch.jpg/revision/latest/scale-to-width-down/150?cb=20110810231638",
@@ -61,6 +93,5 @@
         "blackbird":"https://static.wikia.nocookie.net/warriors/images/2/2b/Blackbird.jpg/revision/latest/scale-to-width-down/150?cb=20110811010659",
         "squirrel":"https://static.wikia.nocookie.net/warriors/images/f/fd/Squirrel.jpg/revision/latest/scale-to-width-down/150?cb=20110811030203",
         "adder":"https://static.wikia.nocookie.net/warriors/images/1/18/European_Adder-1.jpg/revision/latest/scale-to-width-down/150?cb=20170523233354"
-
     }
 }

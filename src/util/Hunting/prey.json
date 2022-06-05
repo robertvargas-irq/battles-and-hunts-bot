@@ -49,6 +49,7 @@
         "frog",
         "lizard",
         "newt",
+        "great created newt",
         "minnow",
         "salamander"
     ],
@@ -58,7 +59,10 @@
         "chub",
         "water vole",
         "rabbit",
+        "newt",
+        "great created newt",
         "minnow",
+        "salamander",
         "toad"
     ],
     "carrion-place":[
@@ -75,7 +79,8 @@
     ],
     "visuals":{
         "newt":"https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Taricha_torosa%2C_Napa_County%2C_CA.jpg/1920px-Taricha_torosa%2C_Napa_County%2C_CA.jpg",
-        "salamander":"https://www.wwt.org.uk/uploads/images/2019-05-09/1557426651-717x403-great-crested-newt.jpg",
+        "great crested newt":"https://www.wwt.org.uk/uploads/images/2019-05-09/1557426651-717x403-great-crested-newt.jpg",
+        "salamander":"https://cdn.pixabay.com/photo/2012/08/18/14/00/fire-salamander-54534_960_720.jpg",
         "rabbit":"https://static.wikia.nocookie.net/warriors/images/0/0b/Rabbit.jpg/revision/latest/scale-to-width-down/150?cb=20110811022523",
         "mouse":"https://static.wikia.nocookie.net/warriors/images/b/b7/Mouse.jpg/revision/latest/scale-to-width-down/150?cb=20110811015349",
         "field mouse":"https://static.wikia.nocookie.net/warriors/images/b/b7/Mouse.jpg/revision/latest/scale-to-width-down/150?cb=20110811015349",

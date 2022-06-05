@@ -7,9 +7,14 @@ module.exports = async ( interaction ) => {
 
     if ( !interaction.client.commands.has( interaction.commandName ) ) return;
 
+    const SubcommandGroup = interaction.options.getSubcommandGroup(false) || null;
+    const Subcommand = interaction.options.getSubcommand(false) || null;
+
     console.log({
-        commandName: interaction.commandName,
         commandId: interaction.commandId,
+        commandName: interaction.commandName,
+        subcommandGroup: SubcommandGroup,
+        subcommand: Subcommand,
         calledBy: ( interaction.commandName == 'feedback' )
             ? '# Anonymized #'
             : interaction.user.tag + ' (' + interaction.user.id + ')',
@@ -31,6 +36,8 @@ module.exports = async ( interaction ) => {
 
         console.error( `${Date()}\n\n`
             + `Command: ${interaction.commandName}\n`
+            + `Subcommand Group: ${SubcommandGroup}\n`
+            + `Subcommand: ${Subcommand}\n`
             + `Guild: ${interaction.guild.name} (${interaction.guild.id})\n`
             + `Caller: ${interaction.user.tag} (${interaction.user.id})\n`
             + `${error.stack}` );

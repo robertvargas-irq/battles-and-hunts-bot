@@ -31,7 +31,7 @@ class HuntManager extends CoreUtil {
     static #playerIdToRecentlyCaught = new Map();
 
     /**
-     * @type {Map<string, [weight, prey[]]>}
+     * @type {Map<string, [weight: number, prey[]]>}
      * Player ID to their inventory */
     static #playerIdToInventory = new Map();
 
@@ -225,8 +225,8 @@ class HuntManager extends CoreUtil {
             description: generateBriefDescription(tracked, caught, preyFromLocations.descriptors[prey.size - 1], prey)
             + '\n\n' + (
                 server.hunting.locked
-                ? '🔒 **Hunting is currently restricted.**\n> `/eat` `/carry` and `/deposit` are unavailable.'
-                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '> You may use `/carry` to carry it on your back, and `/deposit` when you return to camp.\n> *You may also `/eat off-back` if you must without alerting others...*' : ''))
+                ? '🔒 **Hunting is currently restricted.**\n> `/eat-from` `/carry` and `/deposit` are unavailable.'
+                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '> You may use `/carry` to carry it on your back, and `/deposit` when you return to camp.\n> *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
             ),
         }));
 
@@ -280,6 +280,63 @@ class HuntManager extends CoreUtil {
     static getRecentlyCaught(userId) {
         console.log(this.#playerIdToRecentlyCaught);
         return this.#playerIdToRecentlyCaught.get(userId);
+    }
+
+    /**
+     * Pull from a player's carrying inventory
+     * @param {[weight: number,prey[]]} inventory Player's inventory entry.
+     * @param {number} bitesToSatisfy The amount of bites needed to satisfy hunger.
+     * @returns {{bites_taken: number, consumed: {name:string, totalEaten:number}[]}} The prey that was required to facilitate 
+     */
+    static pullFromCarrying(inventory, bitesToSatisfy) {
+
+        // iterate through the pile until prey is depleted or bites satisfied
+        /**@type {prey} */
+        let pulled = null;
+        let bites_taken = 0;
+        let total_bites_taken = 0;
+        let eatenPrey = new Map();
+        while (inventory[1].length > 0 && bitesToSatisfy > 0) {
+
+            // unenqueue prey item
+            pulled = inventory[1].shift();
+            console.log({pulled});
+            
+            // see how many bites needed; either the full thing or bites needed to satisfy
+            const originalBitesRemaining = pulled.bites_remaining;
+            bites_taken = Math.min(pulled.bites_remaining, bitesToSatisfy);
+            pulled.bites_remaining -= bites_taken;
+            bitesToSatisfy -= bites_taken;
+            total_bites_taken += bites_taken;
+            
+            // record to eaten prey
+            eatenPrey.set(
+                pulled.name,
+                (eatenPrey.get(pulled.name) || 0)
+                    + 1 * (bites_taken / originalBitesRemaining)
+            );
+        }
+
+        // format the prey eaten
+        console.log(eatenPrey);
+        const eaten = Array.from(eatenPrey.entries()).map(([p, count]) => { return {name: p, amountEaten: count} })
+
+        // return the prey needed to eat
+        return { bitesTaken: total_bites_taken, consumed: eaten };
+
+    }
+
+    /**
+     * Get all the items being carried
+     * @param {string} userId The player's inventory to grab
+     * @returns {[weight: number,prey[]]} All the prey in their inventory
+     */
+    static getCarrying(userId) {
+        const inventory = this.#playerIdToInventory.get(userId);
+        if (!inventory) return [0, []];
+
+        // return the inventory from index 1
+        return inventory;
     }
 
     /**
@@ -349,6 +406,16 @@ class HuntManager extends CoreUtil {
 
         // return inventory
         return inventoryItems;
+    }
+
+    /**
+     * Override a player's inventory
+     * @param {string} userId The player to modify
+     * @param {[weight: number, prey[]]} newInventory Inventory to replace the original
+     * @returns {Map<string, [weight: number, prey[]]>} New Map of player inventories
+     */
+    static setCarrying(userId, newInventory) {
+        return this.#playerIdToInventory.set(userId, newInventory);
     }
 
     /**

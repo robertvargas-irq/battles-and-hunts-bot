@@ -175,8 +175,11 @@ module.exports = {
             }
             
             case 'prey-pile': {
+                // get clan
+                const clan = interaction.options.getString('clan-to-eat-from');
+
                 // if the prey pile is empty, inform
-                const preyPile = PreyPile.getPreyPile(clan, server);
+                const preyPile = PreyPile.getPreyPile(player.clan, server);
                 if (preyPile.length < 1) return interaction.editReply({
                     embeds: [new MessageEmbed({
                         color: 'RED',
@@ -188,14 +191,14 @@ module.exports = {
                 });
 
                 // pull and eat the amount, and update hunger
-                const {bitesTaken, consumed} = PreyPile.pullFromPreyPile(clan, server, bitesNeeded);
+                const {bitesTaken, consumed} = PreyPile.pullFromPreyPile(player.clan, server, bitesNeeded);
                 const consumedFormatted = consumed.map(({name, amountEaten}) => {
                     return `(\`${Number.isInteger(amountEaten) ? amountEaten : amountEaten.toFixed(2)}\`) **${name}**`
                 }).join(', ');
                 player.currentHunger = player.currentHunger - bitesTaken;
 
                 // update prey pile and save user's new hunger
-                await PreyPile.updatePreyPile(interaction, server, clan);
+                await PreyPile.updatePreyPile(interaction, server, player.clan);
                 await player.save();
                 await server.save();
 

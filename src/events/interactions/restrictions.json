@@ -4,7 +4,6 @@
             "960693549735743518": [
                 "register",
                 "edit",
-                "audit-registration",
                 "stats"
             ],
             "960696910849662976": [
@@ -13,7 +12,7 @@
                 "health",
                 "stats",
                 "take-damage",
-                "who-goes-first"
+                "who-first"
             ],
             "960696925810741248": [
                 "attack",
@@ -21,7 +20,7 @@
                 "health",
                 "stats",
                 "take-damage",
-                "who-goes-first"
+                "who-first"
             ],
             "960696939161210930": [
                 "attack",
@@ -29,7 +28,7 @@
                 "health",
                 "stats",
                 "take-damage",
-                "who-goes-first"
+                "who-first"
             ],
             "960698679596032001": [
                 "attack",
@@ -37,7 +36,7 @@
                 "health",
                 "stats",
                 "take-damage",
-                "who-goes-first"
+                "who-first"
             ],
             "960697143243472916": [
                 "hunt",

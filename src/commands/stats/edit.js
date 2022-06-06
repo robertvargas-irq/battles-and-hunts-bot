@@ -57,7 +57,7 @@ module.exports = {
                             .setColor('AQUA')
                             .setTitle('🌟 ' + translator.getGlobal('STATS_SAVED'))
                             .setDescription(translator.getGlobal('MENU_DISMISS')),
-                        Player.formatStats(interaction, found)
+                        Player.formatStats(interaction.member, found, interaction.user.id)
                     ]
                 });
             })

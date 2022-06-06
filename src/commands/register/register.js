@@ -38,7 +38,7 @@ module.exports = {
                     .setColor('AQUA')
                     .setTitle('🌟 ' + Translator.getGlobal('STATS_SAVED'))
                     .setDescription(Translator.getGlobal('MENU_DISMISS')),
-                Player.formatStats(interaction, found)
+                Player.formatStats(interaction.member, found, interaction.user.id)
             ]
         });
     },
@@ -57,7 +57,7 @@ function alreadyRegistered(interaction, userData, translator) {
                 .setColor('AQUA')
                 .setTitle('🌟 ' + translator.get('ALREADY_REGISTERED_TITLE'))
                 .setDescription(translator.get('ALREADY_REGISTERED_DESCRIPTION')),
-            Player.formatStats(interaction, userData)
+            Player.formatStats(interaction.member, userData, interaction.user.id)
         ]
     })
 }

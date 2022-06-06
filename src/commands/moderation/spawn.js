@@ -108,8 +108,13 @@ module.exports = {
                 interaction.channel.send({
                     embeds: [new MessageEmbed()
                         .setColor('BLURPLE')
-                        .setTitle('Excuse Form Requests')
-                        .setDescription('Sit sint tempor quis eu nisi cupidatat enim velit consequat reprehenderit. Mollit id ad excepteur anim elit cupidatat nulla aute Lorem fugiat. Voluptate eiusmod est officia culpa adipisicing ullamco. Deserunt amet anim incididunt tempor Lorem deserunt nostrud. Cupidatat do do nulla proident non consectetur esse sint. Qui ea exercitation Lorem incididunt commodo ut incididunt amet officia ipsum ullamco culpa.')
+                        .setTitle('📝 Excuse Form Requests')
+                        .setDescription(
+                            'Need to excuse yourself from a session? Running late or a little behind; need to leave early, perhaps?'
+                            + '\n**No worries! We\'ve got you covered!**'
+                            + '\n\nExcuse forms are readily available for any needs you may have. If you don\'t feel comfortable sharing the reason, that\'s perfectly fine! Please just let us know and we\'ll accomodate!'
+                            + '\n\n💡 **To get started, select the day you wish to fill out a form for. You will then be prompted for what kind of excuse you would like to submit, along with extra details.**'
+                        )
                     ],
                     components: [new MessageActionRow({
                         components: ExcuseHandler.days.map(day => new MessageButton({

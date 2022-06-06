@@ -53,7 +53,7 @@ class AttackManager extends CoreUtil {
         // create attack header with attacker
         embeds.push(new MessageEmbed({
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#abfa7a' : '#fa877a',
-            image: { url: interaction.member.displayAvatarURL() },
+            image: { url: interaction.member.displayAvatarURL({ dynamic: true }) },
             author: { name: '🗡️ ' + interaction.member.displayName + ' has launched an attack!' },
         }));
 
@@ -76,7 +76,7 @@ class AttackManager extends CoreUtil {
         // provide a brief summary
         embeds.push(new MessageEmbed({
             color: hit ? '#fa877a' : '#abfa7a',
-            thumbnail: { url: targetMember.displayAvatarURL() },
+            thumbnail: { url: targetMember.displayAvatarURL({ dynamic: true }) },
             title: (hit && crit ? '💥 CRITICAL HIT\n' : hit ? '⚔️ ' : '🍃 ')
             + targetMember.displayName + ' ' + (hit ? 'has endured `' + damage + '` damage!' : 'has avoided the blow'),
             description: '> **' + interaction.member.displayName + '** ' + getRandomDescription(hit, crit)

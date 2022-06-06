@@ -296,7 +296,7 @@ class ExcuseHandler extends CoreUtil {
             embeds: [new MessageEmbed()
                 .setColor(color)
                 .setTitle(emoji + ' ' + excuse.type + ' FORM')
-                .setThumbnail(interaction.member.displayAvatarURL())
+                .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription('Incoming request from:'
                 + '\n`Nickname`: **' + interaction.member.displayName + '**'
                 + '\n`Username`: ' + interaction.user.tag

@@ -22,7 +22,7 @@ module.exports = async (interaction, subcommand) => {
                 + '\n> 🟢: Approved'
                 + '\n> 🟡: Pending'
                 + '\n> 🔴: Denied',
-                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL() },
+                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
                 timestamp: Date.now(),
             });
             const lateEmbed = new MessageEmbed({
@@ -201,7 +201,7 @@ module.exports = async (interaction, subcommand) => {
                 color: 'DARK_GREY',
                 title: '🦴 Starvation lingers...',
                 description: '> This audit contains the most up-to-date information available upon request.',
-                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL() },
+                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
                 timestamp: Date.now(),
             });
             const starvingEmbed = new MessageEmbed({
@@ -276,7 +276,7 @@ module.exports = async (interaction, subcommand) => {
                 color: 'AQUA',
                 title: '📝 All members registered to the bot',
                 description: '> This audit contains the most up-to-date information available upon request.',
-                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL() },
+                footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
                 timestamp: Date.now(),
             }));
 

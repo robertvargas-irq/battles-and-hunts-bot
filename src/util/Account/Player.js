@@ -25,7 +25,7 @@ function formatStats(member, userData, originalCallerId) {
     const generalStats = new MessageEmbed({
         color: '680d2b',
         title: translator.get('STATS_HEADER'),
-        thumbnail: { url: member.displayAvatarURL() },
+        thumbnail: { url: member.displayAvatarURL({ dynamic: true }) },
         fields: [
             {
                 name: translator.getGlobal('CURRENT_HEALTH') + ' 💘',
@@ -61,6 +61,51 @@ function formatStats(member, userData, originalCallerId) {
         },
     });
     return [generalStats, listedStats];
+}
+
+/**
+ * Format player's battle stats.
+ * @param {GuildMember} member
+ * @param {userSchema} userData 
+ * @param {string} originalCallerId For translation purposes
+ */
+ function formatBattleStats(member, userData, originalCallerId) {
+
+    const translator = new Translator(originalCallerId, FILE_LANG_ID);
+    
+    const generalStats = new MessageEmbed({
+        color: '680d2b',
+        title: 'Player Battle Stats',
+        thumbnail: { url: member.displayAvatarURL({ dynamic: true }) },
+        fields: [
+            {
+                name: translator.getGlobal('CURRENT_HEALTH') + ' 💘',
+                value: `> ↣ \`${userData.currentHealth}\` / \`${userData.stats.constitution * 5 + 50}\``,
+                inline: true
+            },
+            {
+                name: translator.getGlobal('BATTLE_POWER') + ' 💪',
+                value: `> ↣ \`${userData.stats.strength + userData.stats.dexterity + userData.stats.constitution + userData.stats.speed}\` / \`30\``,
+            },
+            {
+                name: 'Attack',
+                value: `> ↣ \`${userData.stats.strength * 4}\` / \`40\``,
+                inline: true,
+            },
+            {
+                name: 'Dodge Chance',
+                value: `> ↣ \`${userData.stats.speed * 4}\` / \`40\``,
+                inline: true,
+            },
+            {
+                name: 'Crit Chance',
+                value: `> ↣ \`0\` - \`${userData.stats.dexterity * 3}\``,
+                inline: true,
+            },
+        ]
+    });
+    
+    return [generalStats];//, listedStats];
 }
 
 const allowEditing = (guildId, userId) => {
@@ -103,4 +148,4 @@ function calculateMaxHealth(constitution) {
     return constitution * 5 + 50;
 }
 
-module.exports = { formatStats, calculateMaxHealth, allowEditing, clearEditing, allowedToEdit };
+module.exports = { formatStats, formatBattleStats, calculateMaxHealth, allowEditing, clearEditing, allowedToEdit };

@@ -4,6 +4,7 @@ const Player = require('../../util/Account/Player');
 const HuntManager = require('../../util/Hunting/HuntManager');
 const CoreUtil = require('../../util/CoreUtil');
 
+
 module.exports = {
     name: 'stats',
     description: 'Check out your stats (default)! Or another\'s (player)!',
@@ -16,6 +17,19 @@ module.exports = {
                 {
                     name: 'player',
                     description: '(DEFAULT: YOURSELF) Examine your enemy.',
+                    type: CommandTypes.User,
+                    required: false,
+                },
+            ]
+        },
+        {
+            name: 'battle',
+            description: 'Check out your or another\'s battle stats!',
+            type: CommandTypes.Subcommand,
+            options: [
+                {
+                    name: 'player',
+                    description: '(DEFAULT: YOURSELF) Examine another\'s contributions.',
                     type: CommandTypes.User,
                     required: false,
                 },
@@ -69,9 +83,14 @@ module.exports = {
         // display the requested stats
         switch (statsType) {
             case 'general': {
-                // display general character stats
                 return interaction.editReply({
                     embeds: Player.formatStats(playerMember, found, interaction.user.id)
+                });
+            }
+
+            case 'battle': {
+                return interaction.editReply({
+                    embeds: Player.formatBattleStats(playerMember, found, interaction.user.id)
                 });
             }
 

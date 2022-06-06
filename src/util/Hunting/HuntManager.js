@@ -220,7 +220,7 @@ class HuntManager extends CoreUtil {
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
                 text: 'Hunt Results for ' + interaction.member.displayName,
-                iconURL: interaction.member.displayAvatarURL()
+                iconURL: interaction.member.displayAvatarURL({ dynamic: true })
             },
             description: generateBriefDescription(tracked, caught, preyFromLocations.descriptors[prey.size - 1], prey)
             + '\n\n' + (
@@ -377,7 +377,7 @@ class HuntManager extends CoreUtil {
                     .setColor('GREYPLE')
                     .setAuthor({
                         name: '🐾 Prey was carried away',
-                        iconURL: originalInteraction.member.displayAvatarURL() })
+                        iconURL: originalInteraction.member.displayAvatarURL({ dynamic: true }) })
                     .setTitle('')
                     .setThumbnail(r.embeds[0].image?.url || '')
                     .setImage('')
@@ -520,7 +520,7 @@ class HuntManager extends CoreUtil {
     static formatStats(user, memberSnowflake) {
         return new MessageEmbed({
             color: 'DARK_VIVID_PINK',
-            thumbnail: { url: memberSnowflake.displayAvatarURL() },
+            thumbnail: { url: memberSnowflake.displayAvatarURL({ dynamic: true }) },
             title: '🥩 Hunting Stats and Contributions',
             description: '**These are 🍃 canon contributions!**'
             + '\n*(These only update when Hunting is not `restricted`)*',

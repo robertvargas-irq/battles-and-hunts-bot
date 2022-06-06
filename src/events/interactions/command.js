@@ -25,8 +25,9 @@ module.exports = async ( interaction ) => {
     // execute command
     try {
         // error if the channel id is restricted and wrong command is used
-        let wrongId = wrongChannel(interaction);
-        // console.log({wrongId});
+        let wrongId = !(interaction.commandName === 'admin' || interaction.commandName === 'spawn')
+        && wrongChannel(interaction);
+        
         if (wrongId) return wrongChannelMessage(interaction, wrongId);
 
         await interaction.client.commands.get(interaction.commandName).execute(interaction).catch(console.error);

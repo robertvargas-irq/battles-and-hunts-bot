@@ -36,7 +36,7 @@ module.exports = {
             embeds: [new MessageEmbed()
                 .setColor(first ? 'GREEN' : 'YELLOW')
                 .setTitle('💭 __Let\'s see who\'s first!__')
-                .setThumbnail(first ? interaction.member.displayAvatarURL() : target.displayAvatarURL())
+                .setThumbnail(first ? interaction.member.displayAvatarURL({ dynamic: true }) : target.displayAvatarURL({ dynamic: true }))
                 .setDescription(
                 `> Time to flip a coin...\n\n` +
                 `🌿 (\`HEADS\`) **${interaction.member.displayName}**\n` +

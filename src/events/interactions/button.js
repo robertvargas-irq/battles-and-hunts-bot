@@ -45,7 +45,7 @@ module.exports = async (button) => {
                 embeds: [new MessageEmbed()
                     .setColor('AQUA')
                     .setTitle('Adult Verification Request')
-                    .setThumbnail(button.member.displayAvatarURL())
+                    .setThumbnail(button.member.displayAvatarURL({ dynamic: true }))
                     .setDescription('Incoming request from:'
                     + '\n`Nickname`: **' + button.member.displayName + '**'
                     + '\n`Username`: ' + button.user.tag

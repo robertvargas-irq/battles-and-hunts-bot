@@ -207,7 +207,7 @@ module.exports = {
                 if (player.clan == clan) {
                     notifyEmbed
                         .setColor('AQUA')
-                        .setAuthor({name: '🦴 Some prey has been eaten', iconURL: interaction.member.displayAvatarURL()})
+                        .setAuthor({name: '🦴 Some prey has been eaten', iconURL: interaction.member.displayAvatarURL({ dynamic: true })})
                         .setThumbnail('https://c.tenor.com/27kedvI8EwQAAAAd/cat-eating.gif')
                         .setDescription(`\
                         **${interaction.member.displayName}** has eaten some food from the prey pile.\

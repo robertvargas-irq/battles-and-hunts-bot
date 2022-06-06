@@ -55,7 +55,7 @@ class CoreUtil {
      * @param {[number]} seconds
      */
     static async SendAndDelete(interaction, messagePayload, seconds = 20) {
-        const translator = new Translator(interaction.user.id, FILE_LANG_ID);
+        const translator = new (require('./Translator'))(interaction.user.id, FILE_LANG_ID);
         if (messagePayload.embeds[0].footer?.text) messagePayload.embeds[0].footer.text += '\n'
         + (
             interaction.ephemeral
@@ -138,7 +138,7 @@ class CoreUtil {
      * @param {Translator} translator
      */
     static InformInvalid(interaction, translator) {
-        if (!translator) translator = new require('./Translator')();
+        if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
             embeds: [ new MessageEmbed()
                 .setColor('AQUA')
@@ -155,7 +155,7 @@ class CoreUtil {
      * @param {Translator} translator
      */
     static InformNotRegistered(interaction, translator) {
-        if (!translator) translator = new require('./Translator')();
+        if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
             embeds: [ new MessageEmbed()
                 .setColor('RED')
@@ -172,7 +172,7 @@ class CoreUtil {
      * @param {Translator} translator
      */
     static InformSuccessfulCancel(interaction, translator) {
-        if (!translator) translator = new require('./Translator')();
+        if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
             embeds: [ new MessageEmbed()
                 .setColor('AQUA')

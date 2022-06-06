@@ -284,7 +284,7 @@ class ExcuseHandler extends CoreUtil {
 
             // add everyone in the current channel to the new thread
             for (const [_, member] of (await excuseChannelParent.fetch()).members)
-                excuseThread.members.add(member.user.id);
+                if (!member.user.bot) excuseThread.members.add(member.user.id);
         }
 
         // post the excuse for administrative review

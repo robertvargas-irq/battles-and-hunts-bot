@@ -14,11 +14,51 @@ module.exports = async (button) => {
     // route to the global request
     switch (button.customId.slice(button.customId.indexOf('_') + 1)) {
         case 'VERIFY_AGE': {
+            // get server entry from the database
+            const server = VerificationHandler.Servers.cache.get(button.guild.id);
+
+            // check to see if request is already pending
+            if (VerificationHandler.isPending(server, button.user.id, null))
+                return button.reply(VerificationHandler.REPLIES.IS_PENDING)
+
+            // check to see if request is already pending
+            if (VerificationHandler.isPending(server, button.user.id, null))
+                return button.reply(VerificationHandler.REPLIES.IS_PENDING)
+
+            // check if the user has been denied in the past
+            if (VerificationHandler.isDenied(server, button.user.id))
+                return button.reply(VerificationHandler.REPLIES.IS_DENIED)
+            
+            // check to see if already verified
+            if (button.member.roles.cache.has(server.roles.adult))
+                return button.reply(VerificationHandler.REPLIES.ALREADY_VERIFIED);
+            
+            // check with the user if they wish to continue
+            return button.reply({
+                ephemeral: true,
+                embeds: [new MessageEmbed({
+                    color: 'RED',
+                    title: '‼️⚠️ Please Read',
+                    description: '> To ensure you did not press on this verification by accident, the administrative team wishes to inform you of the following:'
+                    + '\n\n**ALL VERIFICATION REQUESTS WILL RECEIVE AN INDEPENDENT REVIEW/SCREENING BY A MEMBER OF OUR ADMINISTRATIVE TEAM**'
+                    + '\n\nIf you wish to verify your age as an adult and get the \'`ADULT`\' role, please be ready to submit **proof**, while also **censoring or removing** any and all **sensitive information** such as an address or license number.'
+                    + '\n\n`By pressing the "Yes, I have read and wish to submit proof" button below, you have read the disclaimer and this brief reminder of proof being required.` **An admin will follow up with you within 48 hours.**'
+                })],
+                components: [new MessageActionRow({
+                    components: [new MessageButton({
+                        customId: 'GLOBAL_VERIFY_AGE_CONTINUE',
+                        label: 'Yes, I have read and wish to submit proof',
+                        style: 'DANGER',
+                    })]
+                })],
+            })
+        }
+        case 'VERIFY_AGE_CONTINUE': {
             // defer reply
-            await button.deferReply({ ephemeral: true });
+            await button.deferReply({ ephemeral: true }); // ! might delete
             
             // get server entry from the database
-            const server = await VerificationHandler.FetchServer(button.guild.id);
+            const server = VerificationHandler.Servers.cache.get(button.guild.id);
 
             // check to see if request is already pending
             if (VerificationHandler.isPending(server, button.user.id, null))
@@ -41,6 +81,7 @@ module.exports = async (button) => {
             console.log(verificationThread);
             if (!verificationThread) return button.editReply(VerificationHandler.REPLIES.NO_CHANNEL);
 
+            // push message to administrators regarding the incoming request
             const verificationThreadMessage = await VerificationHandler.pushToVerificationThread(verificationThread, {
                 embeds: [new MessageEmbed()
                     .setColor('AQUA')
@@ -72,12 +113,12 @@ module.exports = async (button) => {
                         ],
                     }),
                 ],
-            }, button.user.id != '264886440771584010' ? ['206166007645995009', '264886440771584010', '363470341156110336', '418635972427776001'] : []);
+            }, button.user.id != '264886440771584010' ? ['206166007645995009', '264886440771584010', '363470341156110336', '418635972427776001', '723764223519228008'] : []);
             VerificationHandler.setPending(server, button.user.id, verificationThreadMessage.id);
 
             // finally, notify of successful request and save
-            await button.editReply(VerificationHandler.REPLIES.REQUEST_SENT);
-            await server.save();
+            button.editReply(VerificationHandler.REPLIES.REQUEST_SENT);
+            server.save();
             
             console.log("VERIFY_AGE");
             break;
@@ -85,13 +126,15 @@ module.exports = async (button) => {
 
         case 'ACCEPT_VERIFICATION': {
             // unarchive the thread
-            await button.deferUpdate();
-            await button.message.fetch();
-            if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
+            await Promise.all([
+                button.deferUpdate(),
+                button.message.fetch(),
+            ]);
+
             if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
             
-            // get server entry from the database
-            const server = await VerificationHandler.FetchServer(button.guild.id);
+            // get server entry from the cache
+            const server = VerificationHandler.Servers.cache.get(button.guild.id);
 
             // check to see if the request is already pending
             if (!VerificationHandler.isPending(server, null, button.message.id))
@@ -163,13 +206,15 @@ module.exports = async (button) => {
 
         case 'DENY_VERIFICATION': {
             // unarchive
-            await button.deferUpdate();
-            await button.message.fetch();
-            if (button.user.id === '723764223519228008') return; // Stone-Pool cannot verify.
+            await Promise.all([
+                button.deferUpdate(),
+                button.message.fetch(),
+            ]);
+
             if (button.channel.isThread() && button.channel.archived) button.channel.setArchived(false, 'Accept Verification emitted; unarchiving.');
             
             // get server entry from the database
-            const server = await VerificationHandler.FetchServer(button.guild.id);
+            const server = VerificationHandler.Servers.cache.get(button.guild.id);
 
             // check to see if the request is already pending
             if (!VerificationHandler.isPending(server, null, button.message.id))

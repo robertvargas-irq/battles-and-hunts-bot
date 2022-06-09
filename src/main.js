@@ -9,6 +9,7 @@ const Language = require('./util/Language');
 const CharacterCache = require('./util/Character/CharacterCache');
 const MemberCache = require('./util/Member/MemberCache');
 const ServerCache = require('./util/Server/ServerCache');
+const ExcuseCache = require('./util/Excused/ExcuseCache');
 dotenv.config({ path: '../.env' });
 
 // initialize Discord client then connect to the mongodb database
@@ -50,6 +51,15 @@ require('./database/connect.js')().then(() => {
             'Map(' + cache.size + ')'
         );
     });
+
+    // cache excuses
+    ExcuseCache.CacheExcuses().then((cache) => {
+        console.log(
+            'Excuses successfully cached',
+            'Map(' + cache.size + ')'
+        );
+    })
+
 });
 
 

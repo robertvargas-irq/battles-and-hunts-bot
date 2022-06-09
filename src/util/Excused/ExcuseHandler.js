@@ -77,6 +77,13 @@ class ExcuseHandler extends CoreUtil {
         // update excuse status and message embed to reflect approval
         excuse.status = this.EXCUSE_STATUSES.APPROVED;
         excuse.save();
+
+        // save to the member's excuse tracker
+        const memberDocument = this.Members.cache.get(excuse.guildId, excuse.userId);
+        memberDocument.excuses.approved.total++;
+        memberDocument.excuses.approved[excuse.type.replace(/ +/, '_').toLowerCase()]++;
+        memberDocument.save();
+
         return message.edit({
             embeds: [new MessageEmbed(message.embeds[0])
                 .setColor('GREEN')
@@ -134,6 +141,13 @@ class ExcuseHandler extends CoreUtil {
         // update excuse status and message embed to reflect denied request
         excuse.status = this.EXCUSE_STATUSES.DENIED;
         excuse.save();
+
+        // save to the member's excuse tracker
+        const memberDocument = this.Members.cache.get(excuse.guildId, excuse.userId);
+        memberDocument.excuses.denied.total++;
+        memberDocument.excuses.denied[excuse.type.replace(/ +/, '_').toLowerCase()]++;
+        memberDocument.save();
+
         return message.edit({
             embeds: [new MessageEmbed(message.embeds[0])
                 .setColor('RED')
@@ -151,11 +165,11 @@ class ExcuseHandler extends CoreUtil {
      * @param {string} guildId 
      * @param {days} day 
      * @param {types} type 
-     * @returns 
+     * @returns {Promise<Excuse>}
      */
     static async fetchExcuse(userId, guildId, day, type) {
         return Excuse.findOne({ userId, guildId, day, type }).exec();
-    }
+    } 
 
     /**
      * Fetch all excuses from the database
@@ -185,22 +199,25 @@ class ExcuseHandler extends CoreUtil {
     static async clearDayAndDeleteThread(interaction, day) {
 
         // delete the actual thread associated with the day
-        this.FetchServer(interaction.guild.id).then(async server => {
-            console.log({server});
-            const threadId = server.excusesThreads.get(day);
-            if (!threadId) return;
+        const server = this.Servers.cache.get(interaction.guild.id)
+        const threadId = server.excusesThreads.get(day);
+        if (!threadId) return;
+        
+        console.log({threadId});
 
-            console.log({threadId});
-
-            const thread = await interaction.guild.channels.fetch(threadId).catch(() => false);
-            if (!thread) return;
-
+        // delete the corresponding thread
+        interaction.guild.channels.fetch(threadId)
+        .then(thread => {
             console.log({thread});
-            
             thread.delete().catch();
-        }).catch();
+        })
+        .catch();
 
-        // delete all excuses from a given day
+        // delete all excuses from the cache then from the database for a given day
+        const cache = this.Excuses.cache;
+        await this.fetchAllExcuses(guildId, day).then(excuses => {
+            excuses.forEach(e => cache.remove(e));
+        });
         return Excuse.deleteMany({ guildId: interaction.guild.id, day });
     }
 
@@ -208,10 +225,10 @@ class ExcuseHandler extends CoreUtil {
      * See if an excuse day is paused
      * @param {string} guildId Guild to check
      * @param {days} day Day to check
-     * @returns {Promise<boolean>}
+     * @returns {boolean}
      */
-    static async dayIsPaused(guildId, day) {
-        const server = await this.FetchServer(guildId);
+    static dayIsPaused(guildId, day) {
+        const server = this.Servers.cache.get(guildId);
         return server.excusesPaused.has(day);
     }
 
@@ -219,17 +236,17 @@ class ExcuseHandler extends CoreUtil {
      * Pause incoming excuses for a given day.
      * @param {string} guildId 
      * @param {days} day 
-     * @returns {Promise<boolean>} True if paused | False if already paused
+     * @returns {boolean} True if paused | False if already paused
      */
-    static async pause(guildId, day) {
-        const server = await this.FetchServer(guildId);
+    static pause(guildId, day) {
+        const server = this.Servers.cache.get(guildId);
 
         // if already paused, return false
         if (server.excusesPaused.has(day)) return false;
 
         // pause and save
         server.excusesPaused.set(day, day);
-        await server.save();
+        server.save();
 
         return true;
     }
@@ -324,6 +341,12 @@ class ExcuseHandler extends CoreUtil {
                             emoji: '⛔',
                             label: 'Insufficient Excuse',
                             customId: 'GLOBAL_DENY_EXCUSE'
+                        }),
+                        new MessageButton({
+                            style: 'SECONDARY',
+                            emoji: '🗑',
+                            label: 'Delete',
+                            customId: 'GLOBAL_DELETE_EXCUSE',
                         }),
                     ],
                 }),

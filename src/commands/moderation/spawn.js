@@ -124,10 +124,10 @@ module.exports = {
                         }))
                     })],
                 });
-                await interaction.deferReply({ ephemeral: true });
                 
-                // pull server from the database
-                const server = await ExcuseHandler.FetchServer(interaction.guild.id);
+                // defer and pull server from the cache
+                await interaction.deferReply({ ephemeral: true });
+                const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
                 
                 // save excuse processing channel id and notify
                 ExcuseHandler.setProcessingChannel(server, processingChannel.id);
@@ -151,7 +151,7 @@ module.exports = {
                 const adultRole = interaction.options.getRole('adult-role');
                 
                 // pull server from the database
-                const server = await VerificationHandler.FetchServer(interaction.guild.id);
+                const server = VerificationHandler.Servers.cache.get(interaction.guild.id);
                 
                 // spawn verification request and processing thread
                 VerificationHandler.setAdultRole(server, adultRole.id);
@@ -181,7 +181,7 @@ module.exports = {
                 const clan = interaction.options.getString('clan');
                 
                 // pull server from the database
-                const server = await PreyPile.FetchServer(interaction.guild.id);
+                const server = PreyPile.Servers.cache.get(interaction.guild.id);
 
                 // set current channel to the corresponding clan's preyPileChannelId
                 await PreyPile.setPreyPileChannelAndSpawn(interaction, server, clan);

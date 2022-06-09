@@ -1,6 +1,7 @@
 const { ButtonInteraction, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
+const ExcuseModel = require('../../database/schemas/excuse');
 
 /**
  * GLOBAL buttons handler
@@ -284,6 +285,7 @@ module.exports = async (button) => {
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.delete().catch();
             await ExcuseHandler.approveAndDM(excuse, button.message, button.member, await button.guild.members.fetch(excuse.userId));
+            ExcuseHandler.Excuses.cache.add(excuse);
             break;
         }
     
@@ -291,7 +293,48 @@ module.exports = async (button) => {
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.delete().catch();
             await ExcuseHandler.denyAndDM(excuse, button.message, button.member, await button.guild.members.fetch(excuse.userId));
+            ExcuseHandler.Excuses.cache.add(excuse);
             break;
+        }
+
+        case 'DELETE_EXCUSE': {
+            const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
+            if (!excuse) return button.message.edit({
+                embeds: [new MessageEmbed({
+                    color: 'ORANGE',
+                    author: { name: 'Unable to delete; excuse no longer exists' },
+                    footer: {
+                        text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
+                    },
+                    timestamp: Date.now(),
+                })],
+                components: [],
+            }).catch(() => button.message.edit({
+                embeds: [new MessageEmbed({
+                    color: 'ORANGE',
+                    author: { name: 'Unable to delete' },
+                    footer: {
+                        text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
+                    },
+                    timestamp: Date.now(),
+                })],
+                components: [],
+            })).catch();
+
+            // delete excuse from cache and database
+            ExcuseHandler.Excuses.cache.remove({ guildId: excuse.guildId, userId: excuse.userId, day: excuse.day, type: excuse.type });
+            ExcuseModel.deleteOne({ guildId: excuse.guildId, userId: excuse.userId }).then(console.log).catch(console.error);
+            return button.message.edit({
+                embeds: [new MessageEmbed({
+                    color: 'GREYPLE',
+                    author: { name: 'Excuse successfully deleted.' },
+                    footer: {
+                        text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
+                    },
+                    timestamp: Date.now(),
+                })],
+                components: [],
+            }).catch();
         }
     }
 

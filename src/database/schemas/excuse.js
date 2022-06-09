@@ -32,6 +32,7 @@ const ExcuseSchema = new Schema({
     },
 });
 
+
 /**
  * @typedef {{
  * guildId: string,
@@ -43,6 +44,5 @@ const ExcuseSchema = new Schema({
  * processingMessageId: string,
  * }} Excuse
  * @type {Excuse}
- * 
 */
 module.exports = mongoose.model('Excuse', ExcuseSchema);

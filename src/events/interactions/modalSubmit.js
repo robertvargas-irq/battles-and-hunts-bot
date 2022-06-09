@@ -7,7 +7,7 @@ module.exports = async (/**@type {ModalSubmitInteraction}*/ interaction) => {
     switch (MODAL_ID) {
         case 'EXCUSE': {
 
-            interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ ephemeral: true });
             
             console.log(`Submitted ${interaction.customId}; received: `);
             console.log({
@@ -30,7 +30,8 @@ module.exports = async (/**@type {ModalSubmitInteraction}*/ interaction) => {
             });
             const processingMessage = await ExcuseHandler.post(interaction, createdExcuse);
             createdExcuse.processingMessageId = processingMessage.id;
-            await createdExcuse.save();
+            ExcuseHandler.Excuses.cache.add(createdExcuse);
+            createdExcuse.save();
             
             // notify
             interaction.editReply({

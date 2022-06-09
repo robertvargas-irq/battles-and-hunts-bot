@@ -12,9 +12,9 @@ module.exports = async (interaction, subcommand) => {
     const day = interaction.options.getString('day');
 
     // route subcommand
-    await interaction.deferReply({ ephemeral: true });
     switch (subcommand) {
         case 'clear': {
+            await interaction.deferReply();
             const { deletedCount } = await ExcuseHandler.clearDayAndDeleteThread(interaction, day);
 
             // if nothing was deleted, inform and do not resume
@@ -27,7 +27,7 @@ module.exports = async (interaction, subcommand) => {
             });
 
             // resume and inform success
-            await ExcuseHandler.resume(interaction, day);
+            ExcuseHandler.resume(interaction, day);
             return interaction.editReply({
                 embeds: [new MessageEmbed({
                     color: 'GREEN',
@@ -37,47 +37,49 @@ module.exports = async (interaction, subcommand) => {
             });
         } // end clear
 
-        case 'pause':
-            return ExcuseHandler.pause(interaction.guild.id, day).then(successfullyPaused => {
-                // paused successfully
-                if (successfullyPaused) interaction.editReply({
-                    embeds: [new MessageEmbed({
-                        color: 'GREEN',
-                        title: '⏸ Successfully paused requests for ' + day,
-                        description: 'To un-pause, use the `unpause` subcommand.\n/admin excuses unpause'
-                    })]
-                });
-
-                // already paused
-                else interaction.editReply({
-                    embeds: [new MessageEmbed({
-                        color: 'AQUA',
-                        title: '⏸ Requests were already paused for ' + day,
-                        description: 'To un-pause, use the `unpause` subcommand.\n/admin excuses unpause'
-                    })]
-                });
+        case 'pause': {
+            const successfullyPaused = ExcuseHandler.pause(interaction.guild.id, day);
+            
+            // paused successfully
+            if (successfullyPaused) interaction.editReply({
+                embeds: [new MessageEmbed({
+                    color: 'GREEN',
+                    title: '⏸ Successfully paused requests for ' + day,
+                    description: 'To un-pause, use the `unpause` subcommand.\n/admin excuses unpause'
+                })]
             });
 
-        case 'unpause':
-            return ExcuseHandler.resume(interaction.guild.id, day).then(successfullyResumed => {
-                // resumed successfully
-                if (successfullyResumed) interaction.editReply({
-                    embeds: [new MessageEmbed({
-                        color: 'GREEN',
-                        title: '▶️ Successfully un-paused requests for ' + day,
-                        description: 'To pause, use the `pause` subcommand.\n/admin excuses pause'
-                    })]
-                });
-
-                // already resumed
-                else interaction.editReply({
-                    embeds: [new MessageEmbed({
-                        color: 'AQUA',
-                        title: '▶️ Requests were already un-paused for ' + day,
-                        description: 'To pause, use the `pause` subcommand.\n/admin excuses pause'
-                    })]
-                });
+            // already paused
+            else interaction.editReply({
+                embeds: [new MessageEmbed({
+                    color: 'AQUA',
+                    title: '⏸ Requests were already paused for ' + day,
+                    description: 'To un-pause, use the `unpause` subcommand.\n/admin excuses unpause'
+                })]
             });
+        }
+
+        case 'unpause': {
+            const successfullyResumed = ExcuseHandler.resume(interaction.guild.id, day);
+            
+            // resumed successfully
+            if (successfullyResumed) interaction.editReply({
+                embeds: [new MessageEmbed({
+                    color: 'GREEN',
+                    title: '▶️ Successfully un-paused requests for ' + day,
+                    description: 'To pause, use the `pause` subcommand.\n/admin excuses pause'
+                })]
+            });
+
+            // already resumed
+            else interaction.editReply({
+                embeds: [new MessageEmbed({
+                    color: 'AQUA',
+                    title: '▶️ Requests were already un-paused for ' + day,
+                    description: 'To pause, use the `pause` subcommand.\n/admin excuses pause'
+                })]
+            });
+        }
     }
 
 }

@@ -85,8 +85,18 @@ const MemberSchema = new Schema({
  * guildId: string,
  * userId: string,
  * excuses: {
- *      approved: number,
- *      denied: number,
+ *      approved: {
+ *          total: number,
+ *          absence: number,
+ *          late: number,
+ *          left_early: number,
+ *      },
+ *      denied: {
+ *          total: number,
+ *          absence: number,
+ *          late: number,
+ *          left_early: number,
+ *      },
  * },
  * hunting: {
  *      contributions: {

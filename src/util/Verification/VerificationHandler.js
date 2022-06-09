@@ -204,6 +204,7 @@ class VerificationHandler extends CoreUtil {
 
     static REPLIES = {
         IS_DENIED: {
+            ephemeral: true,
             embeds: [new MessageEmbed()
                 .setColor('RED')
                 .setTitle('⚠️ Hang on.')
@@ -212,6 +213,7 @@ class VerificationHandler extends CoreUtil {
             ]
         },
         IS_PENDING: {
+            ephemeral: true,
             embeds: [new MessageEmbed()
                 .setColor('YELLOW')
                 .setTitle('🌟 Woah-!')
@@ -222,6 +224,7 @@ class VerificationHandler extends CoreUtil {
             ]
         },
         REQUEST_SENT: {
+            ephemeral: true,
             embeds: [new MessageEmbed()
                 .setColor('GREEN')
                 .setTitle('✅ Request submitted')
@@ -232,12 +235,14 @@ class VerificationHandler extends CoreUtil {
             ]
         },
         ALREADY_VERIFIED: {
+            ephemeral: true,
             embeds: [new MessageEmbed()
                 .setColor('AQUA')
                 .setTitle('🎉 You\'re already verified!')
             ]
         },
         NO_CHANNEL: {
+            ephemeral: true,
             embeds: [new MessageEmbed()
                 .setColor('YELLOW')
                 .setTitle('⚠️ Sorry, something went wrong')
@@ -247,6 +252,7 @@ class VerificationHandler extends CoreUtil {
             ]
         },
         NO_ROLE: {
+            ephemeral: true,
             embeds: [new MessageEmbed()
                 .setColor('RED')
                 .setTitle('❗ Missing Roles')

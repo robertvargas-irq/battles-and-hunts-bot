@@ -19,34 +19,54 @@ module.exports = {
      */
     async execute(interaction) {
 
-        // defer and get input
-        await interaction.deferReply({ ephemeral: false });
-        let amount = Math.max(0, interaction.options.getInteger('amount'));
+        // verify user input
+        let originalDamageAmount = Math.max(0, interaction.options.getInteger('amount'));
+        let finalDamageAmount = originalDamageAmount;
         
-        // pull user from the database
-        const found = await AttackManager.FetchUser(interaction.user.id);
-        if (!found) return AttackManager.NotRegistered(interaction);
-        
-        // check for already dead or under-heal
-        if (found.currentHealth < 1 || found.currentHealth - amount < 0)
-            amount = found.currentHealth;
-        
-        // save to database if actual change was made
-        if (amount > 0) {
-            found.currentHealth -= amount;
-            await found.save();
-        }
+        // get user from cached database
+        const character = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
+        if (!character) return AttackManager.NotRegistered(interaction);
 
-        // notify user
-        interaction.editReply({
-            embeds: [
-                new MessageEmbed()
-                    .setColor(found.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED')
-                    .setTitle(found.currentHealth < 1 ? '...' : '🩸 Hrrk...!')
-                    .setDescription(AttackManager.getRandomDamageMessage(found.currentHealth))
-                    .addField('CURRENT HEALTH 💔', `> ↣ \`${found.currentHealth}\` / \`${calculateMaxHealth(found.stats.constitution)}\``),
-            ]
+        // notify if health is already at 0
+        if (character.currentHealth < 1) return interaction.reply({
+            embeds: [new MessageEmbed({
+                color: 'DARK_RED',
+                author: { name: 'The void has already consumed.' },
+                description: 'No more damage can be taken.',
+                fields: [{
+                    name: 'CURRENT HEALTH 💔',
+                    value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``
+                }],
+            })]
         });
-
+        
+        // adjust for health tanking below 0
+        if (character.currentHealth - originalDamageAmount < 0) {
+            finalDamageAmount = character.currentHealth;
+        }
+        
+        // save to database if an actual health change was made
+        if (finalDamageAmount > 0) {
+            character.currentHealth -= finalDamageAmount;
+            character.save().then(() => interaction.editReply({
+                embeds: [response]
+            }));
+        }
+        
+        // notify user along with any damage adjustments made
+        interaction.reply({
+            embeds: [new MessageEmbed({
+                color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
+                author: { name: character.currentHealth < 1 ? '...' : '🩸 Hrrk...!' },
+                description: AttackManager.getRandomDamageMessage(character.currentHealth),
+                fields: [{
+                    name: 'CURRENT HEALTH 💔',
+                    value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``
+                }],
+                footer: (finalDamageAmount !== originalDamageAmount ? {
+                    text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'
+                } : undefined),
+            })]
+        })
     },
 };

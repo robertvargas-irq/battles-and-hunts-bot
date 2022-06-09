@@ -85,7 +85,9 @@ class PreyPile extends CoreUtil {
         const clanEntry = server.clans[clan];
         const channel = await interaction.guild.channels.fetch(clanEntry.preyPileChannelId).catch(() => false);
         if (!channel) {
-            await interaction.editReply({content: `⚠️ PLEASE NOTIFY AN ADMIN: ${clan.toUpperCase()}'s prey pile channel has not been initialized or has been deleted.`});
+            await this.SafeReply(interaction, {
+                content: `⚠️ PLEASE NOTIFY AN ADMIN: ${clan.toUpperCase()}'s prey pile channel has not been initialized or has been deleted.`
+            });
             return false;
         }
         // const message = await channel.messages
@@ -111,7 +113,9 @@ class PreyPile extends CoreUtil {
         const clanEntry = server.clans[clan];
         const channel = await interaction.guild.channels.fetch(clanEntry.preyPileChannelId).catch(() => false);
         if (!channel) {
-            await interaction.editReply({content: `⚠️ PLEASE NOTIFY AN ADMIN: ${clan.toUpperCase()}'s prey pile channel has not been initialized or has been deleted.`});
+            await this.SafeReply(interaction, {
+                content: `⚠️ PLEASE NOTIFY AN ADMIN: ${clan.toUpperCase()}'s prey pile channel has not been initialized or has been deleted.`
+            });
             return false;
         }
 

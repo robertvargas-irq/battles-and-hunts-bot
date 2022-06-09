@@ -9,23 +9,21 @@ module.exports = {
      */
     async execute(interaction) {
 
-        // defer
-        await interaction.deferReply({ ephemeral: true });
-        
-        // pull user and server from the database
-        const hunter = await HuntManager.FetchUser(interaction.user.id);
-        if (!hunter) return await HuntManager.NotRegistered(interaction);
-        const server = await HuntManager.FetchServer(interaction.guild.id);
+        // get user and server from the cache
+        const hunter = HuntManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
+        if (!hunter) return HuntManager.NotRegistered(interaction);
+        const server = HuntManager.Servers.cache.get(interaction.guild.id);
 
         // if hunting is currently restricted, display warning
-        if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
+        if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
         
         // if not carrying anything, inform
         const recentlyCaughtResult = HuntManager.getRecentlyCaught(interaction.user.id);
         let recentlyCaught;
         let originalInteraction;
         if (!recentlyCaughtResult) {
-            return interaction.editReply({
+            return interaction.reply({
+                ephemeral: true,
                 embeds: [new MessageEmbed()
                     .setColor('RED')
                     .setTitle('⚠️ Woah wait! You haven\'t caught anything!')
@@ -78,7 +76,8 @@ module.exports = {
             .setFooter({ text: '🍃 This carry is canon.' });
 
         // display result
-        return interaction.editReply({
+        return interaction.reply({
+            ephemeral: true,
             embeds: [resultEmbed]
         });
     },

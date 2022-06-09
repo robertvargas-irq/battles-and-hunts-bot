@@ -1,6 +1,7 @@
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const HuntManager = require('../../../util/Hunting/HuntManager');
 const PreyPile = require('../../../util/Hunting/PreyPile');
+const CharacterModel = require('../../../database/schemas/character');
 
 
 /**
@@ -12,19 +13,17 @@ module.exports = async (interaction, subcommand) => {
     // route subcommand
     switch (subcommand) {
         case 'dc': {
-            // defer
-            await interaction.deferReply({ ephemeral: false });
 
             // parse value and fetch server from the database
             const newValue = Math.max(0, interaction.options.getInteger('value'));
-            const server = await HuntManager.FetchServer(interaction.guild.id);
+            const server = HuntManager.Servers.cache.get(interaction.guild.id);
 
             // modify dc and notify success to the admin
             const oldValue = server.hunting.seasonDC;
             server.hunting.seasonDC = newValue;
-            await server.save();
+            server.save();
 
-            return interaction.editReply({
+            return interaction.reply({
                 embeds: [new MessageEmbed({
                     color: 'GREEN',
                     title: '✅ Hunting DC successfully modified',
@@ -50,36 +49,32 @@ module.exports = async (interaction, subcommand) => {
 
         case 'starve-everyone': {
             // defer
-            await interaction.deferReply({ ephemeral: false });
+            await interaction.deferReply();
 
-            // get all users
-            const { UserModel, users } = await HuntManager.FetchAllUsers();
+            // get all characters in the guild
+            const characters = HuntManager.Characters.cache.getAll(interaction.guild.id);
 
             // set all user's hunger to their size
-            for (let user of users) user.currentHunger = user.stats.cat_size;
+            for (let character of characters) character.currentHunger = character.stats.cat_size;
 
-            // save all user documents
-            await UserModel.bulkSave(users);
+            // save all character documents
+            await CharacterModel.bulkSave(characters);
 
             // notify successful set
             return interaction.editReply({
-                embeds: [new MessageEmbed()
-                    .setColor('GREEN')
-                    .setTitle('✅ Successfully set all user hungers to max.')
-                    .setDescription(
-                    `> **Hunger begins to bear down upon warriors great and small, leaders and young, and everyone in-between.**` +
-                    `\n\n > It is inescapable, as time ticks by, finding something suitable to \`/eat-from\` grows prevalent to satiate this growing \`/hunger\`...`
-                    )
-                ]
+                embeds: [new MessageEmbed({
+                    color: 'GREEN',
+                    title: '✅ Successfully set all character\'s hungers to max.',
+                    description: '> **Hunger begins to bear down upon warriors great and small, leaders and young, and everyone in-between.**'
+                    + '\n\n > It is inescapable, as time ticks by, finding something suitable to `/eat-from` grows prevalent to satiate this growing `/hunger`...'
+                })]
             });
         }
 
         case 'spoil-everything': {
-            // defer
-            await interaction.deferReply({ ephemeral: false });
             
-            // pull server from the database
-            const server = await PreyPile.FetchServer(interaction.guild.id);
+            // get server from the cache
+            const server = PreyPile.Servers.cache.get(interaction.guild.id);
 
             // empty all entries
             for ([clanName, clanData] of Array.from(Object.entries(server.clans))) {
@@ -95,11 +90,11 @@ module.exports = async (interaction, subcommand) => {
                 })
             }
 
-            // save to server
-            await server.save();
+            // save changes to the database
+            server.save();
 
             // notify successful set
-            return interaction.editReply({
+            return interaction.reply({
                 embeds: [new MessageEmbed()
                     .setColor('GREEN')
                     .setTitle('✅ Successfully spoiled all prey piles.')
@@ -109,26 +104,24 @@ module.exports = async (interaction, subcommand) => {
         } // end spoil-everything
 
         case 'lock': {
-            // defer
-            await interaction.deferReply({ ephemeral: false });
 
-            // pull server from the database
-            const server = await HuntManager.FetchServer(interaction.guild.id);
+            // get server from the cache
+            const server = HuntManager.Servers.cache.get(interaction.guild.id);
 
             // inform if already locked
-            if (server.hunting.locked) return interaction.editReply({
+            if (server.hunting.locked) return interaction.reply({
                 embeds: [new MessageEmbed({
                     color: 'FUCHSIA',
                     title: '🔐 Hunting is already locked!',
                 })]
             });
 
-            // lock hunting and save
+            // lock hunting and save to the database
             server.hunting.locked = true;
-            await server.save();
+            server.save();
 
             // notify successful set
-            return interaction.editReply({
+            return interaction.reply({
                 embeds: [new MessageEmbed()
                     .setColor('DARK_VIVID_PINK')
                     .setTitle('🔒 Hunting has been heavily restricted.')
@@ -141,26 +134,24 @@ module.exports = async (interaction, subcommand) => {
         }
 
         case 'unlock': {
-            // defer
-            await interaction.deferReply({ ephemeral: false });
 
-            // pull server from the database
-            const server = await HuntManager.FetchServer(interaction.guild.id);
+            // get server from the cache
+            const server = HuntManager.Servers.cache.get(interaction.guild.id);
 
             // inform if already unlocked
-            if (!server.hunting.locked) return interaction.editReply({
+            if (!server.hunting.locked) return interaction.reply({
                 embeds: [new MessageEmbed({
                     color: 'FUCHSIA',
                     title: '🔓 Hunting is already unlocked!',
                 })]
             });
 
-            // unlock hunting and save
+            // unlock hunting and save to the database
             server.hunting.locked = false;
-            await server.save();
+            server.save();
 
             // notify successful set
-            return interaction.editReply({
+            return interaction.reply({
                 embeds: [new MessageEmbed()
                     .setColor('GREEN')
                     .setTitle('🔓 Hunting is now fully available.')

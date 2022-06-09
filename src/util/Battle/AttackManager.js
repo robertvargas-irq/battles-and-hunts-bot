@@ -24,9 +24,7 @@ class AttackManager extends CoreUtil {
         for (let i = 0; i < ROLL_COUNT; i++) {
             rolls.push(Math.random());
         }
-        
-        console.log({rolls});
-        console.error({rolls});
+
         return Math.floor(
             rolls[
                 Math.floor( Math.random() * ROLL_COUNT )
@@ -84,7 +82,7 @@ class AttackManager extends CoreUtil {
         }));
 
         // display roll breakdowns and summary to the user
-        return await interaction.editReply({ embeds });
+        return await this.SafeReply(interaction, { embeds });
 
         // random quote handler
         function getRandomQuote(quotes) { return quotes[Math.floor(Math.random() * quotes.length)]; }
@@ -107,7 +105,7 @@ class AttackManager extends CoreUtil {
      * @param {BaseCommandInteraction} interaction 
      */
     static denyBotAttack(interaction) {
-        interaction.editReply({
+        this.SafeReply(interaction, {
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
                 .setTitle('🛡️ WOAH THERE')
@@ -122,7 +120,7 @@ class AttackManager extends CoreUtil {
      * @param {BaseCommandInteraction} interaction 
      */
     static denySelfAttack(interaction) {
-        interaction.editReply({
+        this.SafeReply(interaction, {
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
                 .setTitle('❤️‍🩹 Hey now')
@@ -137,7 +135,7 @@ class AttackManager extends CoreUtil {
      * @param {BaseCommandInteraction} interaction 
      */
     static targetNotRegistered(interaction) {
-        interaction.editReply({
+        this.SafeReply(interation, {
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
                 .setTitle('🛡️ WOAH THERE')

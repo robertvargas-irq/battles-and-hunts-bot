@@ -37,19 +37,17 @@ module.exports = {
      */
     async execute(interaction) {
 
-        // defer
-        await interaction.deferReply({ ephemeral: true });
-
         // get clan
         const clan = interaction.options.getString('clan');
         
-        // pull user and server from the database
-        const hunter = await HuntManager.FetchUser(interaction.user.id);
-        if (!hunter) return await HuntManager.NotRegistered(interaction);
-        const server = await HuntManager.FetchServer(interaction.guild.id);
+        // get user and server from the cache
+        const character = HuntManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
+        const member = HuntManager.Members.cache.get(interaction.guild.id, interaction.user.id);
+        if (!character || !member) return HuntManager.NotRegistered(interaction);
+        const server = HuntManager.Servers.cache.get(interaction.guild.id);
 
         // if hunting is currently restricted, display warning
-        if (server.hunting.locked) return await HuntManager.displayRestrictedHunting(interaction);
+        if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
 
         // check if user is on cooldown
         if (HuntManager.onCooldownDeposit(interaction.user.id))
@@ -58,7 +56,8 @@ module.exports = {
         // if not carrying anything, inform
         const carrying = HuntManager.removeFromCarry(interaction.user.id);
         if (carrying.length < 1) {
-            return interaction.editReply({
+            return interaction.reply({
+                ephemeral: true,
                 embeds: [new MessageEmbed()
                     .setColor('YELLOW')
                     .setTitle('⚠️ Woah wait! You aren\'t carrying anything!')
@@ -74,23 +73,37 @@ module.exports = {
             let weight = 0;
             for (let i = 0; i < carrying.length; i++)
                 weight += carrying[i].size;
-            hunter.hunting.contributions.preyCount += carrying.length;
-            hunter.hunting.contributions.preyWeight += weight;
-            hunter.hunting.trips++;
+            
+            // update character hunting stats and overall member stats
+            character.hunting.contributions.preyCount += carrying.length;
+            member.hunting.contributions.preyCount += carrying.length;
+            character.hunting.contributions.preyWeight += weight;
+            member.hunting.contributions.preyWeight += weight;
+            character.hunting.trips++;
+            member.hunting.trips++;
+
+            // perfect hunt if carrying weight matches the max carry weight
+            if (weight === HuntManager.INVENTORY_MAX_WEIGHT) {
+                character.hunting.fullInventoryTrips++;
+                member.hunting.fullInventoryTrips++;
+            }
+
+            // save changes to the database
+            character.save();
+            member.save();
         }
         
         // dump into the prey pile
         HuntManager.addToPreyPile(carrying, clan, server);
         PreyPile.updatePreyPile(interaction, server, clan);
         server.save();
-        hunter.save();
 
         // add cooldown for user
         HuntManager.addCooldownDeposit(interaction.user.id);
 
         // notify the clan
         const notifyEmbed = new MessageEmbed();
-        if (hunter.clan == clan) {
+        if (character.clan == clan) {
             notifyEmbed
                 .setColor('GREEN')
                 .setTitle('📦 Some food has arrived.')
@@ -114,7 +127,7 @@ module.exports = {
                 .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
                 **An outsider to our clan has gifted food to our prey pile!!**\
-                \n> The scent is coming from someone from **${hunter.clan.toUpperCase()}**...\
+                \n> The scent is coming from someone from **${character.clan.toUpperCase()}**...\
                 \n> If I recall, their name was **${interaction.member.displayName}**.
                 \n\
                 \n**- - - - - -**\
@@ -126,35 +139,22 @@ module.exports = {
                 \n**- - - - - -**`)
                 .setFooter({ text: '🍃 This pile deposit is canon.' });
         }
-        await PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[notifyEmbed]})
+        PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[notifyEmbed]})
 
-
-
-
-
-
-
-
-        
-        const resultEmbed = new MessageEmbed()
-            .setColor('GREEN')
-            .setTitle(`📦 __Successfully deposited in: \`${clan.toUpperCase()}\`__`)
-            .setDescription(`\
-            > You take all the prey that you have collected and dump it into the \`${clan.toUpperCase()}\` prey pile.
-            > 
-            > You can finally take a breath after finally dropping off all that weight.
-            
-            🐈 __**Prey you deposited**__
-
-            ${HuntManager.formatPrey(carrying)}
-            
-            **- - - - - -**
-            `)
-            .setFooter({ text: '🍃 This pile deposit is canon.' });
-
-        // display result
-        return interaction.editReply({
-            embeds: [resultEmbed]
+        // display deposit summary
+        return interaction.reply({
+            ephemeral: true,
+            embeds: [new MessageEmbed({
+                color: 'GREEN',
+                title: `📦 __Successfully deposited in: \`${clan.toUpperCase()}\`__`,
+                description: `You take all the prey that you have collected and dump it into the \`${clan.toUpperCase()}\` prey pile.`
+                + '\n\nYou can finally take a breath after finally dropping off all that weight.'
+                + '\n\n🐈 __**Prey you deposited**__'
+                + '\n\n'
+                + HuntManager.formatPrey(carrying)
+                + '\n\n**- - - - - -**',
+                footer: { text: '🍃 This pile deposit is canon.' },
+            })]
         })
     },
 };

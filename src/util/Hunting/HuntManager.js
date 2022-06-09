@@ -2,6 +2,8 @@ const serverSchema = require('../../database/schemas/server');
 const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const userSchema = require('../../database/schemas/user');
+const MemberModel = require('../../database/schemas/member');
+const CharacterModel = require('../../database/schemas/character');
 const { Collection, MessageEmbed, BaseCommandInteraction, GuildMember } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
@@ -163,7 +165,8 @@ class HuntManager extends CoreUtil {
     /**
      * Display the resulting rolls to the player.
      * @param {BaseCommandInteraction} interaction
-     * @param {userSchema} hunter User information from the database.
+     * @param {CharacterModel} character Character information from the database.
+     * @param {MemberModel} member Member information from the database.
      * @param {serverSchema} server Server information from the database. 
      * @param {clans} territory The current territory being hunted in.
      * @param {locations} location The location type within the territory being hunted in.
@@ -171,26 +174,31 @@ class HuntManager extends CoreUtil {
      * @param {number} catchRoll Result of a catch roll.
      * @param {prey} prey The prey that would have been caught.
      */
-    static generateAndDisplayResults(interaction, hunter, server, territory, location, trackRoll, catchRoll, prey) {
+    static generateAndDisplayResults(interaction, character, member, server, territory, location, trackRoll, catchRoll, prey) {
         // get proficiencies for current territory
         const [trackProfName, catchProfName] = huntChecks[territory];
-        const trackProf = Math.floor(hunter.stats[trackProfName] / 2);
-        const catchProf = Math.floor(hunter.stats[catchProfName] / 2);
+        const trackProf = Math.floor(character.stats[trackProfName] / 2);
+        const catchProf = Math.floor(character.stats[catchProfName] / 2);
 
         // check if DC's pass
         const tracked = trackRoll + trackProf >= server.hunting.seasonDC;
         const caught = catchRoll + catchProf >= server.hunting.seasonDC;
 
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
-        if (!server.hunting.locked) { // (if canon)
+        if (!server.hunting.locked) {
             if (tracked && caught) {
                 this.setRecentlyCaught(interaction, interaction.user.id, prey);
-                hunter.hunting.hunts.successful++;
+                character.hunting.hunts.successful++;
+                member.hunting.hunts.successful++;
             }
             else {
-                hunter.hunting.hunts.unsuccessful++;
+                character.hunting.hunts.unsuccessful++;
+                member.hunting.hunts.unsuccessful++;
             }
-            hunter.save(); // save to the database
+
+            // save updates to the database
+            character.save();
+            member.save();
         }
 
         // embeds will be split to show results more clearly; start with header
@@ -231,7 +239,7 @@ class HuntManager extends CoreUtil {
         }));
 
         // display results
-        return interaction.editReply({
+        return this.SafeReply(interaction, {
             embeds: embeds
         });
 
@@ -372,7 +380,7 @@ class HuntManager extends CoreUtil {
 
         // swap interaction sidebar to grey if possible
         originalInteraction.fetchReply().then(r => {
-            originalInteraction.editReply({
+            originalthis.editReply({
                 embeds: [r.embeds[0]
                     .setColor('GREYPLE')
                     .setAuthor({
@@ -475,7 +483,8 @@ class HuntManager extends CoreUtil {
      */
     static async displayCooldownHunt(interaction) {
         let minutes = ((this.#HUNT_COOLDOWN - (Date.now() - this.#cooldownHunt.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);
-        return await interaction.editReply({
+        return await this.SafeReply(interaction, {
+            ephemeral: true,
             embeds: [new MessageEmbed({
                 color: 'FUCHSIA',
                 title: '💫 Feeling a little winded',
@@ -496,7 +505,8 @@ class HuntManager extends CoreUtil {
      */
     static async displayCooldownDeposit(interaction) {
         let minutes = ((this.#DEPOSIT_COOLDOWN - (Date.now() - this.#cooldownDeposit.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);
-        return await interaction.editReply({
+        return await this.SafeReply(interaction, {
+            ephemeral: true,
             embeds: [new MessageEmbed({
                 color: 'FUCHSIA',
                 title: '💤 W...Wait...',

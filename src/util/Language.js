@@ -1,4 +1,3 @@
-const CoreUtil = require('./CoreUtil');
 const userSchema = require('../database/schemas/user');
 const translations = require('./translations.json');
 
@@ -29,7 +28,7 @@ class Language {
      * @returns {Promise<CachedLanguages>} Cached languages
      */
     static LoadLanguages = async () => {
-        const { _, users } = await require('./CoreUtil').FetchAllUsers({});
+        const users = await require('./CoreUtil').Users.FetchAll();
         for (const user of users) {
             this.CachedLanguages.set(user.userId, user.preferredLanguage);
         }

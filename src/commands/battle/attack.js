@@ -2,6 +2,7 @@ const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10
 const { BaseCommandInteraction, GuildMember } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 
+
 module.exports = {
     name: 'attack',
     description: 'Attack another user!',
@@ -19,7 +20,7 @@ module.exports = {
     async execute(interaction) {
 
         // defer
-        await interaction.deferReply({ ephemeral: false });
+        // await interaction.deferReply({ ephemeral: false });
 
         // if target is bot or user, deny
         /**@type {GuildMember}*/
@@ -27,12 +28,12 @@ module.exports = {
         if (targetSnowflake.user.bot) return AttackManager.denyBotAttack(interaction);
         if (targetSnowflake.user.id === interaction.user.id) return AttackManager.denySelfAttack(interaction);
         
-        // pull user from the database
-        const attacker = await AttackManager.FetchUser(interaction.user.id);
+        // pull character document from the character cache
+        const attacker = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
         if (!attacker) return AttackManager.NotRegistered(interaction);
-
+        
         // if target is not registered, deny
-        const target = await AttackManager.FetchUser(targetSnowflake.user.id);
+        const target = AttackManager.Characters.cache.get(interaction.guild.id, targetSnowflake.user.id);
         if (!target) return AttackManager.targetNotRegistered(interaction);
 
         // initiate rolls

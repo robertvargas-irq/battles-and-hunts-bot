@@ -28,33 +28,54 @@ module.exports = {
      */
     async execute(interaction) {
 
-        // defer and get input
-        await interaction.deferReply({ ephemeral: false });
-        let amount = Math.max(0, interaction.options.getInteger('amount'));
+        // validate user input
+        // await interaction.deferReply({ ephemeral: false });
+        const originalHealAmount = Math.max(0, interaction.options.getInteger('amount'));
+        let finalHealAmount = originalHealAmount;
         
         // pull user from the database
-        const found = await AttackManager.FetchUser(interaction.user.id);
-        if (!found) return AttackManager.NotRegistered(interaction);
+        const character = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
+        if (!character) return AttackManager.NotRegistered(interaction);
         
-        // check for over-heal
-        let maxHealth = calculateMaxHealth(found.stats.constitution);
-        if (found.currentHealth + amount > maxHealth)
-            amount = maxHealth - found.currentHealth;
+        // notify if already at max health
+        const maxHealth = calculateMaxHealth(character.stats.constitution);
+        if (character.currentHealth === maxHealth) return interaction.reply({
+            embeds: [new MessageEmbed({
+                color: 'FUCHSIA',
+                title: '✨ You are already at Max Health!',
+                description: 'You feel at ease.',
+                fields: [{
+                    name: 'CURRENT HEALTH 💘',
+                    value: `> ↣ \`${character.currentHealth}\` / \`${character.stats.constitution * 5 + 50}\``,
+                }],
+            })]
+        })
+
+        // adjust for over-heal
+        if (character.currentHealth + originalHealAmount > maxHealth)
+            finalHealAmount = maxHealth - character.currentHealth;
         
         // save to database if actual change was made
-        if (amount > 0) {
-            found.currentHealth += amount;
-            await found.save();
+        if (finalHealAmount > 0) {
+            character.currentHealth += finalHealAmount;
+            await character.save();
         }
 
         // notify user
-        interaction.editReply({
+        interaction.reply({
             embeds: [
-                new MessageEmbed()
-                    .setColor('AQUA')
-                    .setTitle('🌿 Serene')
-                    .setDescription(AttackManager.getRandomHealingMessage())
-                    .addField('CURRENT HEALTH 💘', `> ↣ \`${found.currentHealth}\` / \`${found.stats.constitution * 5 + 50}\``),
+                new MessageEmbed({
+                    color: 'AQUA',
+                    title: '🌿 Serene',
+                    description: AttackManager.getRandomHealingMessage(),
+                    fields: [{
+                        name: 'CURRENT HEALTH 💘',
+                        value: `> ↣ \`${character.currentHealth}\` / \`${character.stats.constitution * 5 + 50}\``,
+                    }],
+                    footer: (finalHealAmount !== originalHealAmount ? {
+                        text: 'Original input has been reduced by ' + (originalHealAmount - finalHealAmount) + '.'
+                    } : undefined),
+                })
             ]
         });
 

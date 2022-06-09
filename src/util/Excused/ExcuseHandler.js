@@ -238,17 +238,17 @@ class ExcuseHandler extends CoreUtil {
      * Resume incoming excuses for a given day.
      * @param {string} guildId 
      * @param {days} day 
-     * @returns {Promise<boolean>} True if resumed | False if already resumed
+     * @returns {boolean} True if resumed | False if already resumed
      */
-    static async resume(guildId, day) {
-        const server = await this.FetchServer(guildId);
+    static resume(guildId, day) {
+        const server = this.Servers.cache.get(guildId);
 
         // if already resumed, return false
         if (!server.excusesPaused.has(day)) return false;
 
         // resume and save
         server.excusesPaused.delete(day);
-        await server.save();
+        server.save();
 
         return true;
     }
@@ -257,9 +257,10 @@ class ExcuseHandler extends CoreUtil {
      * Post the provided excuse
      * @param {ModalSubmitInteraction} interaction
      * @param {Excuse} excuse 
+     * @returns {Promise<Message>}
      */
     static async post(interaction, excuse) {
-        const server = await this.FetchServer(excuse.guildId);
+        const server = this.Servers.cache.get(excuse.guildId);
         const excuseChannelParent = await interaction.guild.channels.fetch(server.excusesChannelId).catch(() => false)
         || interaction.channel;
 

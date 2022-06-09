@@ -119,19 +119,17 @@ module.exports = {
      */
     async execute(interaction) {
 
-        // defer
-        await interaction.deferReply({ ephemeral: false });
-
         // track territory
         const territory = interaction.options.getSubcommand();
         const location = interaction.options.getString('location');
         
-        // pull user from the database
-        const hunter = await HuntManager.FetchUser(interaction.user.id);
-        if (!hunter) return await HuntManager.NotRegistered(interaction);
+        // get character from the cache
+        const character = HuntManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
+        const member = HuntManager.Members.cache.get(interaction.guild.id, interaction.user.id);
+        if (!character || !member) return HuntManager.NotRegistered(interaction);
 
         // pull the server from the database
-        const server = await HuntManager.FetchServer(interaction.guild.id);
+        const server = HuntManager.Servers.cache.get(interaction.guild.id);
 
         // if not locked, session is active, so check cooldowns
         if (!server.hunting.locked) {
@@ -151,7 +149,8 @@ module.exports = {
         // display result
         return HuntManager.generateAndDisplayResults(
             interaction,
-            hunter,
+            character,
+            member,
             server,
             territory,
             location,

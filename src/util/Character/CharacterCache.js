@@ -52,6 +52,17 @@ class CharacterCache {
         getAllGuildless() {
             return cached;
         },
+        /**
+         * Cache a mongoose document
+         * @param {string} guildId 
+         * @param {string} userId 
+         * @param {CharacterModel} characterDocument Mongoose Document to cache
+         */
+        set(guildId, userId, characterDocument) {
+            // instantiate guild if not done already
+            if (!cached.has(guildId)) cached.set(guildId, new Map());
+            return cached.get(guildId).set(userId, characterDocument);
+        },
     }
 }
 

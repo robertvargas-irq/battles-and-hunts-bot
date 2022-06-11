@@ -52,6 +52,11 @@ class MemberCache {
         getAllGuildless() {
             return cached;
         },
+        set(guildId, userId, memberDocument) {
+            // instantiate guild if not done already
+            if (!cached.has(guildId)) cached.set(guildId, new Map());
+            return cached.get(guildId).set(userId, memberDocument);
+        },
     }
 }
 

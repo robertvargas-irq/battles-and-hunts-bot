@@ -9,8 +9,24 @@ const CoreUtil = require('../CoreUtil');
 
 /**
  * Type definitions
+ * @typedef {{
+ * bites?: {min?: number, max?: number},
+ * requiresTracking?: boolean,
+ * requiresCatching?: boolean,
+ * messages?: {
+ *      tracked?: {
+ *          success?: string,
+ *          fail?: string,
+ *      },
+ *      caught?: {
+ *          success?: string,
+ *          fail?: string,
+ *      },
+ *      size?: string[]
+ * },
+ * }} overrides
  * @typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans
- * @typedef {{name: string, size: number, bites_remaining: number}} prey
+ * @typedef {{name: string, size: number, bites_remaining: number, overrides: overrides}} prey
  * @typedef {
  * 'outpost-rock'|'gorge'|'barn'|'snake-rocks'|'sandy-hollow'|'thunderpath'|'burnt-sycamore'|'pond'|'river'|'carrion-place'
  * } locations
@@ -152,13 +168,18 @@ class HuntManager extends CoreUtil {
      * @returns {prey}
      */
     static generatePrey(location, maxSize) {
-        let sizeRoll = this.#Random(1, maxSize);
-        let preyName = this.#RandomFromArray(preyFromLocations[location]);
+        const preyName = this.#RandomFromArray(preyFromLocations[location]);
+        const overrides = preyFromLocations.overrides[preyName] || false;
+        const sizeRoll = this.#Random(
+            overrides.bites.min || 1,
+            overrides.bites.max || maxSize
+        );
         return {
             name: preyName,
             size: sizeRoll,
             bites_remaining: sizeRoll,
-            visual: preyFromLocations.visuals[preyName]
+            visual: preyFromLocations.visuals[preyName],
+            overrides,
         }
     }
 
@@ -180,9 +201,9 @@ class HuntManager extends CoreUtil {
         const trackProf = Math.floor(character.stats[trackProfName] / 2);
         const catchProf = Math.floor(character.stats[catchProfName] / 2);
 
-        // check if DC's pass
-        const tracked = trackRoll + trackProf >= server.hunting.seasonDC;
-        const caught = catchRoll + catchProf >= server.hunting.seasonDC;
+        // check if the prey requires either to pass, and if DC's pass
+        const tracked = !prey.overrides.requiresTracking || trackRoll + trackProf >= server.hunting.seasonDC;
+        const caught = !prey.overrides.requiresCatching || catchRoll + catchProf >= server.hunting.seasonDC;
 
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) {
@@ -204,8 +225,8 @@ class HuntManager extends CoreUtil {
         // embeds will be split to show results more clearly; start with header
         const embeds = [];
 
-        // display tracked result
-        embeds.push(new MessageEmbed({
+        // display tracked result only if a track roll was required
+        if (prey.overrides.requiresTracking) embeds.push(new MessageEmbed({
             color: tracked ? 'GREEN' : 'RED',
             title: '🧭 ' + (tracked ? 'Tracked and spotted prey' : 'No prey has made itself known'),
             description: '**Territory Bonus**: +`' + trackProfName.toUpperCase() + '`/`2`'
@@ -213,8 +234,8 @@ class HuntManager extends CoreUtil {
             + '\n\n**Rolled**: `' + trackRoll + '`/`20` + `' + trackProf + '`'
         }));
 
-        // if tracked, display catch result
-        if (tracked) embeds.push(new MessageEmbed({
+        // if tracked, display catch result only if a catch roll was required
+        if (prey.overrides.requiresCatching && tracked) embeds.push(new MessageEmbed({
             color: caught ? 'GREEN' : 'RED',
             title: '🪝 ' + (caught ? 'Caught and collected prey' : 'Unfortunately, the prey ran off'),
             description: '**Territory Bonus**: +`' + catchProfName.toUpperCase() + '`/`2`'
@@ -244,18 +265,27 @@ class HuntManager extends CoreUtil {
         });
 
         // generates a brief summary of the hunt
-        function generateBriefDescription(tracked, caught, preySizeDescriptor, prey) {
+        function generateBriefDescription(tracked, caught, preySizeDescriptor, /**@type {prey} */ prey) {
 
             // if not tracked then caught is not needed
-            if (!tracked) return 'Unfortunately, it appears the ground below you is the only thing you see. No prey was located.';
-    
-            // construct brief summary
-            const trackedHeader = 'Wandering in the distance, you see a rather **' + preySizeDescriptor + '** `' + prey.name.toUpperCase() + '`!';
-            return trackedHeader + (
-                caught
-                ? '\nYou take it within your maw and tear into it, before pondering on what to do next.'
-                : '\nHowever, before you can even lunge at it, it spots you, and rapidly flees the scene.'
-            )
+            if (!tracked) return prey.overrides?.messages?.tracked?.fail
+            || 'Unfortunately, it appears the ground below you is the only thing you see. No prey was located.';
+
+            // create a summary starting with the tracked description
+            let message = prey.overrides?.messages?.tracked?.success
+            || 'Wandering in the distance, you see a rather **' + preySizeDescriptor + '** `' + prey.name.toUpperCase() + '`!'
+            
+            // add size clarification
+            message += '\n(Size in bites: `' + prey.size + '`)';
+
+            // append the appropriate catch roll message
+            message += '\n\n';
+            if (caught) message += prey.overrides?.messages?.caught?.success
+            || 'You take it within your maw and tear into it, before pondering on what to do next.'
+            else message += prey.overrides?.messages?.caught?.fail
+            || 'However, before you can even lunge at it, it spots you, and rapidly flees the scene.'
+
+            return message;
         }
     }
 
@@ -352,7 +382,7 @@ class HuntManager extends CoreUtil {
      * @param {string} userId The player to add to their carry
      * @param {prey} prey The prey to add to their carry
      * @param {BaseCommandInteraction} originalInteraction The original interaction
-     * @returns {Array} [`AbleToAdd`, `WeightCarried`, `CurrentlyCarrying`]
+     * @returns {[Array]} [`Over Encumbered`, `WeightCarried`, `CurrentlyCarrying`]
      */
     static addToCarry(userId, prey, originalInteraction) {
 
@@ -365,9 +395,9 @@ class HuntManager extends CoreUtil {
         const weight = inventory[0];
         const carried = inventory[1];
 
-        // check to see if able to carry
-        if (prey.bites_remaining + weight > this.INVENTORY_MAX_WEIGHT)
-            return [false, inventory[0], inventory[1]];
+        // check if already over-encumbered
+        if (weight > this.INVENTORY_MAX_WEIGHT)
+            return [true, inventory[0], inventory[1]];
         
         // add to carried and increase weight
         carried.push(prey);
@@ -395,8 +425,8 @@ class HuntManager extends CoreUtil {
             });
         }).catch(() => console.log("Original interaction may have been timed out or deleted."));
         
-        // return success and new weight and inventory
-        return [true, inventory[0], inventory[1]];
+        // return over-encumbered status and new weight and inventory
+        return [false, inventory[0], inventory[1]];
     }
 
     /**
@@ -453,9 +483,9 @@ class HuntManager extends CoreUtil {
         console.log(counter);
         
         // return a formatted string
-        return Array.from(counter.entries()).map(([k, v]) => {
-            console.log(k, v);
-            return `↣ **(${v}) ${k[0].toUpperCase() + k.substring(1)}**`
+        return Array.from(counter.entries()).map(([preyName, preyCount]) => {
+            console.log(preyName, preyCount);
+            return `↣ **(${preyCount}) ${this.ProperCapitalization(preyName)}**`
         }).join('\n');
     }
 

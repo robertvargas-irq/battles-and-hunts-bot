@@ -15,6 +15,7 @@ async function registerClientCommands(client) {
     const queue = [];
     
     // register command if being deployed in guilds
+    console.log('🧩 Reloading all application commands...');
     for ( let g of GUILDS ) {
         queue.push(client.guilds.cache.get(g)?.commands.set(commands));
         queue.push(
@@ -27,7 +28,7 @@ async function registerClientCommands(client) {
 
     // ensure all items in queue complete
     await Promise.all(queue);
-    return Promise.resolve('Successfully reloaded all application commands.');
+    return Promise.resolve('✅ Successfully reloaded all application commands.');
 
 }
 

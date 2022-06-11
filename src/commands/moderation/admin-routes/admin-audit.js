@@ -115,33 +115,34 @@ module.exports = async (interaction, subcommand) => {
         case 'registration': {
             // get options and defer appropriately
             const ping = interaction.options.getString("ping-them") == 'yes';
-            const private = interaction.options.getString("view-privately") == 'yes';
-            await interaction.deferReply({
-                ephemeral: private
-            });
+            const ephemeral = interaction.options.getString("view-privately") == 'yes';
+            await interaction.deferReply({ ephemeral });
             
             // get special exemption roles
             const roles = require('./roles.json');
 
             // get all users from the database and members from the guild
-            const [allUsers, Members] = await Promise.all([
-                CoreUtil.FetchAllUsers().then(({users}) => { return new Set(users.map(o => o.userId)) }),
-                interaction.guild.members.fetch()
-            ]);
+            const CharacterDocuments = CoreUtil.Characters.cache.getAll(interaction.guild.id);
+            const GuildMembers = await interaction.guild.members.fetch();
 
             // compare and only push members that are not registered
             const nonRegistered = [];
             const nonSubmitted = [];
-            for (let [id, member] of Members) {
+            for (let [id, member] of GuildMembers) {
+
+                // filter bots and testing user
                 if (member.user.bot || member.user.id === '964281330609315872') continue;
+                
+                // if role exemptions are present, continue if the member has one
                 if (roles[member.guild.id]) {
                     if (member.roles.cache.hasAny([
                         roles[member.guild.id].spectator,
                         roles[member.guild.id].partner,
                     ])) continue;
                 }
-                console.log(id);
-                if (!allUsers.has(id))
+                
+                // if character is not registered, route to non-registered or non-submitted
+                if (!CharacterDocuments.has(id))
                     if (member.displayName.startsWith('{+'))
                         nonRegistered.push(member);
                     else
@@ -176,53 +177,60 @@ module.exports = async (interaction, subcommand) => {
         case 'starvation': {
             await interaction.deferReply();
 
-            const [{ users }, guildMembers] = await Promise.all([
-                CoreUtil.FetchAllUsers(),
-                interaction.guild.members.fetch(),
-            ]);
-            const starvingMembers = [];
-            const oneAwayMembers = [];
+            const CharacterDocuments = CoreUtil.Characters.cache.getAll(interaction.guild.id);
+            const GuildMembers = await interaction.guild.members.fetch();
+            const starving = {};
 
             // organize members based on hunger status
-            for (const user of users) {
+            const totalClanMembers = {};
+            for (const [userId, character] of Array.from(CharacterDocuments)) {
+                
                 // if user is not in the current server, continue
-                if (!guildMembers.has(user.userId)) continue;
+                if (!GuildMembers.has(character.userId)) continue;
 
                 // if hunger is satiated, continue
-                if (user.currentHunger === 0) continue;
+                if (character.currentHunger === 0) continue;
+
+                // count the total clan members
+                if (!totalClanMembers.hasOwnProperty(character.clan)) totalClanMembers[character.clan] = 0;
+                totalClanMembers[character.clan]++;
 
                 // begin fetching members based on starving or one away from starving
-                if (user.stats.cat_size <= user.currentHunger) starvingMembers.push(guildMembers.get(user.userId));
-                else if (user.stats.cat_size - user.currentHunger === 1) oneAwayMembers.push(guildMembers.get(user.userId));
+                if (character.stats.cat_size <= character.currentHunger) {
+                    // initialize clan array and push the guild member
+                    if (!starving.hasOwnProperty(character.clan)) starving[character.clan] = [];
+                    starving[character.clan].push(GuildMembers.get(character.userId));
+                }
             }
 
             // generate embeds with the final audit
-            const headerEmbed = new MessageEmbed({
+            const embeds = [];
+
+            // generate clan-specific embeds
+            const starvingMembersArray = Object.entries(starving);
+            for (let i = 0; i < starvingMembersArray.length && i < 8; i++) {
+                const [clan, starvingMembers] = starvingMembersArray[i];
+                embeds.push(new MessageEmbed({
+                    color: 'DARK_RED',
+                    title: 'STARVING MEMBERS IN: ' + clan.toUpperCase(),
+                    description: starvingMembers.length > 0 ? starvingMembers.map(member =>
+                        '> ⊗ **' + member.displayName + '** (<@' + member.user.id + '>)'
+                    ).join('\n') : '> None to list... my, many here got lucky...',
+                    footer: { text: starvingMembers.length + ' starving member(s) / ' + totalClanMembers[clan] + ' member(s)' },
+                }));
+            }
+
+            // generate header
+            embeds.push(new MessageEmbed({
                 color: 'DARK_GREY',
                 title: '🦴 Starvation lingers...',
                 description: '> This audit contains the most up-to-date information available upon request.',
                 footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
                 timestamp: Date.now(),
-            });
-            const starvingEmbed = new MessageEmbed({
-                color: 'DARK_RED',
-                title: '⌛️ The rumbling aches... starvation is imminent.',
-                description: starvingMembers.length > 0 ? starvingMembers.map(member =>
-                    '> ⊗ **' + member.displayName + '** (<@' + member.user.id + '>)'
-                ).join('\n') : '> None to list... my, many here got lucky...'
-            });
-            const oneAwayEmbed = new MessageEmbed({
-                color: 'DARK_PURPLE',
-                title: '⏳ One away from starving...',
-                description: oneAwayMembers.length > 0 ? oneAwayMembers.map(member =>
-                    '> ⊕ **' + member.displayName + '** (<@' + member.user.id + '>)'
-                ).join('\n') : '> None to list... my, many here got lucky...'
-            })
+            }));
 
             // display audit result
-            return interaction.editReply({
-                embeds: [starvingEmbed, oneAwayEmbed, headerEmbed]
-            });
+            return interaction.editReply({ embeds });
 
         }
 
@@ -231,18 +239,16 @@ module.exports = async (interaction, subcommand) => {
             await interaction.deferReply({ ephemeral: true });
             const roles = require('./roles.json');
 
-            // get all users from the database and members from the guild
-            const [allUsers, Members] = await Promise.all([
-                CoreUtil.FetchAllUsers().then(({users}) => { return new Map(users.map(o => [o.userId, o])) }),
-                interaction.guild.members.fetch(),
-            ]);
+            // get all users from the cache and fetch members from the guild
+            const allCharacters = CoreUtil.Characters.cache.getAll(interaction.guild.id);
+            const Members = await interaction.guild.members.fetch();
 
             // compare and only push members that are registered
             const registered = new Map();
             for (let [id, member] of Members) {
                 
                 // filter out any users not registered to the bot or not in the server
-                if (!allUsers.has(id) || !Members.has(id)) continue;
+                if (!allCharacters.has(id) || !Members.has(id)) continue;
 
                 // filter out bots, testing account, and any special roles exempting registration
                 if (member.user.bot || member.user.id === '964281330609315872') continue;
@@ -253,9 +259,8 @@ module.exports = async (interaction, subcommand) => {
                     ])) continue;
                 }
 
-
                 // push to the appropriate clan
-                const clan = allUsers.get(id).clan;
+                const clan = allCharacters.get(id).clan;
                 if (!registered.has(clan)) registered.set(clan, []);
                 registered.get(clan).push(Members.get(id));
             }

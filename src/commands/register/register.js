@@ -1,7 +1,8 @@
 const FILE_LANG_ID = 'REGISTER'
 
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const userSchema = require('../../database/schemas/user');
+const CharacterModel = require('../../database/schemas/character');
+const MemberModel = require('../../database/schemas/member');
 const firstTimeRegister = require('../../util/Account/firstTimeRegister');
 const Player = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');
@@ -21,24 +22,37 @@ module.exports = {
         const translator = new Translator(interaction.user.id, FILE_LANG_ID);
         
         // if user is registered
-        let found = await CoreUtil.FetchUser(interaction.user.id);
+        let character = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
+        let member = CoreUtil.Members.cache.get(interaction.guild.id, interaction.user.id);
 
         // prompt registration if user is not registered; inform if registered
-        if (found) return alreadyRegistered(interaction, found, translator);
-        if (!found) found = await firstTimeRegister(interaction);
-        if (!found) return; // error has already been handled inside collect()
+        if (character && member) return alreadyRegistered(interaction, character, translator);
+        character = await firstTimeRegister(interaction);
+        if (!character) return; // error has already been handled inside collect()
 
-        // add to language cache
-        Language.SetLanguage(found);
+        // add to language and character cache
+        CoreUtil.Users.FetchOne(interaction.user.id).then(user => {
+            Language.SetLanguage(user);
+            console.log('User ' + user.userId + ' has had their language updated to ' + user.preferredLanguage);
+        });
 
+        // create member and cache if not already created
+        if (!member) MemberModel.create({
+            guildId: interaction.guild.id,
+            userId: interaction.user.id,
+        }).then((created) => CoreUtil.Members.cache.set(interaction.guild.id, interaction.user.id, created));
+
+        // cache the newly created character
+        CoreUtil.Characters.cache.set(interaction.guild.id, interaction.user.id, character);
+        
         // show success message
         interaction.editReply({
             embeds: [
                 new MessageEmbed()
                     .setColor('AQUA')
-                    .setTitle('🌟 ' + Translator.getGlobal('STATS_SAVED'))
-                    .setDescription(Translator.getGlobal('MENU_DISMISS')),
-                Player.formatStats(interaction.member, found, interaction.user.id)
+                    .setTitle('🌟 ' + translator.getGlobal('STATS_SAVED'))
+                    .setDescription(translator.getGlobal('MENU_DISMISS')),
+                ...Player.formatStats(interaction.member, character, interaction.user.id)
             ]
         });
     },
@@ -47,17 +61,17 @@ module.exports = {
 /**
  * Inform the user they have already registered for the bot.
  * @param {BaseCommandInteraction} interaction
- * @param {userSchema} userData
+ * @param {CharacterModel} character
  * @param {Translator} translator
  */
-function alreadyRegistered(interaction, userData, translator) {
-    interaction.editReply({
+function alreadyRegistered(interaction, character, translator) {
+    CoreUtil.SafeReply(interaction, {
         embeds: [
             new MessageEmbed()
                 .setColor('AQUA')
                 .setTitle('🌟 ' + translator.get('ALREADY_REGISTERED_TITLE'))
                 .setDescription(translator.get('ALREADY_REGISTERED_DESCRIPTION')),
-            Player.formatStats(interaction.member, userData, interaction.user.id)
+            ...Player.formatStats(interaction.member, character, interaction.user.id)
         ]
     })
 }

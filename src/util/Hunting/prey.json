@@ -4,25 +4,30 @@
         "field mouse",
         "vole",
         "robin",
-        "goldfinch"
+        "goldfinch",
+        "suspicious meat"
     ],
     "gorge":[
         "goldfinch",
         "robin",
         "blackbird",
         "squirrel",
-        "field mouse"
+        "field mouse",
+        "suspicious meat"
     ],
     "barn":[
         "mouse",
         "field mouse",
         "vole",
         "adder",
-        "lizard"
+        "lizard",
+        "suspicious meat"
     ],
     "snake-rocks":[
         "vole",
-        "adder"
+        "adder",
+        "mouse",
+        "field mouse"
     ],
     "sandy-hollow":[
         "rabbit",
@@ -35,14 +40,16 @@
         "robin",
         "squirrel",
         "goldfinch",
-        "blackbird"
+        "blackbird",
+        "suspicious flattened meat"
     ],
     "burnt-sycamore":[
         "rabbit",
         "field mouse",
         "vole",
         "robin",
-        "goldfinch"
+        "goldfinch",
+        "suspicious flattened meat"
     ],
     "pond":[
         "toad",
@@ -63,14 +70,16 @@
         "great created newt",
         "minnow",
         "salamander",
-        "toad"
+        "toad",
+        "suspicious meat"
     ],
     "carrion-place":[
         "mouse",
         "field mouse",
         "vole",
         "adder",
-        "lizard"
+        "lizard",
+        "suspicious meat"
     ],
     "descriptors":[
         "scrawny",
@@ -97,6 +106,51 @@
         "frog":"https://static.wikia.nocookie.net/warriors/images/8/87/Frog.jpg/revision/latest/scale-to-width-down/150?cb=20110810204854",
         "blackbird":"https://static.wikia.nocookie.net/warriors/images/2/2b/Blackbird.jpg/revision/latest/scale-to-width-down/150?cb=20110811010659",
         "squirrel":"https://static.wikia.nocookie.net/warriors/images/f/fd/Squirrel.jpg/revision/latest/scale-to-width-down/150?cb=20110811030203",
-        "adder":"https://static.wikia.nocookie.net/warriors/images/1/18/European_Adder-1.jpg/revision/latest/scale-to-width-down/150?cb=20170523233354"
+        "adder":"https://static.wikia.nocookie.net/warriors/images/1/18/European_Adder-1.jpg/revision/latest/scale-to-width-down/150?cb=20170523233354",
+        "suspicious meat":""
+    },
+    "overrides": {
+        "suspicious meat": {
+            "bites": {"min": 3, "max":7},
+            "requiresTracking": true,
+            "requiresCatching": true,
+            "messages": {
+                "tracked": {
+                    "success": "Wandering, you stumble and nearly fall atop a lump of suspicious looking meat. It smells aghast... while you can't really tell what it is, the elements giving way, it gives you an uneasy feeling in your stomach..."
+                },
+                "caught": {
+                    "success": "You hesitate greatly, but take it within your maw, a light gag rising as you ponder on what to do next.",
+                    "fail": "However... it looks heavily rotted. No one would want to eat this, much less even think about grabbing it to carry back. You decide it is better to leave it to the elements... but you can't help but wonder."
+                },
+                "size": [
+                    "grimy",
+                    "chunky",
+                    "well put together",
+                    "large",
+                    "enormous"
+                ]
+            }
+        },
+        "suspicious flattened meat": {
+            "bites": {"min": 3, "max":7},
+            "requiresTracking": true,
+            "requiresCatching": true,
+            "messages": {
+                "tracked": {
+                    "success": "Wandering, you stumble and nearly fall atop a lump of suspicious looking meat. It smells aghast... while you can't really tell what it is, rather flatted from what you can only assume was the monster's doing, it gives you an uneasy feeling in your stomach..."
+                },
+                "caught": {
+                    "success": "You hesitate greatly, but take it within your maw, a light gag rising as you ponder on what to do next.",
+                    "fail": "However... it looks heavily rotted. No one would want to eat this, much less even think about grabbing it to carry back. You decide it is better to leave it to the elements... but you can't help but wonder."
+                },
+                "size": [
+                    "grimy",
+                    "chunky",
+                    "well put together",
+                    "large",
+                    "enormous"
+                ]
+            }
+        }
     }
 }

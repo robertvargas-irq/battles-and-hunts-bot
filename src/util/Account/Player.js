@@ -17,6 +17,7 @@ const usersAllowedToEdit = new Map();
  * @param {GuildMember} member
  * @param {userSchema} userData 
  * @param {string} originalCallerId For translation purposes
+ * @returns {MessageEmbed[]}
  */
 function formatStats(member, userData, originalCallerId) {
 

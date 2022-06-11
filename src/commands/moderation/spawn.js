@@ -116,13 +116,23 @@ module.exports = {
                             + '\n\n💡 **To get started, select the day you wish to fill out a form for. You will then be prompted for what kind of excuse you would like to submit, along with extra details.**'
                         )
                     ],
-                    components: [new MessageActionRow({
-                        components: ExcuseHandler.days.map(day => new MessageButton({
-                            customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
-                            style: 'PRIMARY',
-                            label: day,
-                        }))
-                    })],
+                    components: [
+                        new MessageActionRow({
+                            components: ExcuseHandler.days.map(day => new MessageButton({
+                                customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
+                                style: 'PRIMARY',
+                                label: day,
+                            })),
+                        }),
+                        new MessageActionRow({
+                            components: [new MessageButton({
+                                customId: 'EXCUSEBUTTON_VIEW',
+                                style: 'SECONDARY',
+                                label: 'View the status of your excuses',
+                                emoji: '📝'
+                            })],
+                        }),
+                    ],
                 });
                 
                 // defer and pull server from the cache

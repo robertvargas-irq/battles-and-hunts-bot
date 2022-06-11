@@ -5,7 +5,7 @@ const ExcuseModel = require('../../database/schemas/excuse');
  * @type {cached}
  */
 const cached = new Map();
-const key = (...arguments) => arguments.join(':');
+const key = (...arguments) => arguments.map(arg => arg.toLowerCase()).join(':');
 
 class ExcuseCache {
 

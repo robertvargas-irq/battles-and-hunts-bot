@@ -18,9 +18,95 @@ module.exports = async (button) => {
     console.log(button.customId.split(':'));
 
     const [BUTTON_TITLE, EXCUSE_DAY, EXCUSE_TYPE] = button.customId.split(':');
-    console.log(BUTTON_TITLE);
-    console.log(EXCUSE_DAY);
-    console.log(EXCUSE_TYPE);
+    console.log({BUTTON_TITLE});
+    console.log({EXCUSE_DAY});
+    console.log({EXCUSE_TYPE});
+
+    // if simply viewing, pass along
+    if (BUTTON_TITLE.startsWith('EXCUSEBUTTON_VIEW')) {
+
+        // if specific type is not provided yet, display with day options
+        if (!EXCUSE_DAY) {
+
+            // tally total excuses per day
+            const userExcuseCount = {};
+            for (const day of ExcuseHandler.days) {
+                for (const type of ExcuseHandler.types) {
+                    if (!userExcuseCount.hasOwnProperty(day)) userExcuseCount[day] = 0;
+                    if (ExcuseHandler.Excuses.cache.get(button.guild.id, button.user.id, day, type))
+                        userExcuseCount[day]++;
+                }
+            }
+
+            return button.reply({
+                ephemeral: true,
+                embeds: [new MessageEmbed()
+                    .setColor('BLURPLE')
+                    .setTitle('📝 Status View')
+                    .setDescription('Quickly view the status of any of your excuses, whether they\'ve been approved, still pending, or denied!')
+                ],
+                components: [new MessageActionRow({
+                    components: ExcuseHandler.days.map(day => new MessageButton({
+                        customId: 'EXCUSEBUTTON_VIEW:' + day.toUpperCase(),
+                        style: userExcuseCount[day] < 1 ? 'SECONDARY' : 'PRIMARY',
+                        label: day  + ' : ' + (userExcuseCount[day] < 1 ? 'None' : userExcuseCount[day] + ' submitted'),
+                        disabled: userExcuseCount[day] < 1
+                    })),
+                })],
+            });
+        }
+        
+        else {
+    
+            // generate quick viewer with expandable view
+            return button.reply({
+                ephemeral: true,
+                embeds: [new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: 'Check all of your submitted excuses for `' + EXCUSE_DAY + '`!',
+                    description: '> Press any of the available buttons to pull up the original request submitted!',
+                })],
+                components: [
+                    new MessageActionRow({ components: generateViewButtons(EXCUSE_DAY, button) })
+                ],
+            });
+
+            // button generator for a given day
+            function generateViewButtons(day, button) {
+                // check each type against the day for a form already submitted
+                const alreadySubmitted = [];
+                for (const type of ExcuseHandler.types) alreadySubmitted.push(
+                    ExcuseHandler.Excuses.cache.get(
+                        button.guild.id,
+                        button.user.id,
+                        day,
+                        type.toUpperCase()
+                    )
+                )
+                
+                const buttons = [];
+                for (let i = 0; i < types.length; i++) {
+                    const statusIndex = [
+                        ExcuseHandler.EXCUSE_STATUSES.APPROVED,
+                        ExcuseHandler.EXCUSE_STATUSES.PENDING,
+                        ExcuseHandler.EXCUSE_STATUSES.DENIED,
+                    ].indexOf(alreadySubmitted[i]?.status) || 0;
+                    buttons.push(new MessageButton({
+                        customId: 'EXCUSEBUTTON:' + day + ':' + types[i].toUpperCase(),
+                        style: alreadySubmitted[i] ? ['SUCCESS', 'PRIMARY', 'DANGER'][statusIndex] : 'SECONDARY',
+                        emoji: alreadySubmitted[i] ? ['✅', '⏱', '❌'][statusIndex] : undefined,
+                        label: types[i] + (
+                            alreadySubmitted[i]
+                            ? ' (' + alreadySubmitted[i].status + ') : Review Status'
+                            : ''
+                        ),
+                        disabled: !alreadySubmitted[i]
+                    }));
+                }
+                return buttons;
+            }
+        }
+    }
 
     // check to ensure the request day is not paused
     if (ExcuseHandler.dayIsPaused(button.guild.id, EXCUSE_DAY)) return button.reply({
@@ -29,8 +115,12 @@ module.exports = async (button) => {
             color: 'YELLOW',
             title: '⚠️ Woah wait a minute-!',
             description: 'Looks like all excuse forms for **`' + EXCUSE_DAY + '`** are currently ⏸ **`PAUSED`**!'
+            + '\n> The only action allowed is viewing the status of any submission you have already made.'
             + '\n\nIf you believe this is a mistake, please contact an administrator!',
             timestamp: Date.now()
+        })],
+        components: [new MessageActionRow({
+            components: generateButtons(EXCUSE_DAY, button, true),
         })]
     });
 
@@ -110,14 +200,14 @@ module.exports = async (button) => {
             + '\n> Any button -not- in blue is a submitted form, press it to pull up its status!',
         })],
         components: [
-            new MessageActionRow({ components: await generateButtons(EXCUSE_DAY, button) })
+            new MessageActionRow({ components: generateButtons(EXCUSE_DAY, button) })
         ],
     });
 }
 
 // generate buttons for a given day
 const types = ['Absence', 'Left Early', 'Late'];
-const generateButtons = async (day, button) => {
+const generateButtons = (day, button, dayPaused = false) => {
     // check each type against the day for a form already submitted
     const alreadySubmitted = [];
     for (const type of types) alreadySubmitted.push(
@@ -129,7 +219,6 @@ const generateButtons = async (day, button) => {
         )
     )
     
-    // const alreadySubmitted = await Promise.all(alreadySubmittedChecks);
     const buttons = [];
     for (let i = 0; i < types.length; i++) {
         const statusIndex = [
@@ -139,13 +228,18 @@ const generateButtons = async (day, button) => {
         ].indexOf(alreadySubmitted[i]?.status) || 0;
         buttons.push(new MessageButton({
             customId: 'EXCUSEBUTTON:' + day + ':' + types[i].toUpperCase(),
-            style: alreadySubmitted[i] ? ['SUCCESS', 'SECONDARY', 'DANGER'][statusIndex] : 'PRIMARY',
-            emoji: alreadySubmitted[i] ? ['✅', '⏱', '❌'][statusIndex] : undefined,
+            style: alreadySubmitted[i] ? ['SUCCESS', 'SECONDARY', 'DANGER'][statusIndex] : dayPaused ? 'SECONDARY' : 'PRIMARY',
+            emoji: alreadySubmitted[i] ? ['✅', '⏱', '❌'][statusIndex] : {
+                name: 'pine_spin',
+                id: '962887069976379402',
+                animated: true,
+            },
             label: types[i] + (
                 alreadySubmitted[i]
                 ? ' (' + alreadySubmitted[i].status + ') : Review Status'
                 : ''
             ),
+            disabled: dayPaused && !alreadySubmitted[i]
         }));
     }
     return buttons;

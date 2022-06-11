@@ -18,6 +18,10 @@ const client = new BotClient({
     partials: ["CHANNEL"]
 });
 
+// create console header
+console.log('='.repeat(25));
+console.log('Initializing Process: TBS\n\n' + '- '.repeat(13));
+
 // connect to the MongoDB database
 console.log('🧩 Connecting to the database...')
 require('./database/connect.js')().then(() => {

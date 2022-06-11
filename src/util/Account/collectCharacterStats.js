@@ -2,6 +2,7 @@ const FILE_LANG_ID = 'COLLECT_CHARACTER_STATS';
 
 const { Message, MessageEmbed, BaseCommandInteraction } = require('discord.js');
 const Translator = require('../Translator');
+const CoreUtil = require('../CoreUtil');
 const RETRIES = 3;
 const TIME = 90;
 const clans = ['unforgiven', 'shadowclan', 'thunderclan', 'riverclan'];
@@ -60,7 +61,8 @@ async function collectCharacterStats(interaction, promptMessage) {
         let c_MAX = ranges[field][1];
 
         // prompt for new input
-        await interaction.editReply({
+        await CoreUtil.SafeReply(interaction, {
+            ephemeral: true,
             embeds: [prompt.addField(
                 `${translator.getFromObject(name_translations[field])} ${flairs[field]}`, 
                 `⁅⁘⟧ [\`${c_MIN}\` - \`${c_MAX}\`] `
@@ -85,7 +87,7 @@ async function collectCharacterStats(interaction, promptMessage) {
 
             // prompt for new input since invalid
             prompt.fields[field].value = `⚠️ \`${input}\` ${translator.get('INVALID_INPUT_1')} [\`${c_MIN}\` - \`${c_MAX}\`].\n(${RETRIES - i} ${translator.get('INVALID_INPUT_2')}.)`;
-            await interaction.editReply({ embeds: [prompt] });
+            await CoreUtil.SafeReply(interaction, { embeds: [prompt] });
             input = await collect(interaction, filter);
 
             // validate
@@ -105,7 +107,7 @@ async function collectCharacterStats(interaction, promptMessage) {
         field++;
         
     }
-    await interaction.editReply({ embeds: [prompt] });
+    await CoreUtil.SafeReply(interaction, { embeds: [prompt] });
 
     // return full stats
     return { clanRole, stats };

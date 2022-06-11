@@ -52,7 +52,7 @@ module.exports = async (interaction, subcommand) => {
             await interaction.deferReply();
 
             // get all characters in the guild
-            const characters = HuntManager.Characters.cache.getAll(interaction.guild.id);
+            const characters = Array.from(HuntManager.Characters.cache.getAll(interaction.guild.id).values());
 
             // set all user's hunger to their size
             for (let character of characters) character.currentHunger = character.stats.cat_size;

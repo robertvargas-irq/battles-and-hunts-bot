@@ -307,6 +307,37 @@ class CoreUtil {
         return input;
     }
 
+    /**@protected */
+    static __articles = new Set(['of', 'in', 'the', 'is', 'or', 'a', 'an', 'and']);
+    /**
+     * Properly capitalize a single- or multi-worded sentence, taking into account English articles
+     * @param {string} requestedWord The word or sentence to capitalize
+     * @returns {string} Properly-capitalized word/sentence taking into account English articles
+     */
+    static ProperCapitalization(requestedWord) {
+
+        // if it is only one word, capitalize the first letter and return
+        if (!requestedWord.includes(' ')) return requestedWord[0].toUpperCase() + requestedWord.substring(1);
+
+        /*
+        * format word-by-word with proper capitalization
+        */
+
+        // split the words; the first word will always be in proper casing
+        const words = requestedWord.split(/ +/g);
+        const firstWordProper = words[0][0].toUpperCase() + words[0].substring(1);
+        const subsequentWords = words.slice(1).map(word => {
+            // if the word is an article, return it as is
+            if (this.__articles.has(word)) return word;
+
+            // provide the word with proper casing
+            return word[0].toUpperCase() + word.substring(1);
+        });
+
+        // return the final concatenation
+        return firstWordProper + ' ' + subsequentWords;
+    }
+
 }
 
 module.exports = CoreUtil

@@ -7,16 +7,13 @@ module.exports = {
     description: 'Quickly view your health!',
     /**@param {BaseCommandInteraction} interaction */
     async execute( interaction ) {
-
-        // defer
-        await interaction.deferReply({ ephemeral: false });
         
         // if user is registered
-        const found = await CoreUtil.FetchUser(interaction.user.id);
+        const found = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
         if (!found) return CoreUtil.NotRegistered(interaction);
 
         // show health bar
-        interaction.editReply({
+        interaction.reply({
             embeds: [
                 new MessageEmbed()
                     .setColor(getColor(found.currentHealth, found.stats.constitution))

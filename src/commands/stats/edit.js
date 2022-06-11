@@ -11,16 +11,14 @@ module.exports = {
     description: 'Edit your stats!',
     /**@param {BaseCommandInteraction} interaction */
     async execute(interaction) {
-
-        // defer
-        await interaction.deferReply({ ephemeral: true });
         
         // check if user is registered
-        const found = await CoreUtil.FetchUser(interaction.user.id);
+        const found = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
         if (!found) return CoreUtil.NotRegistered(interaction);
 
         // ensure the user is able to edit
-        if (!Player.allowedToEdit(interaction.guild.id, interaction.user.id)) return interaction.editReply({
+        if (!Player.allowedToEdit(interaction.guild.id, interaction.user.id)) return interaction.reply({
+            ephemeral: true,
             embeds: [new MessageEmbed({
                 color: 'RED',
                 title: '⚠️ Woah there-!',
@@ -47,7 +45,6 @@ module.exports = {
         // save to the database
         found.stats = catStats;
         found.clan = clanRole;
-        found.markModified('User.stats');
         await found.save()
             .then(() => {
                 // success!
@@ -57,7 +54,7 @@ module.exports = {
                             .setColor('AQUA')
                             .setTitle('🌟 ' + translator.getGlobal('STATS_SAVED'))
                             .setDescription(translator.getGlobal('MENU_DISMISS')),
-                        Player.formatStats(interaction.member, found, interaction.user.id)
+                        ...Player.formatStats(interaction.member, found, interaction.user.id),
                     ]
                 });
             })

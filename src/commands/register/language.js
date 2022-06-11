@@ -46,7 +46,7 @@ module.exports = {
         await interaction.deferReply({ ephemeral: true });
         
         // fetch user
-        const found = await CoreUtil.FetchUser(interaction.user.id);
+        const found = await CoreUtil.Users.FetchOne(interaction.user.id);
         if (!found) return CoreUtil.NotRegistered(interaction);
         
         // change preferred language and cache

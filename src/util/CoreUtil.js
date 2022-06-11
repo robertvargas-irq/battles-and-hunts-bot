@@ -30,7 +30,7 @@ class CoreUtil {
      * @param {MessagePayload} messagePayload The message to send
      */
     static async SafeReply(interaction, messagePayload) {
-        if (interaction.replied) return interaction.editReply(messagePayload);
+        if (interaction.replied || interaction.deferred) return interaction.editReply(messagePayload);
         return interaction.reply(messagePayload);
     }
 
@@ -104,43 +104,6 @@ class CoreUtil {
         // delete if possible
         if (!interaction.ephemeral)
             setTimeout(() => interaction.deleteReply().catch(), seconds * 1000);
-    }
-    
-    /**
-     * Fetch a User from the database
-     * @deprecated USE Users.FetchOne(userId, extraParameters)
-     * @method Users.FetchOne
-     * @param {string} userId Desired userId
-     * @param {userSchema} extraParameters Any extra parameters to tighten the search
-     * @returns {Promise<userSchema>}
-     */
-    static async FetchUser(userId, extraParameters = {}) {
-        const User = mongoose.model('User', userSchema);
-        return await User.findOne({ userId, ...extraParameters });
-    }
-
-    /**
-     * Fetches all Users from the database
-     * @deprecated USE Servers.FetchAll(extraParameters)
-     * @method Users.FetchAll
-     * @returns {Promise<{UserModel: mongoose.Model, users: userSchema[]}>}
-     */
-    static async FetchAllUsers() {
-        const UserModel = mongoose.model('User', userSchema);
-        return { UserModel, users: await UserModel.find() };
-    }
-
-    /**
-     * Fetch a User from the database
-     * @deprecated USE Servers.FetchOne(guildId, extraParameters)
-     * @method Servers.FetchOne
-     * @param {string} guildId
-     * @param {serverSchema} extraParameters Any extra parameters to tighten the search
-     * @returns {Promise<serverSchema>}
-     */
-    static async FetchServer(guildId, extraParameters = {}) {
-        const Server = mongoose.model('Server', serverSchema);
-        return await (await Server.findOne({ guildId, ...extraParameters }) || await Server.create({ guildId }));
     }
 
     /** Fetch from the Members category of the database */

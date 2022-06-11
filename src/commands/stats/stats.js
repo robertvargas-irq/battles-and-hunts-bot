@@ -53,7 +53,6 @@ module.exports = {
     async execute(interaction) {
 
         // defer reply and get stat type requested
-        await interaction.deferReply({ ephemeral: true });
         const statsType = interaction.options.getSubcommand();
 
         /**
@@ -62,15 +61,17 @@ module.exports = {
         const playerMember = interaction.options.getMember('player', false) || interaction.member;
 
         // if the target is a bot, inform that bots do not have stats
-        if (playerMember.user.bot) return interaction.editReply({ embeds: [new MessageEmbed({ title: '🤖 These stats are too powerful!' })] });
+        if (playerMember.user.bot) return interaction.reply({ ephemeral: true,
+            embeds: [new MessageEmbed({ title: '🤖 These stats are too powerful!' })] });
         
-        // fetch user from the database
-        const found = await CoreUtil.FetchUser(playerMember.user.id);
+        // fetch user from the cache
+        const found = CoreUtil.Characters.cache.get(interaction.guild.id, playerMember.user.id);
 
         // if target is not registered, inform the user appropriately and return
         if (!found) {
             if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
-            else interaction.editReply({
+            else interaction.reply({
+                ephemeral: true,
                 embeds: [new MessageEmbed()
                     .setColor('AQUA')
                     .setTitle('⚠️ Woah!')
@@ -83,19 +84,22 @@ module.exports = {
         // display the requested stats
         switch (statsType) {
             case 'general': {
-                return interaction.editReply({
+                return interaction.reply({
+                    ephemeral: true,
                     embeds: Player.formatStats(playerMember, found, interaction.user.id)
                 });
             }
 
             case 'battle': {
-                return interaction.editReply({
+                return interaction.reply({
+                    ephemeral: true,
                     embeds: Player.formatBattleStats(playerMember, found, interaction.user.id)
                 });
             }
 
             case 'hunting': {
-                return interaction.editReply({
+                return interaction.reply({
+                    ephemeral: true,
                     embeds: [ HuntManager.formatStats(found, playerMember) ]
                 });
             }

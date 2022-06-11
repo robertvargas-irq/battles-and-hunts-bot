@@ -32,6 +32,10 @@ module.exports = {
                             name: 'Outpost Rock',
                             value: 'outpost-rock',
                         },
+                        {
+                            name: 'By the Thunderpath',
+                            value: 'thunderpath',
+                        },
                     ]
                 }
             ]
@@ -89,6 +93,10 @@ module.exports = {
                         {
                             name: 'Stream',
                             value: 'river',
+                        },
+                        {
+                            name: 'By the Thunderpath',
+                            value: 'thunderpath',
                         },
                     ]
                 }

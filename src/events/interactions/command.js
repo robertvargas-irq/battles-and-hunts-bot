@@ -10,17 +10,24 @@ module.exports = async ( interaction ) => {
     const SubcommandGroup = interaction.options.getSubcommandGroup(false) || null;
     const Subcommand = interaction.options.getSubcommand(false) || null;
 
-    console.log({
-        commandId: interaction.commandId,
-        commandName: interaction.commandName,
-        subcommandGroup: SubcommandGroup,
-        subcommand: Subcommand,
-        calledBy: ( interaction.commandName == 'feedback' )
-            ? '# Anonymized #'
-            : interaction.user.tag + ' (' + interaction.user.id + ')',
-        calledOn: (new Date()).toLocaleDateString(),
-        calledAt: (new Date()).toLocaleTimeString(),
-    });
+    console.log('🏓 COMMAND CALL', {
+        command: {
+            id: interaction.commandId,
+            name: interaction.commandName,
+            subcommandGroup: SubcommandGroup || '---',
+            subcommand: Subcommand || '---',
+        },
+        called: {
+            by: interaction.user.tag + ' (' + interaction.user.id + ')',
+            on: (new Date()).toLocaleDateString(),
+            at: (new Date()).toLocaleTimeString(),
+        },
+        in: {
+            guild: interaction.guild.name + ' (' + interaction.guild.id + ')',
+            channel: interaction.channel.name + ' (' + interaction.channel.id + ')',
+            type: interaction.channel.type
+        },
+    }, 'END CALL ⏹️');
     
     // execute command
     try {

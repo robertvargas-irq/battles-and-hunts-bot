@@ -21,8 +21,5 @@ module.exports = {
             ],
             status: 'online',
         });
-
-        let boot = client.user.tag + ' is now online!';
-        console.log(`${'='.repeat( boot.length )}\n${boot}\n${'='.repeat( boot.length )}`);
     }
 }

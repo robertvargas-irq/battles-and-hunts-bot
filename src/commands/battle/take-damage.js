@@ -48,9 +48,7 @@ module.exports = {
         // save to database if an actual health change was made
         if (finalDamageAmount > 0) {
             character.currentHealth -= finalDamageAmount;
-            character.save().then(() => interaction.editReply({
-                embeds: [response]
-            }));
+            character.save();
         }
         
         // notify user along with any damage adjustments made

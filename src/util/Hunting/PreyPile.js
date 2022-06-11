@@ -226,15 +226,18 @@ class PreyPile extends CoreUtil {
         let preyCount = 0;
         let returnString;
         return preyList.map(p => {
-            returnString = `↣ **(\`${p.bites_remaining}\` / \`${p.size}\`) ${p.name[0].toUpperCase() + p.name.substring(1)}**`
 
+            // decorate the string with the prey bites-remaining information
+            returnString = `↣ **(\`${p.bites_remaining}\` / \`${p.size}\`) ${this.ProperCapitalization(p.name)}**`
+
+            // count the total prey if within embed character limit
             if (charCount < 1500) {
                 charCount += returnString.length;
                 preyCount++;
                 return returnString;
             }
 
-        }).slice(0, preyCount).join('\n') + '...\n'
+        }).slice(0, preyCount).join('\n') + (charCount >= 1500 ? '...\n' : '\n')
         + (charCount >= 1500 ? '[`' + (preyList.length - preyCount) + '` more]' : '')
         + `\n**- - - - - -**\nTotal Available Bites to Eat: \`${totalWeight}\``;
     }

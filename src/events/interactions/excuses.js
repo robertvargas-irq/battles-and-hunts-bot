@@ -88,7 +88,7 @@ module.exports = async (button) => {
                             label: 'Reason',
                             style: 'PARAGRAPH',
                             minLength: 10,
-                            maxLength: 30,
+                            maxLength: 50,
                             required: true,
                         })
                     ],

@@ -2,9 +2,10 @@ const FILE_LANG_ID = 'FIRST_TIME_REGISTER';
 
 const { BaseCommandInteraction } = require('discord.js');
 const { default: mongoose } = require('mongoose');
-const userSchema = require('../../database/schemas/user');
 const Translator = require('../Translator');
+const Player = require('./Player');
 const collectCharacterStats = require('./collectCharacterStats');
+const CharacterModel = require('../../database/schemas/character');
 
 /**
  * Get a user started on their first time using the battle bot!
@@ -19,20 +20,14 @@ async function firstTimeRegister(interaction) {
     if (!stats) return false; // error message already handled within collect()
 
     // register the user to the bot and return the user document
-    const User = mongoose.model('User', userSchema);
-    
-    /**@type {mongoose.Document}*/
-    const newUser = new User({
+    return await CharacterModel.create({
+        guildId: interaction.guild.id,
         userId: interaction.user.id,
-        stats: stats,
-        currentHealth: stats.constitution * 5 + 50,
+        stats,
+        currentHealth: Player.calculateMaxHealth(stats.constitution),
         currentHunger: 0,
         clan: clanRole,
-    });
-    newUser.markModified('User.stats');
-    return await newUser.save()
-        .then(() => { return newUser })
-        .catch(() => { return false });
+    }).catch(() => false);
     
 }
 

@@ -40,7 +40,7 @@ class Language {
      * Cache language change
      * @param {userSchema} userModel
      */
-    static SetLanguage = async (userModel) => {
+    static SetLanguage = (userModel) => {
         this.CachedLanguages.set(userModel.userId, userModel.preferredLanguage);
     }
 

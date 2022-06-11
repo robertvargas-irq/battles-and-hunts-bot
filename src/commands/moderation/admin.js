@@ -230,6 +230,18 @@ module.exports = {
                     ]
                 },
             ]
+        },
+        {
+            name: 'refresh',
+            description: 'Something not quite right?',
+            type: CommandTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'clan-affiliations',
+                    description: 'Someone changed clans? Bot was down during it? Let\'s fix that!',
+                    type: CommandTypes.Subcommand,
+                }
+            ]
         }
     ],
     /**@param {BaseCommandInteraction} interaction */
@@ -260,6 +272,8 @@ module.exports = {
                 return require('./admin-routes/admin-hunting')(interaction, subcommand);
             case 'stats':
                 return require('./admin-routes/admin-stats')(interaction, subcommand);
+            case 'refresh':
+                return require('./admin-routes/admin-refresh')(interaction, subcommand);
         }
 
     },

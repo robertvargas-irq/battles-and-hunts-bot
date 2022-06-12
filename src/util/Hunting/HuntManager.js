@@ -171,8 +171,8 @@ class HuntManager extends CoreUtil {
         const preyName = this.#RandomFromArray(preyFromLocations[location]);
         const overrides = preyFromLocations.overrides[preyName] || false;
         const sizeRoll = this.#Random(
-            overrides.bites.min || 1,
-            overrides.bites.max || maxSize
+            overrides?.bites?.min || 1,
+            overrides?.bites?.max || maxSize
         );
         return {
             name: preyName,
@@ -202,8 +202,10 @@ class HuntManager extends CoreUtil {
         const catchProf = Math.floor(character.stats[catchProfName] / 2);
 
         // check if the prey requires either to pass, and if DC's pass
-        const tracked = !prey.overrides.requiresTracking || trackRoll + trackProf >= server.hunting.seasonDC;
-        const caught = !prey.overrides.requiresCatching || catchRoll + catchProf >= server.hunting.seasonDC;
+        const tracked = prey.overrides?.hasOwnProperty('requiresTracking') && !prey.overrides?.requiresTracking ? true
+        : trackRoll + trackProf >= server.hunting.seasonDC;
+        const caught = prey.overrides?.hasOwnProperty('requiresCatching') && !prey.overrides?.requiresCatching ? true
+        : catchRoll + catchProf >= server.hunting.seasonDC;
 
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) {
@@ -226,7 +228,7 @@ class HuntManager extends CoreUtil {
         const embeds = [];
 
         // display tracked result only if a track roll was required
-        if (prey.overrides.requiresTracking) embeds.push(new MessageEmbed({
+        if (!prey.overrides?.hasOwnProperty('requiresTracking') || prey.overrides?.requiresTracking) embeds.push(new MessageEmbed({
             color: tracked ? 'GREEN' : 'RED',
             title: '🧭 ' + (tracked ? 'Tracked and spotted prey' : 'No prey has made itself known'),
             description: '**Territory Bonus**: +`' + trackProfName.toUpperCase() + '`/`2`'
@@ -235,7 +237,7 @@ class HuntManager extends CoreUtil {
         }));
 
         // if tracked, display catch result only if a catch roll was required
-        if (prey.overrides.requiresCatching && tracked) embeds.push(new MessageEmbed({
+        if ((!prey.overrides?.hasOwnProperty('requiresCatching') || prey.overrides?.requiresCatching) && tracked) embeds.push(new MessageEmbed({
             color: caught ? 'GREEN' : 'RED',
             title: '🪝 ' + (caught ? 'Caught and collected prey' : 'Unfortunately, the prey ran off'),
             description: '**Territory Bonus**: +`' + catchProfName.toUpperCase() + '`/`2`'

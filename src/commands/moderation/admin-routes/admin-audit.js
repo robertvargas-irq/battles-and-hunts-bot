@@ -192,6 +192,7 @@ module.exports = async (interaction, subcommand) => {
                 if (character.currentHunger === 0) continue;
 
                 // count the total clan members
+                if (!character.clan) continue;
                 if (!totalClanMembers.hasOwnProperty(character.clan)) totalClanMembers[character.clan] = 0;
                 totalClanMembers[character.clan]++;
 
@@ -261,6 +262,7 @@ module.exports = async (interaction, subcommand) => {
 
                 // push to the appropriate clan
                 const clan = allCharacters.get(id).clan;
+                if (!clan) continue;
                 if (!registered.has(clan)) registered.set(clan, []);
                 registered.get(clan).push(Members.get(id));
             }

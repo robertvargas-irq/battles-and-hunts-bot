@@ -37,7 +37,7 @@ module.exports = async (interaction, subcommand) => {
                 if (member.user.bot || member.user.id === '964281330609315872') continue;
 
                 // find clan in their roles; if none continue
-                let clanRole;
+                let clanRole = null;
                 member.roles.cache.find(r => {
                     // if name matches a clan name, return it
                     let name = r.name.toLowerCase().replace(/[^a-zA-Z]/g, '');
@@ -47,7 +47,6 @@ module.exports = async (interaction, subcommand) => {
                     }
                     return false;
                 });
-                if (!clanRole) continue;
 
                 // update clan affiliation
                 character.clan = clanRole;

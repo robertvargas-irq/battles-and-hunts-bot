@@ -57,7 +57,7 @@ function formatStats(member, userData, originalCallerId) {
             }
         }),
         footer: {
-            text:'⇸ ' + translator.get('CLAN_AFFILIATION') + `: ${userData.clan.toUpperCase()}`,
+            text:'⇸ ' + translator.get('CLAN_AFFILIATION') + `: ${userData.clan?.toUpperCase() || 'NONE'}`,
             iconURL: member.guild.iconURL(),
         },
     });

@@ -127,7 +127,7 @@ module.exports = {
                 .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
                 **An outsider to our clan has gifted food to our prey pile!!**\
-                \n> The scent is coming from someone from **${character.clan.toUpperCase()}**...\
+                \n> The scent is coming from someone from **${character.clan?.toUpperCase() || 'an unknown clan or territory'}**...\
                 \n> If I recall, their name was **${interaction.member.displayName}**.
                 \n\
                 \n**- - - - - -**\

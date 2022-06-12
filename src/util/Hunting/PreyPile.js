@@ -82,6 +82,7 @@ class PreyPile extends CoreUtil {
      * @returns 
      */
     static async pushPreyUpdateMessage(interaction, server, clan, messagePayload) {
+        if (!clan) return;
         const clanEntry = server.clans[clan];
         const channel = await interaction.guild.channels.fetch(clanEntry.preyPileChannelId).catch(() => false);
         if (!channel) {

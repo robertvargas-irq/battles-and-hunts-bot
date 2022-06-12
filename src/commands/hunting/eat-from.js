@@ -179,7 +179,7 @@ module.exports = {
                 const clan = interaction.options.getString('clan-to-eat-from');
 
                 // if the prey pile is empty, inform
-                const preyPile = PreyPile.getPreyPile(character.clan, server);
+                const preyPile = PreyPile.getPreyPile(clan, server);
                 if (preyPile.length < 1) return interaction.reply({
                     ephemeral,
                     embeds: [new MessageEmbed({
@@ -192,7 +192,7 @@ module.exports = {
                 });
 
                 // pull and eat the amount, and update hunger
-                const {bitesTaken, consumed} = PreyPile.pullFromPreyPile(character.clan, server, bitesNeeded);
+                const {bitesTaken, consumed} = PreyPile.pullFromPreyPile(clan, server, bitesNeeded);
                 const consumedFormatted = consumed.map(({name, amountEaten}) => {
                     return '`' + (Number.isInteger(amountEaten) ? amountEaten : amountEaten.toFixed(2)) + '`) **'
                     + name + '**'
@@ -200,7 +200,7 @@ module.exports = {
                 character.currentHunger = character.currentHunger - bitesTaken;
 
                 // update prey pile and save user's new hunger
-                PreyPile.updatePreyPile(interaction, server, character.clan);
+                PreyPile.updatePreyPile(interaction, server, clan);
                 character.save();
                 server.save();
 
@@ -230,7 +230,7 @@ module.exports = {
                         .setThumbnail('https://www.wildliferemoval.com/wp-content/uploads/2019/02/Animal-Tracks.jpg')
                         .setDescription(`\
                         **An outsider to our clan has eaten from our prey pile!!**\
-                        \n> The scent is coming from someone from **${character.clan.toUpperCase()}**.\
+                        \n> The scent is coming from someone from **${character.clan?.toUpperCase() || 'unknown clan or territory'}**.\
                         \n\
                         \n**SPOILER** \| WHO IT WAS: || ${interaction.member.displayName} ||
                         \n\
@@ -254,8 +254,8 @@ module.exports = {
                     + '\n> \n> ' + (
                         character.currentHunger < 1
                         ? 'You are fully satiated.'
-                        : 'Just... `' + character.currentHunger + '` more bite' + character.currentHunger !== 1 ? 's':''
-                    ) + '...',
+                        : 'Just... `' + character.currentHunger + '` more bite' + (character.currentHunger !== 1 ? 's' : '') + '...'
+                    ),
                     footer: { text: CANON_MESSAGE }
                 });
                 return interaction.reply({ ephemeral, embeds: [resultEmbed] });

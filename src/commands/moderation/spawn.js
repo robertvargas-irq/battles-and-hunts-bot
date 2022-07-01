@@ -105,6 +105,7 @@ module.exports = {
                 }
 
                 // finally, spawn the menu and provide a loading screen
+                const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
                 const menuMessage = interaction.channel.send({
                     embeds: [new MessageEmbed()
                         .setColor('BLURPLE')
@@ -120,17 +121,11 @@ module.exports = {
                         )
                     ],
                     components: [
-                        new MessageActionRow({
-                            components: ExcuseHandler.days.map(day => new MessageButton({
-                                customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
-                                style: 'PRIMARY',
-                                label: day,
-                            })),
-                        }),
+                        new MessageActionRow({ components: ExcuseHandler.generateDayButtons(server) }),
                         new MessageActionRow({
                             components: [new MessageButton({
                                 customId: 'EXCUSEBUTTON_VIEW',
-                                style: 'SECONDARY',
+                                style: 'PRIMARY',
                                 label: 'View the status of your excuses',
                                 emoji: '📝'
                             })],
@@ -140,7 +135,6 @@ module.exports = {
                 
                 // defer and pull server from the cache
                 await interaction.deferReply({ ephemeral: true });
-                const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
                 
                 // save excuse menu channel/message id and processing channel id and notify
                 ExcuseHandler.setMenuMessage(server, interaction.channel.id, (await menuMessage).id);

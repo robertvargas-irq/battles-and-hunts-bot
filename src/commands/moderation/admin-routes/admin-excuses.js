@@ -38,7 +38,7 @@ module.exports = async (interaction, subcommand) => {
             return interaction.editReply({
                 embeds: [new MessageEmbed({
                     color: 'GREEN',
-                    title: '✅ Successfully cleared ' + deletedCount + ' excuse(s) for ' + day,
+                    title: '✅ Successfully cleared ' + deletedCount + ' excuse' + (deletedCount != 1 ? 's' : '') + ' for ' + day,
                     description: '> Additionally, if excuses for this day were paused, they have been resumed.'
                 })]
             });

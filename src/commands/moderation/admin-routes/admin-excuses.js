@@ -15,7 +15,14 @@ module.exports = async (interaction, subcommand) => {
     switch (subcommand) {
         case 'clear': {
             await interaction.deferReply();
+            const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
             const { deletedCount } = await ExcuseHandler.clearDayAndDeleteThread(interaction, day);
+
+            // re-render the menu
+            ExcuseHandler.fetchMenuMessage(interaction, server).then(menuMessage => {
+                if (!menuMessage) return;
+                ExcuseHandler.renderMenu(menuMessage, server);
+            });
 
             // if nothing was deleted, inform and do not resume
             if (deletedCount === 0) return interaction.editReply({
@@ -27,7 +34,7 @@ module.exports = async (interaction, subcommand) => {
             });
 
             // resume and inform success
-            ExcuseHandler.resume(interaction, day);
+            ExcuseHandler.resume(interaction.guild.id, day);
             return interaction.editReply({
                 embeds: [new MessageEmbed({
                     color: 'GREEN',
@@ -38,7 +45,14 @@ module.exports = async (interaction, subcommand) => {
         } // end clear
 
         case 'pause': {
+            const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
             const successfullyPaused = ExcuseHandler.pause(interaction.guild.id, day);
+
+            // re-render the menu
+            ExcuseHandler.fetchMenuMessage(interaction, server).then(menuMessage => {
+                if (!menuMessage) return;
+                ExcuseHandler.renderMenu(menuMessage, server);
+            });
             
             // paused successfully
             if (successfullyPaused) interaction.reply({
@@ -61,8 +75,15 @@ module.exports = async (interaction, subcommand) => {
         }
 
         case 'unpause': {
+            const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
             const successfullyResumed = ExcuseHandler.resume(interaction.guild.id, day);
             
+            // re-render the menu
+            ExcuseHandler.fetchMenuMessage(interaction, server).then(menuMessage => {
+                if (!menuMessage) return;
+                ExcuseHandler.renderMenu(menuMessage, server);
+            });
+
             // resumed successfully
             if (successfullyResumed) interaction.reply({
                 embeds: [new MessageEmbed({

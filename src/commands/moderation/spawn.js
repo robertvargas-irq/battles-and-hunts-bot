@@ -119,6 +119,7 @@ module.exports = {
                             + '\n\n⏰**All excuses are due UP TO 4 hours after session end, after which submissions will be locked for review.**'
                             + '\n\n💡 **To get started, select the day you wish to fill out a form for. You will then be prompted for what kind of excuse you would like to submit, along with extra details.**'
                         )
+                        .setFooter({ text: 'This menu is dynamically updated and all information displayed is up to date.' })
                     ],
                     components: [
                         new MessageActionRow({ components: ExcuseHandler.generateDayButtons(server) }),

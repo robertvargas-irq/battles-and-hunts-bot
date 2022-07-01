@@ -1,4 +1,12 @@
-const { MessageEmbed, MessageActionRow, MessageButton, GuildMember, Message, BaseCommandInteraction, ModalSubmitInteraction } = require('discord.js');
+const {
+    MessageEmbed,
+    MessageActionRow,
+    MessageButton,
+    GuildMember,
+    Message,
+    BaseCommandInteraction,
+    ModalSubmitInteraction,
+} = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 const Excuse = require('../../database/schemas/excuse');
 
@@ -29,6 +37,56 @@ class ExcuseHandler extends CoreUtil {
 
     static setProcessingChannel(serverModel, channelId) {
         serverModel.excusesChannelId = channelId;
+    }
+
+    static setMenuMessage(serverModel, channelId, messageId) {
+        serverModel.excusesMenuChannelId = channelId;
+        serverModel.excusesMenuMessageId = messageId;
+    }
+
+    /**
+     * Fetch the menu message for excuse form submissions
+     * @param {BaseCommandInteraction} interaction 
+     * @param {import('../../database/schemas/server').ServerSchema} serverModel 
+     */
+    static async fetchMenuMessage(interaction, serverModel) {
+        const channelId = serverModel.excusesMenuChannelId;
+        const messageId = serverModel.excusesMenuMessageId;
+
+        if (!channelId || !messageId) return;
+
+        // fetch channel from id
+        const channel = await interaction.guild.channels.fetch(channelId).catch(() => null);
+        if (!channel) return false;
+
+        // fetch message from id
+        const message = await channel.messages.fetch(messageId).catch(() => false);
+        return message;
+    }
+
+    /**
+     * 
+     * @param {Message} message 
+     * @param {import('../../database/schemas/server').ServerSchema} serverSchema 
+     */
+    static async renderMenu(message, serverSchema) {
+        const embeds = message.embeds;
+        return message.edit({
+            embeds,
+            components: [
+                new MessageActionRow({
+                    components: this.generateDayButtons(serverSchema)
+                }),
+                new MessageActionRow({
+                    components: [new MessageButton({
+                        customId: 'EXCUSEBUTTON_VIEW',
+                        style: 'PRIMARY',
+                        label: 'View the status of your excuses',
+                        emoji: '📝'
+                    })],
+                }),
+            ]
+        });
     }
 
     /**
@@ -208,14 +266,14 @@ class ExcuseHandler extends CoreUtil {
         // delete the corresponding thread
         interaction.guild.channels.fetch(threadId)
         .then(thread => {
-            console.log({thread});
             thread.delete().catch();
         })
-        .catch();
+        .catch(() => false);
 
         // delete all excuses from the cache then from the database for a given day
         const cache = this.Excuses.cache;
-        await this.fetchAllExcuses(guildId, day).then(excuses => {
+        await this.fetchAllExcuses(interaction.guild.id, day).then(excuses => {
+            if (!excuses) return;
             excuses.forEach(e => cache.remove(e));
         });
         return Excuse.deleteMany({ guildId: interaction.guild.id, day });
@@ -245,7 +303,9 @@ class ExcuseHandler extends CoreUtil {
         if (server.excusesPaused.has(day)) return false;
 
         // pause and save
-        server.excusesPaused.set(day, day);
+        const date = new Date();
+        const dateString = date.toLocaleDateString('default', {month: 'long'}) + ' ' + date.getUTCDate();
+        server.excusesPaused.set(day, dateString);
         server.save();
 
         return true;
@@ -353,6 +413,25 @@ class ExcuseHandler extends CoreUtil {
             ],
         })
 
+    }
+
+    /**
+     * Generate day buttons based on paused days
+     * @param {import('../../database/schemas/server').ServerSchema} serverSchema 
+     */
+    static generateDayButtons(serverSchema) {
+        const paused = serverSchema.excusesPaused;
+
+        return this.days.map(day => {
+            const p = paused.has(day.toUpperCase());
+            return new MessageButton({
+                customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
+                style: p ? 'SECONDARY' : 'SUCCESS',
+                emoji: p ? '⏸️' : undefined,
+                label: p ? day + ' : Under review since ' + paused.get(day.toUpperCase()) : day,
+                disabled: p
+            });
+        }).sort((a, b) => a.disabled - b.disabled);
     }
 }
 

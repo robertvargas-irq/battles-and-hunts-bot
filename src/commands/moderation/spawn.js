@@ -105,7 +105,8 @@ module.exports = {
                 }
 
                 // finally, spawn the menu and provide a loading screen
-                interaction.channel.send({
+                const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
+                const menuMessage = interaction.channel.send({
                     embeds: [new MessageEmbed()
                         .setColor('BLURPLE')
                         .setTitle('📝 Excuse Form Requests')
@@ -113,21 +114,18 @@ module.exports = {
                             'Need to excuse yourself from a session? Running late or a little behind; need to leave early, perhaps?'
                             + '\n**No worries! We\'ve got you covered!**'
                             + '\n\nExcuse forms are readily available for any needs you may have. If you don\'t feel comfortable sharing the reason, that\'s perfectly fine! Please just let us know and we\'ll accomodate!'
+                            + '\n\n💫 **Please keep in mind**'
+                            + '\nEach excuse form is checked against the attendance for that given day. Sometimes this takes a while, we appreciate your patience 💚'
+                            + '\n\n⏰**All excuses are due UP TO 4 hours after session end, after which submissions will be locked for review.**'
                             + '\n\n💡 **To get started, select the day you wish to fill out a form for. You will then be prompted for what kind of excuse you would like to submit, along with extra details.**'
                         )
                     ],
                     components: [
-                        new MessageActionRow({
-                            components: ExcuseHandler.days.map(day => new MessageButton({
-                                customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
-                                style: 'PRIMARY',
-                                label: day,
-                            })),
-                        }),
+                        new MessageActionRow({ components: ExcuseHandler.generateDayButtons(server) }),
                         new MessageActionRow({
                             components: [new MessageButton({
                                 customId: 'EXCUSEBUTTON_VIEW',
-                                style: 'SECONDARY',
+                                style: 'PRIMARY',
                                 label: 'View the status of your excuses',
                                 emoji: '📝'
                             })],
@@ -137,9 +135,9 @@ module.exports = {
                 
                 // defer and pull server from the cache
                 await interaction.deferReply({ ephemeral: true });
-                const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
                 
-                // save excuse processing channel id and notify
+                // save excuse menu channel/message id and processing channel id and notify
+                ExcuseHandler.setMenuMessage(server, interaction.channel.id, (await menuMessage).id);
                 ExcuseHandler.setProcessingChannel(server, processingChannel.id);
                 await server.save();
                 return interaction.editReply({

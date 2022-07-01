@@ -8,6 +8,9 @@ const {
     TextInputComponent
 } = require('discord.js');
 
+const EXCUSE_MIN_LENGTH = 10;
+const EXCUSE_MAX_LENGTH = 100;
+
 /**
  * GLOBAL buttons handler
  * @param {ButtonInteraction} button Passed button interaction
@@ -177,8 +180,8 @@ module.exports = async (button) => {
                             customId: 'excused_reason',
                             label: 'Reason',
                             style: 'PARAGRAPH',
-                            minLength: 10,
-                            maxLength: 50,
+                            minLength: EXCUSE_MIN_LENGTH,
+                            maxLength: EXCUSE_MAX_LENGTH,
                             required: true,
                         })
                     ],

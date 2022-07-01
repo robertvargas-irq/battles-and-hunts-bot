@@ -73,9 +73,19 @@ class ExcuseHandler extends CoreUtil {
         const embeds = message.embeds;
         return message.edit({
             embeds,
-            components: [new MessageActionRow({
-                components: generateDayButtons(serverSchema)
-            })]
+            components: [
+                new MessageActionRow({
+                    components: this.generateDayButtons(serverSchema)
+                }),
+                new MessageActionRow({
+                    components: [new MessageButton({
+                        customId: 'EXCUSEBUTTON_VIEW',
+                        style: 'PRIMARY',
+                        label: 'View the status of your excuses',
+                        emoji: '📝'
+                    })],
+                }),
+            ]
         });
     }
 
@@ -256,14 +266,14 @@ class ExcuseHandler extends CoreUtil {
         // delete the corresponding thread
         interaction.guild.channels.fetch(threadId)
         .then(thread => {
-            console.log({thread});
             thread.delete().catch();
         })
-        .catch();
+        .catch(() => false);
 
         // delete all excuses from the cache then from the database for a given day
         const cache = this.Excuses.cache;
-        await this.fetchAllExcuses(guildId, day).then(excuses => {
+        await this.fetchAllExcuses(interaction.guild.id, day).then(excuses => {
+            if (!excuses) return;
             excuses.forEach(e => cache.remove(e));
         });
         return Excuse.deleteMany({ guildId: interaction.guild.id, day });
@@ -404,25 +414,25 @@ class ExcuseHandler extends CoreUtil {
         })
 
     }
+
+    /**
+     * Generate day buttons based on paused days
+     * @param {import('../../database/schemas/server').ServerSchema} serverSchema 
+     */
+    static generateDayButtons(serverSchema) {
+        const paused = serverSchema.excusesPaused;
+
+        return this.days.map(day => {
+            const p = paused.has(day.toUpperCase());
+            return new MessageButton({
+                customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
+                style: p ? 'SECONDARY' : 'SUCCESS',
+                emoji: p ? '⏸️' : undefined,
+                label: p ? day + ' : Under review since ' + paused.get(day.toUpperCase()) : day,
+                disabled: p
+            });
+        }).sort((a, b) => a.disabled - b.disabled);
+    }
 }
 
 module.exports = ExcuseHandler;
-
-/**
- * Generate day buttons based on paused days
- * @param {import('../../database/schemas/server').ServerSchema} serverSchema 
- */
-function generateDayButtons(serverSchema) {
-    const paused = serverSchema.excusesPaused;
-
-    return ExcuseHandler.days.map(day => {
-        const p = paused.has(day.toUpperCase());
-        return new MessageButton({
-            customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
-            style: p ? 'SECONDARY' : 'PRIMARY',
-            emoji: p ? '⏸️' : undefined,
-            label: p ? day + ' : Under review since ' + paused.get(day.toUpperCase()) : day,
-            disabled: p
-        });
-    })
-}

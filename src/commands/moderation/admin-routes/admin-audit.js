@@ -188,13 +188,13 @@ module.exports = async (interaction, subcommand) => {
                 // if user is not in the current server, continue
                 if (!GuildMembers.has(character.userId)) continue;
 
-                // if hunger is satiated, continue
-                if (character.currentHunger === 0) continue;
-
                 // count the total clan members
                 if (!character.clan) continue;
                 if (!totalClanMembers.hasOwnProperty(character.clan)) totalClanMembers[character.clan] = 0;
                 totalClanMembers[character.clan]++;
+                
+                // if hunger is satiated, continue
+                if (character.currentHunger === 0) continue;
 
                 // begin fetching members based on starving or one away from starving
                 if (character.stats.cat_size <= character.currentHunger) {
@@ -211,10 +211,12 @@ module.exports = async (interaction, subcommand) => {
             const starvingMembersArray = Object.entries(starving);
             for (let i = 0; i < starvingMembersArray.length && i < 8; i++) {
                 const [clan, starvingMembers] = starvingMembersArray[i];
+                console.log({starvingMembers});
+                console.log({starvSorted: starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, ''))})
                 embeds.push(new MessageEmbed({
                     color: 'DARK_RED',
                     title: 'STARVING MEMBERS IN: ' + clan.toUpperCase(),
-                    description: starvingMembers.length > 0 ? starvingMembers.map(member =>
+                    description: starvingMembers.length > 0 ? starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, '')).map(member =>
                         '> ⊗ **' + member.displayName + '** (<@' + member.user.id + '>)'
                     ).join('\n') : '> None to list... my, many here got lucky...',
                     footer: { text: starvingMembers.length + ' starving member(s) / ' + totalClanMembers[clan] + ' member(s)' },

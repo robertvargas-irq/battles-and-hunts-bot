@@ -111,22 +111,6 @@ module.exports = async (button) => {
         }
     }
 
-    // check to ensure the request day is not paused
-    if (ExcuseHandler.dayIsPaused(button.guild.id, EXCUSE_DAY)) return button.reply({
-        ephemeral: true,
-        embeds: [new MessageEmbed({
-            color: 'YELLOW',
-            title: '⚠️ Woah wait a minute-!',
-            description: 'Looks like all excuse forms for **`' + EXCUSE_DAY + '`** are currently ⏸ **`PAUSED`**!'
-            + '\n> The only action allowed is viewing the status of any submission you have already made.'
-            + '\n\nIf you believe this is a mistake, please contact an administrator!',
-            timestamp: Date.now()
-        })],
-        components: [new MessageActionRow({
-            components: generateButtons(EXCUSE_DAY, button, true),
-        })]
-    });
-
     // if type received, generate modal and display to user
     if (EXCUSE_TYPE) {
         // if a type of excuse has already been made for the requested day, inform the user and return
@@ -169,7 +153,22 @@ module.exports = async (button) => {
             });
         }
 
-        // if the request is unique, display form
+        // if the request is unique, display form if the day is not paused
+        if (ExcuseHandler.dayIsPaused(button.guild.id, EXCUSE_DAY)) return button.reply({
+            ephemeral: true,
+            embeds: [new MessageEmbed({
+                color: 'YELLOW',
+                title: '⚠️ Woah wait a minute-!',
+                description: 'Looks like all excuse forms for **`' + EXCUSE_DAY + '`** are currently ⏸ **`PAUSED`**!'
+                + '\n> The only action allowed is viewing the status of any submission you have already made.'
+                + '\n\nIf you believe this is a mistake, please contact an administrator!',
+                timestamp: Date.now()
+            })],
+            components: [new MessageActionRow({
+                components: generateButtons(EXCUSE_DAY, button, true),
+            })]
+        });
+
         return button.showModal(new Modal({
             customId: 'EXCUSE:' + EXCUSE_DAY + ':' + EXCUSE_TYPE,
             title: EXCUSE_TYPE + ' Excuse Form for ' + EXCUSE_DAY,

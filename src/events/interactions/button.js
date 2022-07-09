@@ -282,22 +282,59 @@ module.exports = async (button) => {
         }
 
         case 'ACCEPT_EXCUSE': {
+            await button.deferUpdate();
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.delete().catch();
-            await ExcuseHandler.approveAndDM(excuse, button.message, button.member, await button.guild.members.fetch(excuse.userId));
+
+            // ensure member is still in the guild
+            const member = await button.guild.members.fetch(excuse.userId).catch(() => false);
+            if (!member) {
+                // delete the excuse and inform the admin
+                ExcuseHandler.Excuses.cache.remove({ guildId: excuse.guildId, userId: excuse.userId, day: excuse.day, type: excuse.type });
+                ExcuseModel.deleteOne({ guildId: excuse.guildId, userId: excuse.userId }).then(console.log).catch(console.error);
+                return button.message.edit({
+                    embeds: [button.message.embeds[0]
+                        .setTitle(button.message.embeds[0].title + ' | ⚠️ This member is no longer in the server.')
+                        .setColor(0x520)
+                    ],
+                    components: [],
+                });
+            }
+
+            // approve and DM the user
+            await ExcuseHandler.approveAndDM(excuse, button.message, button.member, member);
             ExcuseHandler.Excuses.cache.add(excuse);
             break;
         }
     
         case 'DENY_EXCUSE': {
+            await button.deferUpdate();
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.delete().catch();
-            await ExcuseHandler.denyAndDM(excuse, button.message, button.member, await button.guild.members.fetch(excuse.userId));
+
+            // ensure member is still in the guild
+            const member = await button.guild.members.fetch(excuse.userId).catch(() => false);
+            if (!member) {
+                // delete the excuse and inform the admin
+                ExcuseHandler.Excuses.cache.remove({ guildId: excuse.guildId, userId: excuse.userId, day: excuse.day, type: excuse.type });
+                ExcuseModel.deleteOne({ guildId: excuse.guildId, userId: excuse.userId }).then(console.log).catch(console.error);
+                return button.message.edit({
+                    embeds: [button.message.embeds[0]
+                        .setTitle(button.message.embeds[0].title + ' | ⚠️ This member is no longer in the server.')
+                        .setColor(0x520)
+                    ],
+                    components: [],
+                });
+            }
+
+            // deny and DM the user
+            await ExcuseHandler.denyAndDM(excuse, button.message, button.member, member);
             ExcuseHandler.Excuses.cache.add(excuse);
             break;
         }
 
         case 'DELETE_EXCUSE': {
+            await button.deferUpdate();
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.edit({
                 embeds: [new MessageEmbed({

@@ -223,6 +223,8 @@ class CoreUtil {
         }
     }
 
+    static Submissions = require('./Submissions/SubmissionCache');
+
     
     /**
      * Prompts that time has run out.

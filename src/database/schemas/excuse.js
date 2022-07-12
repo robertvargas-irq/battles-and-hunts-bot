@@ -40,7 +40,7 @@ const ExcuseSchema = new Schema({
  * day: string,
  * type: string,
  * reason: string,
- * status: {'PENDING'|'APPROVED'|'DENIED'},
+ * status: 'PENDING'|'APPROVED'|'DENIED',
  * processingMessageId: string,
  * }} Excuse
  * @type {Excuse}

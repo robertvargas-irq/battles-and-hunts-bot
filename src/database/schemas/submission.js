@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
+const { Schema, Model } = require('mongoose');
 
 const SubmissionSchema = new Schema({
     guildId: {
@@ -40,9 +40,9 @@ const SubmissionSchema = new Schema({
  * day: string,
  * type: string,
  * reason: string,
- * status: {'PENDING'|'APPROVED'|'DENIED'},
+ * status: 'PENDING'|'APPROVED'|'DENIED',
  * processingMessageId: string,
- * }} Excuse
- * @type {Excuse}
+ * }} Submission
+ * @type {Model & Submission}
 */
-module.exports = mongoose.model('Excuse', SubmissionSchema);
+module.exports = mongoose.model('Submission', SubmissionSchema);

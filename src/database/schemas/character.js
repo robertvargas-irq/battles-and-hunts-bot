@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
+const { Schema, Model } = require('mongoose');
 
 const CharacterSchema = new Schema({
     guildId: {
@@ -9,6 +9,10 @@ const CharacterSchema = new Schema({
     userId: {
         type: String,
         required: true,
+    },
+    name: {
+        type: String,
+        default: null,
     },
     stats: {      // might become its own schema
         cat_size: {
@@ -124,7 +128,7 @@ const CharacterSchema = new Schema({
  *      trips: Number,
  * },
  * }} Character
- * @type {Character}
+ * @type {Model & Character}
  * 
 */
 module.exports = mongoose.model('Character', CharacterSchema);

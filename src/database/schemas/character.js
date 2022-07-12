@@ -17,39 +17,39 @@ const CharacterSchema = new Schema({
     stats: {      // might become its own schema
         cat_size: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         strength: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         dexterity: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         constitution: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         speed: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         intelligence: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         charisma: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         swimming: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         stalking: {
             type: Number,
-            default: 0
+            default: -1
         },
     },
     currentHealth: {

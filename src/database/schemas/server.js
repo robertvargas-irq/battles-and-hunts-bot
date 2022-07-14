@@ -28,7 +28,8 @@ const { Schema } = require("mongoose");
  *      excusesPaused: Map<string, string>,
  *      submissions: {
  *          channelId: string,
- *          openSubmissions: Map<messageId, submittingUserId>,
+ *          messageIdToAuthorId: Map<messageId, submittingUserId>,
+ *          authorIdToMessageId: Map<submittingUserId, messageId>,
  *      },
  *      roles: {
  *          adult: string
@@ -36,6 +37,7 @@ const { Schema } = require("mongoose");
  * }} ServerSchema
  */
 
+/**@type {ServerSchema} */
 const serverSchema = new Schema({
     guildId: {
         type: String,
@@ -133,10 +135,15 @@ const serverSchema = new Schema({
             type: String,
             default: null,
         },
-        openSubmissions: {
+        messageIdToAuthorId: {
             type: Map,
             of: String,
-            default: null,
+            default: new Map(),
+        },
+        authorIdToMessageId: {
+            type: Map,
+            of: String,
+            default: new Map(),
         },
     },
     roles: {

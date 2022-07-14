@@ -2,6 +2,7 @@ const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10
 const { BaseCommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
     name: 'spawn',
@@ -69,7 +70,20 @@ module.exports = {
                     ],
                 },
             ],
-        }
+        },
+        {
+            name: 'character-submissions',
+            description: 'Spawn and configure Character Submissions.',
+            type: dTypes.Subcommand,
+            options: [
+                {
+                    name: 'submission-processing-channel',
+                    description: 'Which channel to spawn threads for each day.',
+                    type: dTypes.Channel,
+                    required: true,
+                }
+            ],
+        },
     ],
     /**@param {BaseCommandInteraction} interaction */
     async execute(interaction) {
@@ -209,6 +223,56 @@ module.exports = {
                     ]
                 });
             }
-        }         
+
+            case 'character-submissions': {
+                // grab choice
+                const processingChannel = interaction.options.getChannel('submission-processing-channel');
+
+                // ensure the channel is valid
+                if (processingChannel.type !== 'GUILD_TEXT') {
+                    return interaction.reply({
+                        ephemeral: true,
+                        embeds: [new MessageEmbed()
+                            .setColor('RED')
+                            .setTitle('❗ Woah wait-!')
+                            .setDescription('The channel must be a text channel, not a thread or category!')
+                        ],
+                    });
+                }
+
+                // assign to server
+                const server = CoreUtil.Servers.cache.get(interaction.guild.id);
+                server.submissions.channelId = processingChannel.id;
+                server.save();
+
+                // spawn menu to open a submission
+                interaction.channel.send({
+                    embeds: [new MessageEmbed({
+                        author: { name: '🔨 WORK-IN-PROGRESS' },
+                        color: 'FUCHSIA',
+                        title: '🗃️ Character Submission Information',
+                        description: 'Do anim dolor est duis laborum mollit. Labore dolor aliqua nisi ullamco velit ad est. Ea reprehenderit enim magna deserunt magna reprehenderit qui enim. Ad aliquip deserunt dolore pariatur ullamco est adipisicing elit. Duis tempor laborum quis commodo amet voluptate deserunt cillum consectetur aliqua sint Lorem sint enim.\n\nNulla velit exercitation ad consequat excepteur cupidatat adipisicing aliqua reprehenderit aliquip. Officia irure tempor sunt aute laborum reprehenderit duis aute aliqua nostrud cillum reprehenderit est consectetur. Deserunt aute eu aute in do sunt nisi esse quis. Mollit nisi sit anim velit officia occaecat occaecat cupidatat laboris. Consequat magna qui quis consectetur cupidatat enim. Esse enim reprehenderit ut magna laborum enim adipisicing minim ut.'
+                    })],
+                    components: [new MessageActionRow({
+                        components: [new MessageButton({
+                            customId: 'CHARACTERSUBMISSION:OPEN',
+                            label: 'Open Character Menu',
+                            style: 'PRIMARY',
+                            emoji: '📝',
+                        })]
+                    })]
+                });
+
+                // inform success
+                return interaction.reply({
+                    ephemeral: true,
+                    embeds: [new MessageEmbed({
+                        color: 'GREEN',
+                        title: '✅ Configuration Saved',
+                        description: '`Processing Channel`: <#' + processingChannel.id + '>'
+                    })]
+                });
+            }
+        }
     },
 };

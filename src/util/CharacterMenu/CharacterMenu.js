@@ -40,8 +40,7 @@ class CharacterMenu {
         this.statsLocked = statsLocked;
         this.isAdmin = interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS);
         this.isAuthor = interaction.user.id === authorGuildMemberSnowflake.user.id;
-        this.registering = this.isAuthor
-        && !character.approved;
+        this.registering = this.isAuthor && !character.approved;
         this.editingEnabled = this.registering || (this.isAdmin || (this.isAuthor && editingEnabled));
 
         this.messageId = null;
@@ -65,7 +64,7 @@ class CharacterMenu {
         return new MessageEmbed({
             title: c.name || s.displayName + '\'s unnamed character',
             color: s.displayHexColor,
-            author: { name: '🔨 WORK-IN-PROGRESS' },
+            author: { name: '🏓 <ALPHA BUILD>\nWORK-IN-PROGRESS\nEVERYTHING IS SUBJECT TO CHANGE' },
             thumbnail: { url: c.icon || s.displayAvatarURL() },
             image: { url: c.image || undefined },
             description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',
@@ -93,7 +92,7 @@ class CharacterMenu {
 
     /**
      * Render menu to the user
-     * @returns {CharacterMenu}
+     * @returns {Promise<CharacterMenu>}
      */
     async render() {
         const embed = CharacterMenu.constructEmbed(this.character, this.authorSnowflake, this.editingEnabled, this.statsLocked, this.isAdmin);
@@ -105,7 +104,7 @@ class CharacterMenu {
         }));
         if (this.registering) components.push(new MessageActionRow({
             components: [new MessageButton({
-                customId: 'CHARACTERMENU:EDIT:SUBMIT',
+                customId: 'CHARACTERMENU:SUBMIT',
                 label: 'Submit for review',
                 emoji: '📋',
                 style: 'SECONDARY',

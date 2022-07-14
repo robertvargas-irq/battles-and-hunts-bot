@@ -14,6 +14,22 @@ const CharacterSchema = new Schema({
         type: String,
         default: null,
     },
+    personality: {
+        type: String,
+        default: null,
+    },
+    background: {
+        type: String,
+        default: null,
+    },
+    image: {
+        type: String,
+        default: null,
+    },
+    approved: {
+        type: Boolean,
+        default: false,
+    },
     stats: {      // might become its own schema
         cat_size: {
             type: Number,
@@ -100,6 +116,11 @@ const CharacterSchema = new Schema({
  * @typedef {{
  * guildId: string,
  * userId: string,
+ * name: string,
+ * personality: string,
+ * background: string,
+ * image: string,
+ * approved: string,
  * stats: {
  *      cat_size: number,
  *      strength: number,

@@ -98,7 +98,7 @@ module.exports = {
         
         // pull character and server from the database
         const character = HuntManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!character) return HuntManager.NotRegistered(interaction);
+        if (!character || !character.approved) return HuntManager.NotRegistered(interaction);
         const server = HuntManager.Servers.cache.get(interaction.guild.id);
 
         // if hunting is currently restricted, display warning

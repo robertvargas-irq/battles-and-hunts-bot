@@ -56,15 +56,15 @@ module.exports = async (interaction, subcommand) => {
             for (const excuse of excuses) {
                 switch (excuse.type) {
                     case 'LATE':
-                        late.push(interaction.guild.members.fetch(excuse.userId));
+                        late.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
                         statuses.late[excuse.userId] = excuse.status;
                         break;
                     case 'LEFT EARLY':
-                        leftEarly.push(interaction.guild.members.fetch(excuse.userId));
+                        leftEarly.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
                         statuses.leftEarly[excuse.userId] = excuse.status;
                         break;
                     case 'ABSENCE':
-                        absent.push(interaction.guild.members.fetch(excuse.userId));
+                        absent.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
                         statuses.absent[excuse.userId] = excuse.status;
                         break;
                 }
@@ -93,18 +93,27 @@ module.exports = async (interaction, subcommand) => {
             };
 
             // sort into each respective embed
-            lateEmbed.description = lateMembers.sort((a, b) => a.status - b.status).map(member => {
-                const status = statuses.late[member.user.id];
-                return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
-            }).join('\n') || '> Nothin to see here! ✨';
-            leftEarlyEmbed.description = leftEarlyMembers.sort((a, b) => a.status - b.status).map(member => {
-                const status = statuses.leftEarly[member.user.id];
-                return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
-            }).join('\n') || '> Nothin to see here! ✨';
-            absentEmbed.description = absentMembers.sort((a, b) => a.status - b.status).map(member => {
-                const status = statuses.absent[member.user.id];
-                return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
-            }).join('\n') || '> Nothin to see here! ✨';
+            lateEmbed.description = lateMembers
+                .filter(member => member != false)
+                .sort((a, b) => a.status - b.status)
+                .map(member => {
+                    const status = statuses.late[member.user.id];
+                    return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
+                }).join('\n') || '> Nothin to see here! ✨';
+            leftEarlyEmbed.description = leftEarlyMembers
+                .filter(member => member != false)
+                .sort((a, b) => a.status - b.status)
+                .map(member => {
+                    const status = statuses.leftEarly[member.user.id];
+                    return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
+                }).join('\n') || '> Nothin to see here! ✨';
+            absentEmbed.description = absentMembers
+                .filter(member => member != false)
+                .sort((a, b) => a.status - b.status)
+                .map(member => {
+                    const status = statuses.absent[member.user.id];
+                    return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
+                }).join('\n') || '> Nothin to see here! ✨';
 
             // display excuse report
             return interaction.editReply({

@@ -134,7 +134,7 @@ module.exports = {
         // get character from the cache
         const character = HuntManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
         const member = HuntManager.Members.cache.get(interaction.guild.id, interaction.user.id);
-        if (!character || !member) return HuntManager.NotRegistered(interaction);
+        if (!character || !character.approved) return HuntManager.NotRegistered(interaction);
 
         // pull the server from the database
         const server = HuntManager.Servers.cache.get(interaction.guild.id);

@@ -8,3 +8,4 @@
 dev_start.sh
 src/guilds.json
 preview_start.sh
+tbs_dev.code-workspace

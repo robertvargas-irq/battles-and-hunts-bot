@@ -69,6 +69,38 @@ module.exports = {
             ],
         },
         {
+            name: 'character',
+            description: 'Administrator tools for characters',
+            type: CommandTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'delete',
+                    description: '⚠️ Delete a Character permenantly from the database',
+                    type: CommandTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'character-author',
+                            description: 'Who\'s character to delete; ⚠️ THIS IS IRREVERSABLE! ⚠️',
+                            required: true,
+                            type: CommandTypes.User,
+                        },
+                        {
+                            name: 'are-you-absolutely-sure',
+                            description: '⚠️ THIS IS ABSOLUTELY IRREVERSABLE! ⚠️',
+                            required: true,
+                            type: CommandTypes.String,
+                            choices: [
+                                {
+                                    name: 'yes',
+                                    value: 'yes',
+                                },
+                            ],
+                        },
+                    ]
+                }
+            ]
+        },
+        {
             name: 'audit',
             description: 'Perform audits',
             type: CommandTypes.SubcommandGroup,
@@ -266,6 +298,8 @@ module.exports = {
         switch (group) {
             case 'excuses':
                 return require('./admin-routes/admin-excuses')(interaction, subcommand);
+            case 'character':
+                return require('./admin-routes/admin-character')(interaction, subcommand);
             case 'audit':
                 return require('./admin-routes/admin-audit')(interaction, subcommand);
             case 'hunting':

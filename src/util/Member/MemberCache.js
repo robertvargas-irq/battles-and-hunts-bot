@@ -33,9 +33,12 @@ class MemberCache {
          */
         get(guildId, userId) {
             // handle non-existent guild
-            if (!cached.has(guildId)) return undefined;
+            if (!cached.has(guildId)) cached.set(guildId, new Map());
             
-            return cached.get(guildId).get(userId);
+            let member = cached.get(guildId).get(userId);
+            if (!member) member = new MemberModel({ guildId, userId });
+
+            return member;
         },
         /**
          * Get all cached Members from a guild

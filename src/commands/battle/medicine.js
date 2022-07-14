@@ -35,7 +35,7 @@ module.exports = {
         
         // pull user from the database
         const character = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!character) return AttackManager.NotRegistered(interaction);
+        if (!character || !character.approved) return AttackManager.NotRegistered(interaction);
         
         // notify if already at max health
         const maxHealth = calculateMaxHealth(character.stats.constitution);

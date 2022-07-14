@@ -1,8 +1,8 @@
 const CharacterModel = require('../../database/schemas/character');
 
 /**
- * @typedef {Map<guildId: string, Map<userId: string, CharacterModel>>} CharacterCache
- * @type {CharacterCache} */
+ * @typedef {Map<guildId, Map<userId, CharacterModel>>} CharacterCacheMap
+ * @type {CharacterCacheMap} */
 const cached = new Map();
 
 class CharacterCache {
@@ -33,9 +33,12 @@ class CharacterCache {
          */
         get(guildId, userId) {
             // handle non-existent guild
-            if (!cached.has(guildId)) return undefined;
+            if (!cached.has(guildId)) cached.set(guildId, new Map());
             
-            return cached.get(guildId).get(userId);
+            let character = cached.get(guildId).get(userId);
+            if (!character) character = new CharacterModel({ guildId, userId });
+            
+            return character;
         },
         /**
          * Get all cached Characters from a guild
@@ -63,6 +66,14 @@ class CharacterCache {
             if (!cached.has(guildId)) cached.set(guildId, new Map());
             return cached.get(guildId).set(userId, characterDocument);
         },
+        /**
+         * Remove a mongoose document from the cache
+         * @param {string} guildId 
+         * @param {string} userId 
+         */
+        remove(guildId, userId) {
+            return cached.get(guildId)?.delete(userId);
+        }
     }
 }
 

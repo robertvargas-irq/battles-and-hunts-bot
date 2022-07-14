@@ -5,6 +5,7 @@ const Excuse = require('../../database/schemas/excuse');
 module.exports = async (/**@type {ModalSubmitInteraction}*/ interaction) => {
     const [MODAL_ID, ...ARGS] = interaction.customId.split(':');
     switch (MODAL_ID) {
+        case 'CHARACTERMENU': return require('./routes/modalSubmit/charactermenu')(interaction);
         case 'EXCUSE': {
 
             await interaction.deferReply({ ephemeral: true });

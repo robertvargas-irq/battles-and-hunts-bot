@@ -88,6 +88,7 @@ require('./database/connect.js')().then(() => {
 });
 
 
+
 // client login
 console.log('🧩 Logging into the client...');
 client.login( process.env.DISCORD_TOKEN )

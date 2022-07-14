@@ -25,7 +25,7 @@ module.exports = {
         
         // get user from cached database
         const character = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!character) return AttackManager.NotRegistered(interaction);
+        if (!character || !character.approved) return AttackManager.NotRegistered(interaction);
 
         // notify if health is already at 0
         if (character.currentHealth < 1) return interaction.reply({

@@ -14,7 +14,7 @@ module.exports = {
         
         // check if user is registered
         const found = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!found) return CoreUtil.NotRegistered(interaction);
+        if (!found || !found.approved) return CoreUtil.NotRegistered(interaction);
 
         // ensure the user is able to edit
         if (!Player.allowedToEdit(interaction.guild.id, interaction.user.id)) return interaction.reply({

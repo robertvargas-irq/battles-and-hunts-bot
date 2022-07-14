@@ -43,11 +43,11 @@ class CoreUtil {
             embeds: [new MessageEmbed({
                 color: 'RED',
                 title: '⚠️ Woah there!',
-                description: 'You haven\'t signed up for the bot yet!'
-                + '\nBefore you can start using any of the nifty features, **you must first `/register` with your OC\'s details!**'
+                description: 'You\'re not quite ready yet!'
+                + '\nBefore you can start using any of these nifty features, **you must first create and submit your character, and have it approved!**'
                 + '\nThis is also required for roleplay sessions within `' + ROLEPLAY_NAME + '`!'
-                + '\nIt only takes a few seconds, and all you need is your cat\'s `morph size` and `stat sheet`!'
-                + '\n\n__SideNote__: *If you haven\'t submitted a character form and had it approved, that is required before signing up!*',
+                + '\nBe sure to check the Character Tracker for available clans! All you need is your cat\'s `morph size`, `stat sheet`, and all of your glorious `lore`!'
+                + '\n\nYou can get started by using the `/character` command!',
                 footer: {
                     text: interaction.ephemeral
                     ? '🧹 You may now dismiss this menu'

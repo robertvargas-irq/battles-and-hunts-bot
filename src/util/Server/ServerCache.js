@@ -33,6 +33,7 @@ class ServerCache {
 
             if (!server) {
                 server = new ServerModel({ guildId });
+                cached.set(guildId, server);
                 server.save();
             }
 

@@ -333,7 +333,7 @@ function getEditModal(instance, toEdit) {
                     label: statData.flair + ' ' + CoreUtil.ProperCapitalization(statData.name)
                     + ' (' + statData.range[0] + '-' + statData.range[1] + ')',
                     placeholder: 'No value yet',
-                    value: instance.character.stats[stat],
+                    value: instance.character.stats[stat] != -1 ? instance.character.stats[stat] : undefined,
                     style: 'SHORT',
                 })
             ]})

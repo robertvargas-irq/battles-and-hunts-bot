@@ -1,4 +1,4 @@
-const { Schema } = require("mongoose");
+const { Schema, Model } = require("mongoose");
 
 /**
  * @typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans
@@ -26,13 +26,16 @@ const { Schema } = require("mongoose");
  *      excusesChannelId: string,
  *      excusesThreads: Map<string, string>,
  *      excusesPaused: Map<string, string>,
+ *      submissions: {
+ *          channelId: string,
+ *          openSubmissions: Map<messageId, submittingUserId>,
+ *      },
  *      roles: {
  *          adult: string
  *      }
  * }} ServerSchema
  */
 
-/**@type {ServerSchema} */
 const serverSchema = new Schema({
     guildId: {
         type: String,
@@ -125,6 +128,17 @@ const serverSchema = new Schema({
         of: String,
         default: new Map(),
     },
+    submissions: {
+        channelId: {
+            type: String,
+            default: null,
+        },
+        openSubmissions: {
+            type: Map,
+            of: String,
+            default: null,
+        },
+    },
     roles: {
         adult: {
             type: String,
@@ -133,4 +147,5 @@ const serverSchema = new Schema({
     },
 });
 
+/**@type {Model & ServerSchema} */
 module.exports = serverSchema;

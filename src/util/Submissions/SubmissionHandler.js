@@ -20,6 +20,7 @@ class SubmissionHandler {
      */
     static async handleSubmission(interaction, character, server) {
         const channel = await this.fetchProcessingChannel(interaction, server);
+        console.log({channel});
         if (!channel) return interaction.reply({
             embeds: [new MessageEmbed({
                 title: '⚠️ Wait a minute-!',
@@ -124,7 +125,7 @@ class SubmissionHandler {
      * @param {ServerSchema} server 
      */
     static async fetchProcessingChannel(interaction, server) {
-        return interaction.guild.channels.fetch(server.submissions?.channelId).catch(() => false);
+        return interaction.guild.channels.fetch(server.submissions?.channelId || '0').catch(() => false);
     }
 
     /**

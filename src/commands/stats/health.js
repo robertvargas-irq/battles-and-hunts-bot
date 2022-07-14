@@ -10,7 +10,7 @@ module.exports = {
         
         // if user is registered
         const found = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!found) return CoreUtil.NotRegistered(interaction);
+        if (!found || !found.approved) return CoreUtil.NotRegistered(interaction);
 
         // show health bar
         interaction.reply({

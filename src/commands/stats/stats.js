@@ -68,7 +68,7 @@ module.exports = {
         const found = CoreUtil.Characters.cache.get(interaction.guild.id, playerMember.user.id);
 
         // if target is not registered, inform the user appropriately and return
-        if (!found) {
+        if (!found || !found.approved) {
             if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
             else interaction.reply({
                 ephemeral: true,

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
+const { Schema, Model } = require('mongoose');
 
 const CharacterSchema = new Schema({
     guildId: {
@@ -10,42 +10,62 @@ const CharacterSchema = new Schema({
         type: String,
         required: true,
     },
+    name: {
+        type: String,
+        default: null,
+    },
+    personality: {
+        type: String,
+        default: null,
+    },
+    background: {
+        type: String,
+        default: null,
+    },
+    image: {
+        type: String,
+        default: null,
+    },
+    approved: {
+        type: Boolean,
+        default: false,
+    },
     stats: {      // might become its own schema
         cat_size: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         strength: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         dexterity: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         constitution: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         speed: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         intelligence: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         charisma: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         swimming: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         stalking: {
             type: Number,
-            default: 0
+            default: -1
         },
     },
     currentHealth: {
@@ -96,6 +116,11 @@ const CharacterSchema = new Schema({
  * @typedef {{
  * guildId: string,
  * userId: string,
+ * name: string,
+ * personality: string,
+ * background: string,
+ * image: string,
+ * approved: string,
  * stats: {
  *      cat_size: number,
  *      strength: number,
@@ -124,7 +149,7 @@ const CharacterSchema = new Schema({
  *      trips: Number,
  * },
  * }} Character
- * @type {Character}
+ * @type {Model & Character}
  * 
 */
 module.exports = mongoose.model('Character', CharacterSchema);

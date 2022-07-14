@@ -138,14 +138,20 @@ class ExcuseHandler extends CoreUtil {
 
         // save to the member's excuse tracker
         const memberDocument = this.Members.cache.get(excuse.guildId, excuse.userId);
-        memberDocument.excuses.approved.total++;
-        memberDocument.excuses.approved[excuse.type.replace(/ +/, '_').toLowerCase()]++;
-        memberDocument.save();
+        if (memberDocument) {
+            memberDocument.excuses.approved.total++;
+            memberDocument.excuses.approved[excuse.type.replace(/ +/, '_').toLowerCase()]++;
+            memberDocument.save();
+        }
 
         return message.edit({
             embeds: [new MessageEmbed(message.embeds[0])
                 .setColor('GREEN')
-                .setAuthor({ name: '✅ Approved' + (errorSending ? ' | ⚠️ Failed to DM' : '') })
+                .setAuthor({
+                    name: '✅ Approved'
+                    + (errorSending ? ' | ⚠️ Failed to DM' : '')
+                    + (!memberDocument ? ' | ⚠️ This member is not registered to the bot yet; excuse not recorded to their history.' : '')
+                })
                 .setFooter({ text: 'Fulfilled by: ' + admin.user.tag + '(' + admin.user.id + ')' })
                 .setTimestamp(),
             ],
@@ -202,14 +208,21 @@ class ExcuseHandler extends CoreUtil {
 
         // save to the member's excuse tracker
         const memberDocument = this.Members.cache.get(excuse.guildId, excuse.userId);
-        memberDocument.excuses.denied.total++;
-        memberDocument.excuses.denied[excuse.type.replace(/ +/, '_').toLowerCase()]++;
-        memberDocument.save();
+        if (memberDocument) {
+            memberDocument.excuses.denied.total++;
+            memberDocument.excuses.denied[excuse.type.replace(/ +/, '_').toLowerCase()]++;
+            memberDocument.save();
+        }
 
+        // return the excuse form
         return message.edit({
             embeds: [new MessageEmbed(message.embeds[0])
                 .setColor('RED')
-                .setAuthor({ name: '⛔️ Insufficient Excuse' + (errorSending ? ' | ⚠️ Failed to DM' : '') })
+                .setAuthor({
+                    name: '⛔️ Insufficient Excuse'
+                    + (errorSending ? ' | ⚠️ Failed to DM' : '')
+                    + (!memberDocument ? ' | ⚠️ This member is not registered to the bot yet; excuse not recorded to their history.' : '')
+                })
                 .setFooter({ text: 'Fulfilled by: ' + admin.user.tag + '(' + admin.user.id + ')' })
                 .setTimestamp(),
             ],

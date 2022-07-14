@@ -139,7 +139,7 @@ class AttackManager extends CoreUtil {
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
                 .setTitle('🛡️ WOAH THERE')
-                .setDescription('You can\'t attack a cat that doesn\'t exist!\nLet them know to sign up by trying to ')
+                .setDescription('You can\'t attack a cat that doesn\'t exist yet!\nLet them know to create and submit their character for review!\n\nThey can get started with `/character`!')
             ]
         });
         return false;

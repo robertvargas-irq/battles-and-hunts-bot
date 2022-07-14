@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema, Model } = require('mongoose');
 
-const ExcuseSchema = new Schema({
+const SubmissionSchema = new Schema({
     guildId: {
         type: String,
         required: true,
@@ -42,7 +42,7 @@ const ExcuseSchema = new Schema({
  * reason: string,
  * status: 'PENDING'|'APPROVED'|'DENIED',
  * processingMessageId: string,
- * }} Excuse
- * @type {Model & Excuse}
+ * }} Submission
+ * @type {Model & Submission}
 */
-module.exports = mongoose.model('Excuse', ExcuseSchema);
+module.exports = mongoose.model('Submission', SubmissionSchema);

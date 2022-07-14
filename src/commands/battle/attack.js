@@ -30,11 +30,11 @@ module.exports = {
         
         // pull character document from the character cache
         const attacker = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!attacker) return AttackManager.NotRegistered(interaction);
+        if (!attacker || !attacker.approved) return AttackManager.NotRegistered(interaction);
         
         // if target is not registered, deny
         const target = AttackManager.Characters.cache.get(interaction.guild.id, targetSnowflake.user.id);
-        if (!target) return AttackManager.targetNotRegistered(interaction);
+        if (!target || !target.approved) return AttackManager.targetNotRegistered(interaction);
 
         // initiate rolls
         return AttackManager.rollAndGiveAttackResult(interaction, attacker, target, targetSnowflake);

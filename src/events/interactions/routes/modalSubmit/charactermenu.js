@@ -39,9 +39,14 @@ module.exports = async (modal) => {
     // handle section edits
     else modal.fields.components.forEach((actionRow) => {
         const { customId, value } = actionRow.components[0];
-        const parsedValue = parseInt(value) || false;
-        if (!parsedValue) return errors.push([customId, 'Please enter only numerical values.'])
-        if (parsedValue < stats[customId].range[0]
+        let parsedValue = value.length > 0 ? parseInt(value) : '-1';
+        if (parsedValue === '-1') return errors.push([
+            customId, 'Please ensure you don\'t forget to enter a value between `' + stats[customId].range[0] + '`-`' + stats[customId].range[1] + '`'
+        ]);
+        else if (!parsedValue) return errors.push([
+                customId, 'Please only enter numerical values.'
+        ]);
+        else if (parsedValue < stats[customId].range[0]
         || parsedValue > stats[customId].range[1]) return errors.push([
             customId, 'Please enter a number in the following range: `' + stats[customId].range[0] + '`-`' + stats[customId].range[1] + '`'
         ]);
@@ -58,7 +63,7 @@ module.exports = async (modal) => {
         title: '⚠️ Whoops-! Something\'s a bit off...',
         color: 'RED',
         description: 'There were a few values that were\'t quite right! They have been reset to their original values.\n\n'
-        + errors.map(([customId, errorMessage]) => '**' + stats[customId].name + '**\n> ' + errorMessage)
+        + errors.map(([customId, errorMessage]) => stats[customId].flair + ' **' + stats[customId].name + '**\n> ' + errorMessage).join('\n')
     }));
     instance.character.save();
     CoreUtil.Characters.cache.set(instance.authorSnowflake.guild.id, instance.authorSnowflake.user.id, instance.character);

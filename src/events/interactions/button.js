@@ -14,6 +14,7 @@ module.exports = async (button) => {
     // route to type
     switch (button.customId.split(':')[0]) {
         case 'CHARACTERMENU': return require('./routes/button/charactermenu')(button);
+        case 'CHARACTERSUBMISSION': return require('./routes/button/charactersubmission')(button);
         case 'EXCUSEBUTTON': return require('./routes/button/excuses')(button);
     }
 

@@ -43,10 +43,10 @@ class CoreUtil {
             embeds: [new MessageEmbed({
                 color: 'RED',
                 title: '⚠️ Woah there!',
-                description: 'You\'re not quite ready yet!'
-                + '\nBefore you can start using any of these nifty features, **you must first create and submit your character, and have it approved!**'
-                + '\nThis is also required for roleplay sessions within `' + ROLEPLAY_NAME + '`!'
-                + '\nBe sure to check the Character Tracker for available clans! All you need is your cat\'s `morph size`, `stat sheet`, and all of your glorious `lore`!'
+                description: '**You\'re not quite ready yet!**'
+                + '\n> Before you can start using any of these nifty features, **you must first create and submit your character, and have it approved!**'
+                + '\n> \n> This is also required for roleplay sessions within `' + ROLEPLAY_NAME + '`!'
+                + '\n> \n> Be sure to check the Character Tracker for available clans! All you need is your cat\'s `morph size`, `stat sheet`, and all of your glorious `lore`!'
                 + '\n\nYou can get started by using the `/character` command!',
                 footer: {
                     text: interaction.ephemeral

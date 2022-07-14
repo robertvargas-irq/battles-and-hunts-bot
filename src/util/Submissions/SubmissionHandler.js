@@ -49,8 +49,8 @@ class SubmissionHandler {
                 })]
             }).then(m => {
                 // store as active submission
-                server.submissions.messageIdToAuthorId.set(m.id, character.userId);
-                server.submissions.authorIdToMessageId.set(character.userId, m.id);
+                server.submissions?.messageIdToAuthorId?.set(m.id, character.userId);
+                server.submissions?.authorIdToMessageId?.set(character.userId, m.id);
                 server.save();
 
                 // start thread for discussions
@@ -89,7 +89,7 @@ class SubmissionHandler {
                     ephemeral: true,
                     embeds: [new MessageEmbed({
                         title: '🔃 Refreshed submission',
-                        description: '<#' + server.submissions.channelId + '>'
+                        description: '<#' + server.submissions?.channelId + '>'
                     })]
                 });
             }
@@ -100,7 +100,7 @@ class SubmissionHandler {
                 ephemeral: true,
                 embeds: [new MessageEmbed({
                     title: '✅ Re-submitted!',
-                    description: '<#' + server.submissions.channelId + '>',
+                    description: '<#' + server.submissions?.channelId + '>',
                 })]
             });
 
@@ -113,7 +113,7 @@ class SubmissionHandler {
             ephemeral: true,
             embeds: [new MessageEmbed({
                 title: '✅ Submitted!',
-                description: '<#' + server.submissions.channelId + '>',
+                description: '<#' + server.submissions?.channelId + '>',
             })]
         });
     }
@@ -124,7 +124,7 @@ class SubmissionHandler {
      * @param {ServerSchema} server 
      */
     static async fetchProcessingChannel(interaction, server) {
-        return interaction.guild.channels.fetch(server.submissions.channelId).catch(() => false);
+        return interaction.guild.channels.fetch(server.submissions?.channelId).catch(() => false);
     }
 
     /**
@@ -143,11 +143,11 @@ class SubmissionHandler {
      * @param {string} messageId 
      */
     static getSubmissionAuthorId(server, messageId) {
-        return server.submissions.messageIdToAuthorId.get(messageId);
+        return server.submissions?.messageIdToAuthorId?.get(messageId);
     }
 
     static getSubmissionMessageId(server, authorId) {
-        return server.submissions.authorIdToMessageId.get(authorId);
+        return server.submissions?.authorIdToMessageId?.get(authorId);
     }
 
     /**
@@ -159,11 +159,11 @@ class SubmissionHandler {
     static removeSubmission(server, authorId = null, messageId = null) {
         if (!authorId && !messageId) throw new Error('Submission needs at least an authorId or messageId.');
 
-        if (!authorId) authorId = server.submissions.messageIdToAuthorId.get(messageId);
-        if (!messageId) messageId = server.submissions.authorIdToMessageId.get(authorId);
+        if (!authorId) authorId = server.submissions?.messageIdToAuthorId?.get(messageId);
+        if (!messageId) messageId = server.submissions?.authorIdToMessageId?.get(authorId);
 
-        server.submissions.authorIdToMessageId.delete(authorId);
-        server.submissions.messageIdToAuthorId.delete(messageId);
+        server.submissions?.authorIdToMessageId?.delete(authorId);
+        server.submissions?.messageIdToAuthorId?.delete(messageId);
 
         server.save();
     }

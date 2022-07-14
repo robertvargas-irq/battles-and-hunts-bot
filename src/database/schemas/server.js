@@ -1,4 +1,4 @@
-const { Schema, Model } = require("mongoose");
+const { Schema } = require("mongoose");
 
 /**
  * @typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans
@@ -147,5 +147,5 @@ const serverSchema = new Schema({
     },
 });
 
-/**@type {Model & ServerSchema} */
+/**@type {ServerSchema} */
 module.exports = serverSchema;

@@ -85,7 +85,7 @@ module.exports = async (interaction, subcommand) => {
                         .setColor('RED')
                         .setTitle('🪰🦴 All of your food has gone to waste.')
                         .setDescription(`The entirety of the prey pile has rotted away, leaving behind a foul odor that absolutely engulfs your sense of smell.` +
-                        `\n\n__**All of the following prey has spoiled**__:\n${PreyPile.formatPrey(spoiledFood)}\n\n||**${interaction.member.displayName}** called the \`/spoil\` command.||`)
+                        `\n\n__**All of the following prey has spoiled**__:\n${PreyPile.formatPrey(spoiledFood)}\n\n||**${interaction.member.displayName} (${interaction.user.tag}(${interaction.user.id}))** called the \`/spoil\` command.||`)
                     ]
                 })
             }

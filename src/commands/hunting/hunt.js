@@ -142,11 +142,11 @@ module.exports = {
         // if not locked, session is active, so check cooldowns
         if (!server.hunting.locked) {
             // return if on cooldown
-            if (HuntManager.onCooldownHunt(interaction.user.id))
+            if (HuntManager.onCooldownHunt(interaction.guild.id, interaction.user.id))
                 return HuntManager.displayCooldownHunt(interaction);
             
             // add cooldown
-            HuntManager.addCooldownHunt(interaction.user.id);
+            HuntManager.addCooldownHunt(interaction.guild.id, interaction.user.id);
         }
 
         // roll for track

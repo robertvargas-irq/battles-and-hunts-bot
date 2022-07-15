@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^0.3.0",
+    "color2k": "^2.0.0",
     "discord-api-types": "^0.30.0",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",

@@ -1,7 +1,6 @@
 const serverSchema = require('../../database/schemas/server');
 const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
-const userSchema = require('../../database/schemas/user');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
 const { Collection, MessageEmbed, CommandInteraction, GuildMember, MessageButton, MessageActionRow } = require('discord.js');
@@ -579,34 +578,35 @@ class HuntManager extends CoreUtil {
 
     /**
      * Format hunting stats in an embed
-     * @param {userSchema} user User entry in the database
+     * @param {CharacterModel} character User entry in the database
      * @param {GuildMember} memberSnowflake Member desired
      */
-    static formatStats(user, memberSnowflake) {
+    static formatStats(character, memberSnowflake) {
         return new MessageEmbed({
             color: 'DARK_VIVID_PINK',
-            thumbnail: { url: memberSnowflake.displayAvatarURL({ dynamic: true }) },
+            thumbnail: { url: character.icon ?? memberSnowflake.displayAvatarURL({ dynamic: true }) },
             title: '🥩 Hunting Stats and Contributions',
             description: '**These are 🍃 canon contributions!**'
             + '\n*(These only update when Hunting is not `restricted`)*',
             fields: [
                 {
                     name: 'Hunting',
-                    value: 'Successful Hunts: `' + user.hunting.hunts.successful + '`'
-                    + '\nUnsuccessful Hunts: `' + user.hunting.hunts.unsuccessful + '`'
+                    value: 'Successful Hunts: `' + character.hunting.hunts.successful + '`'
+                    + '\nUnsuccessful Hunts: `' + character.hunting.hunts.unsuccessful + '`'
                 },
                 {
                     name: 'Contributions',
-                    value: 'Total Prey Count: `' + user.hunting.contributions.preyCount + '`'
-                    + '\nTotal Prey Weight: `' + user.hunting.contributions.preyWeight + '` `lbs.`'
+                    value: 'Total Prey Count: `' + character.hunting.contributions.preyCount + '`'
+                    + '\nTotal Prey Weight: `' + character.hunting.contributions.preyWeight + '` `lbs.`'
                 },
                 {
                     name: 'Hunting Trips',
                     value: '*(number of `/deposit`s)*'
-                    + '\nTrips Made: `' + user.hunting.trips + '`'
+                    + '\nTrips Made: `' + character.hunting.trips + '`'
                 }
-            ]
-        })
+            ],
+            footer: { text: character.name ?? memberSnowflake.displayName + '\'s character' },
+        });
     }
 
 }

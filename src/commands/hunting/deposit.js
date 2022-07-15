@@ -109,7 +109,7 @@ module.exports = {
                 .setTitle('📦 Some food has arrived.')
                 .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
-                **${interaction.member.displayName}** has deposited some food into the prey pile.\
+                **${character.name ?? interaction.member.displayName + '\'s character'}** has deposited some food into the prey pile.\
                 \n\
                 \n**- - - - - -**\
                 \n\
@@ -128,7 +128,7 @@ module.exports = {
                 .setDescription(`\
                 **An outsider to our clan has gifted food to our prey pile!!**\
                 \n> The scent is coming from someone from **${character.clan?.toUpperCase() || 'an unknown clan or territory'}**...\
-                \n> If I recall, their name was **${interaction.member.displayName}**.
+                \n> If I recall, their name was **${character.name ?? interaction.member.displayName + '\'s character'}**.
                 \n\
                 \n**- - - - - -**\
                 \n\

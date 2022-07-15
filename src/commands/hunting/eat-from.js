@@ -226,7 +226,7 @@ module.exports = {
                         .setAuthor({name: '🦴 Some prey has been eaten', iconURL: character.icon ?? interaction.member.displayAvatarURL({ dynamic: true })})
                         .setThumbnail('https://c.tenor.com/27kedvI8EwQAAAAd/cat-eating.gif')
                         .setDescription(`\
-                        **${interaction.member.displayName}** has eaten some food from the prey pile.\
+                        **${character.name ?? interaction.member.displayName + '\'s character'}** has eaten some food from the prey pile.\
                         \n\
                         \n**- - - - - -**\
                         \n\
@@ -246,7 +246,7 @@ module.exports = {
                         **An outsider to our clan has eaten from our prey pile!!**\
                         \n> The scent is coming from someone from **${character.clan?.toUpperCase() || 'unknown clan or territory'}**.\
                         \n\
-                        \n**SPOILER** \| WHO IT WAS: || ${interaction.member.displayName} ||
+                        \n**SPOILER** \| WHO IT WAS: || ${(c.name ?? '') + ' (' + interaction.member.displayName + '\'s character' + '(' + interaction.user.id + '))'} ||
                         \n\
                         \n*(if someone has recently been given food, this can be ignored)*\
                         \n**- - - - - -**\
@@ -267,8 +267,8 @@ module.exports = {
                     description: `> ${consumed.length == 1 ? 'Y':'One after the other, y'}ou take ${consumedFormatted} between your teeth and tear into ${consumed.length == 1 ? 'it' : 'them'}, finally getting a good meal.`
                     + '\n> \n> ' + (
                         character.currentHunger < 1
-                        ? 'You are fully satiated.'
-                        : 'Just... `' + character.currentHunger + '` more bite' + (character.currentHunger !== 1 ? 's' : '') + '...'
+                        ? ('You are fully satiated.')
+                        : ('Just... `' + character.currentHunger + '` more bite' + (character.currentHunger !== 1 ? 's' : '') + '...')
                     ),
                     footer: { text: CANON_MESSAGE }
                 });

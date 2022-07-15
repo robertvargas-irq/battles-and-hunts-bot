@@ -35,6 +35,19 @@ module.exports = async (modal) => {
         instance.character.background = background;
         instance.character.image = image;
     }
+    else if (editTarget === 'AGE') {
+        const age = modal.fields.getField('age').value;
+        let parsed = parseInt(age);
+
+        if (parsed === NaN) errors.push([
+            'moons', 'Please only enter numerical values.'
+        ]);
+        else if (age === '' || parsed < 0) {
+            parsed = -1;
+            instance.character.moons = parsed;
+        }
+        else instance.character.moons = parsed;
+    }
 
     // handle section edits
     else modal.fields.components.forEach((actionRow) => {
@@ -43,7 +56,7 @@ module.exports = async (modal) => {
         if (parsedValue === '-1') return errors.push([
             customId, 'Please ensure you don\'t forget to enter a value between `' + stats[customId].range[0] + '`-`' + stats[customId].range[1] + '`'
         ]);
-        else if (!parsedValue) return errors.push([
+        else if (parsedValue === NaN) return errors.push([
                 customId, 'Please only enter numerical values.'
         ]);
         else if (parsedValue < stats[customId].range[0]

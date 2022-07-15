@@ -3,6 +3,7 @@ const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const Player = require('../../util/Account/Player');
 const StatCalculator = require('../../util/Stats/StatCalculator');
+const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
 module.exports = {
     name: 'medicine',
@@ -39,16 +40,25 @@ module.exports = {
         
         // notify if already at max health
         const maxHealth = StatCalculator.calculateMaxHealth(character);
+        if (character.currentHealth > maxHealth) return interaction.reply({
+            embeds: [
+                new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: '💖 You are over-healed!',
+                    description: 'You feel at ease.',
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
+        });
         if (character.currentHealth === maxHealth) return interaction.reply({
-            embeds: [new MessageEmbed({
-                color: 'FUCHSIA',
-                title: '✨ You are already at Max Health!',
-                description: 'You feel at ease.',
-                fields: [{
-                    name: 'CURRENT HEALTH 💘',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
-                }],
-            })]
+            embeds: [
+                new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: '✨ You are already at Max Health!',
+                    description: 'You feel at ease.',
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
         })
 
         // adjust for over-heal
@@ -66,16 +76,13 @@ module.exports = {
             embeds: [
                 new MessageEmbed({
                     color: 'AQUA',
-                    title: '🌿 Serene',
-                    description: AttackManager.getRandomHealingMessage(),
-                    fields: [{
-                        name: 'CURRENT HEALTH 💘',
-                        value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
-                    }],
+                    title: '🥬 Healed up `' + finalHealAmount + '` HP',
+                    description: '> ' + AttackManager.getRandomHealingMessage(),
                     footer: (finalHealAmount !== originalHealAmount ? {
                         text: 'Original input has been reduced by ' + (originalHealAmount - finalHealAmount) + '.'
                     } : undefined),
-                })
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
             ]
         });
 

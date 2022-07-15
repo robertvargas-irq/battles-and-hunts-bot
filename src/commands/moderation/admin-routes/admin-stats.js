@@ -30,7 +30,7 @@ module.exports = async (interaction, subcommand) => {
             return interaction.reply({
                 embeds: [new MessageEmbed({
                     color: 'GREEN',
-                    title: '🔓 /edit permission has been temporarily granted to ' + member.displayName + '.',
+                    title: '🔓 /edit permission has been temporarily granted to ' + member.displayName + '(' + member.user.tag + ').',
                     description: 'To lock everyone\'s usage of /edit again, use the `lock` subcommand.'
                     + '\n/admin stats lock'
                 })]

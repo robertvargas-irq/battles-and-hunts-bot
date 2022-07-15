@@ -4,7 +4,6 @@ const huntChecks = require('./huntChecks.json');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
 const { MessageEmbed, CommandInteraction, GuildMember } = require('discord.js');
-const HuntCooldowns = require('./HuntCooldowns');
 const CoreUtil = require('../CoreUtil');
 
 /**

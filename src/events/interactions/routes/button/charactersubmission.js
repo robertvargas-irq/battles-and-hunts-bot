@@ -1,5 +1,6 @@
-const { ButtonInteraction, MessageEmbed, Permissions, MessageButton } = require('discord.js');
+const { ButtonInteraction, MessageEmbed, Permissions, Message, MessageButton } = require('discord.js');
 const CoreUtil = require('../../../../util/CoreUtil');
+const ServerSchema = require('../../../../database/schemas/server');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const SubmissionHandler = require('../../../../util/Submissions/SubmissionHandler');
 
@@ -41,36 +42,18 @@ module.exports = async (button) => {
             // get character from submission and approve
             const server = CoreUtil.Servers.cache.get(button.guild.id);
             const authorId = SubmissionHandler.getSubmissionAuthorId(server, button.message.id);
-            if (!authorId) return button.message.edit({
-                embeds: [new MessageEmbed({
-                    color: 'RED',
-                    title: '⚠️ This submission is no longer available.',
-                })],
-                components: [],
-            });
+            if (!authorId) return submissionNoLongerAvailable(button);
             const character = CoreUtil.Characters.cache.get(button.guild.id, authorId);
-            if (!character) return button.message.edit({
-                embeds: [new MessageEmbed({
-                    color: 'RED',
-                    title: '⚠️ This character no longer exists.'
-                })],
-                components: [],
-            });
+            if (!character) return characterNoLongerExists(button, server, authorId);
             const authorMember = await button.guild.members.fetch(authorId).catch(() => false);
-            if (!authorMember) {
-                SubmissionHandler.removeSubmission(server, authorId, button.message.id);
-                return button.message.edit({
-                    embeds: [new MessageEmbed({
-                        color: 'RED',
-                        title: '⚠️ This submission is no longer available as the member is no longer in the server.',
-                    })],
-                    components: [],
-                });
-            }
+            if (!authorMember) return authorNoLongerInServer(button, server, authorId);
 
             // approve and save
             character.approved = true;
             character.save();
+
+            // delete the thread
+            safelyDeleteThread(button.message, 'Character was approved; Thread no longer needed.');
 
             // mark message as approved and inform the author if possible
             SubmissionHandler.removeSubmission(server, authorId, button.message.id);
@@ -102,32 +85,11 @@ module.exports = async (button) => {
             // get character from submission and refresh
             const server = CoreUtil.Servers.cache.get(button.guild.id);
             const authorId = SubmissionHandler.getSubmissionAuthorId(server, button.message.id);
-            if (!authorId) return button.message.edit({
-                embeds: [new MessageEmbed({
-                    color: 'RED',
-                    title: '⚠️ This submission is no longer available.',
-                })],
-                components: [],
-            });
+            if (!authorId) return submissionNoLongerAvailable(button);
             const character = CoreUtil.Characters.cache.get(button.guild.id, authorId);
-            if (!character) return button.message.edit({
-                embeds: [new MessageEmbed({
-                    color: 'RED',
-                    title: '⚠️ This character no longer exists.'
-                })],
-                components: [],
-            });
+            if (!character) return characterNoLongerExists(button, server, authorId);
             const authorMember = await button.guild.members.fetch(authorId).catch(() => false);
-            if (!authorMember) {
-                SubmissionHandler.removeSubmission(server, authorId, button.message.id);
-                return button.message.edit({
-                    embeds: [new MessageEmbed({
-                        color: 'RED',
-                        title: '⚠️ This submission is no longer available as the member is no longer in the server.',
-                    })],
-                    components: [],
-                });
-            }
+            if (!authorMember) return authorNoLongerInServer(button, server, authorId);
 
             // refresh embed
             button.message.edit({
@@ -152,21 +114,12 @@ module.exports = async (button) => {
             // get character from submission and approve
             const server = CoreUtil.Servers.cache.get(button.guild.id);
             const authorId = SubmissionHandler.getSubmissionAuthorId(server, button.message.id);
-            if (!authorId) return button.message.edit({
-                embeds: [new MessageEmbed({
-                    color: 'RED',
-                    title: '⚠️ This submission is no longer available.',
-                })],
-                components: [],
-            });
+            if (!authorId) return submissionNoLongerAvailable(button);
             const character = CoreUtil.Characters.cache.get(button.guild.id, authorId);
-            if (!character) return button.message.edit({
-                embeds: [new MessageEmbed({
-                    color: 'RED',
-                    title: '⚠️ This character no longer exists.'
-                })],
-                components: [],
-            });
+            if (!character) return characterNoLongerExists(button, server, authorId);
+
+            // delete the thread
+            button.message.thread.delete('Submission was deleted; Thread no longer needed.').catch(() => console.log('Thread no longer exists.'));
 
             // delete submission and inform author if possible
             SubmissionHandler.removeSubmission(server, authorId, button.message.id);
@@ -181,4 +134,69 @@ module.exports = async (button) => {
             return;
         }
     }
+}
+
+/**
+ * Delete a thread safely
+ * @param {Message} message 
+ */
+async function safelyDeleteThread(message, reason = 'No reason provided,') {
+    if (!message.hasThread()) return;
+
+    return message.thread.delete(reason)
+        .then(() => console.log('Successfully deleted thread.'))
+        .catch(e => {
+            console.log('Unable to delete thread; Thread most likely no longer exists.');
+            console.error(e);
+        });
+}
+
+/**
+ * Display error if submission no longer exists
+ * @param {ButtonInteraction} button 
+ */
+async function submissionNoLongerAvailable(button) {
+    return button.message.edit({
+        embeds: [new MessageEmbed({
+            color: 'RED',
+            title: '⚠️ This character no longer exists.'
+        })],
+        components: [],
+    });
+}
+
+/**
+ * Display error if character no longer exists
+ * @param {ButtonInteraction} button 
+ * @param {ServerSchema} server 
+ * @param {string} authorId 
+ */
+async function characterNoLongerExists(button, server, authorId) {
+    SubmissionHandler.removeSubmission(server, authorId, button.message.id);
+    safelyDeleteThread(button.message, 'Submission is no longer available; this character no longer exists.');
+    return button.message.edit({
+        embeds: [new MessageEmbed({
+            color: 'RED',
+            title: '⚠️ This character no longer exists.'
+        })],
+        components: [],
+    });
+}
+
+/**
+ * Display error if author is no longer in the server
+ * @param {ButtonInteraction} button 
+ * @param {ServerSchema} server 
+ * @param {string} authorId 
+ */
+async function authorNoLongerInServer(button, server, authorId) {
+    SubmissionHandler.removeSubmission(server, authorId, button.message.id);
+    safelyDeleteThread(button.message, 'Submission is no longer available; member no longer in the server.');
+    return button.message.edit({
+        embeds: [new MessageEmbed({
+            color: 'RED',
+            title: '⚠️ This submission is no longer available as the member is no longer in the server.',
+        })],
+        components: [],
+    });
 }

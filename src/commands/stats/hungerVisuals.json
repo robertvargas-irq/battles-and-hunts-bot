@@ -1,0 +1,20 @@
+{
+    "colors": [
+        "AQUA",
+        "YELLOW",
+        "RED",
+        "NOT_QUITE_BLACK"
+    ],
+    "titles": [
+        "Satiated",
+        "Could go for a bite",
+        "Not feeling too good...",
+        "I might starve soon..."
+    ],
+    "flairs": [
+        "🍖",
+        "🍴",
+        "⏳",
+        "🦴"
+    ]
+}

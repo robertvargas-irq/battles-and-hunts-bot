@@ -87,17 +87,17 @@ function formatStats(member, character) {
             },
             {
                 name: 'Attack',
-                value: `> ↣ \`${character.stats.strength * 4}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateAttackMax(character)}\` / \`40\``,
                 inline: true,
             },
             {
                 name: 'Dodge Chance',
-                value: `> ↣ \`${character.stats.speed * 4}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateDodgeChance(character)}\` / \`40\``,
                 inline: true,
             },
             {
-                name: 'Crit Chance',
-                value: `> ↣ \`0\` - \`${character.stats.dexterity * 3}\``,
+                name: 'Crit. Chance',
+                value: `> ↣ \`0\` - \`${StatCalculator.calculateCritChance(character)}\``,
                 inline: true,
             },
         ]

@@ -1,7 +1,7 @@
 const { BaseCommandInteraction, MessageEmbed, Util: DiscordUtil } = require('discord.js');
 const StatCalculator = require('../../util/Stats/StatCalculator');
 const CoreUtil = require('../../util/CoreUtil');
-const { colors, titles, descriptions, flairs } = require('./healthVisuals.json');
+const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
 module.exports = {
     name: 'health',
@@ -16,11 +16,11 @@ module.exports = {
         // show health bar
         const maxHealth = StatCalculator.calculateMaxHealth(found);
         const healthRatio = found.currentHealth / maxHealth;
-        const description = getDescription(healthRatio);
+        const description = HealthVisuals.getDescription(healthRatio);
         interaction.reply({
             embeds: [new MessageEmbed({
-                color: getColor(healthRatio),
-                title: '⟪' + getFlair(healthRatio) + '⟫ ' + getTitle(healthRatio),
+                color: HealthVisuals.getColor(healthRatio),
+                title: '⟪' + HealthVisuals.getFlair(healthRatio) + '⟫ ' + HealthVisuals.getTitle(healthRatio),
                 description: description ? '*' + description + '*' : '',
                 thumbnail: { url: found.icon ?? interaction.member.displayAvatarURL({ dynamic: true }) },
                 fields: [
@@ -42,13 +42,3 @@ module.exports = {
     
     },
 };
-
-
-
-/*
- * Helper functions for visuals
- */
-const getColor = (ratio) => CoreUtil.GetColorFromRatio(colors, ratio);
-const getDescription = (ratio) => CoreUtil.GetArrayElementFromRatio(descriptions, ratio);
-const getTitle = (ratio) => CoreUtil.GetArrayElementFromRatio(titles, ratio);
-const getFlair = (ratio) => CoreUtil.GetArrayElementFromRatio(flairs, ratio);

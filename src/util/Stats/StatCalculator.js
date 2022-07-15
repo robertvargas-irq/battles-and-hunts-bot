@@ -1,5 +1,5 @@
 const CharacterModel = require('../../database/schemas/character');
-const stats = require('../CharacterMenu/stats.json');
+const stats = require('./stats.json');
 
 class StatCalculator {
     static calculateMaxHealth = (/**@type {CharacterModel}*/character) => character.stats.constitution * 5 + 50;

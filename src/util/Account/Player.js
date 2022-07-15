@@ -1,6 +1,6 @@
 const { GuildMember, MessageEmbed } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
-const stats = require('../CharacterMenu/stats.json');
+const stats = require('../Stats/stats.json');
 const StatCalculator = require('../Stats/StatCalculator');
 const HealthVisuals = require('../Battle/HealthVisuals');
 const HungerVisuals = require('../Hunting/HungerVisuals');

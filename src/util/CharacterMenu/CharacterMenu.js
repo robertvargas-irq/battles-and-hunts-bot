@@ -14,7 +14,7 @@ const {
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
 
-const stats = require('./stats.json');
+const stats = require('../Stats/stats.json');
 const statSections = ['🍓', '🫐', '🍋'];
 const statArray = Object.entries(stats);
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema, Model } = require('mongoose');
-const stats = require('../../util/CharacterMenu/stats.json');
+const stats = require('../../util/Stats/stats.json');
 
 const CharacterSchema = new Schema({
     guildId: {

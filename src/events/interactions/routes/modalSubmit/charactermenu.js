@@ -2,7 +2,7 @@ const { ModalSubmitInteraction, MessageEmbed } = require('discord.js');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const CoreUtil = require('../../../../util/CoreUtil');
 const Player = require('../../../../util/Account/Player');
-const stats = require('../../../../util/CharacterMenu/stats.json');
+const stats = require('../../../../util/Stats/stats.json');
 
 /** @param {ModalSubmitInteraction} modal */
 module.exports = async (modal) => {

@@ -22,7 +22,7 @@ module.exports = {
         // if not carrying anything, inform
         const recentlyCaughtResult = HuntManager.getRecentlyCaught(interaction.guild.id, interaction.user.id);
         let recentlyCaught;
-        let originalInteraction;
+        let originalMessage;
         if (!recentlyCaughtResult) {
             const [weightCarrying, preyCarrying] = HuntInventory.getCarrying(interaction.guild.id, interaction.user.id);
             return interaction.reply({
@@ -42,12 +42,12 @@ module.exports = {
         if (HuntCooldowns.onCooldownDeposit(interaction.guild.id, interaction.user.id))
             return HuntCooldowns.displayCooldownDeposit(interaction);
         
-        // attach recently caught and interaction to proper variables
+        // attach recently caught and message to proper variables
         recentlyCaught = recentlyCaughtResult.prey;
-        originalInteraction = recentlyCaughtResult.interaction;
+        originalMessage = recentlyCaughtResult.message;
         
         // add to carry
-        const [overEncumbered, weightCarrying, preyCarrying] = HuntInventory.addToCarry(interaction.guild.id, interaction.user.id, recentlyCaught, originalInteraction);
+        const [overEncumbered, weightCarrying, preyCarrying] = HuntInventory.addToCarry(interaction.guild.id, interaction.user.id, recentlyCaught, originalMessage);
         const resultEmbed = new MessageEmbed();
 
         // if successfully carried, notify

@@ -3,7 +3,7 @@
         "name": "Char. Size",
         "description":"**This directly affects your hunger.**\n`1`: Kit-Young Warrior\n`2`: Warrior\n`3`: Large Warrior",
         "flair":"🐈",
-        "range": [0, 3]
+        "range": [1, 3]
     },
     "strength":{
         "name":"Strength",

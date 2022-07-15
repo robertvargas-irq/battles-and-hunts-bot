@@ -16,20 +16,20 @@ class HealthVisuals {
      */
     static Damage = {
         getRandomDamageTitle: (health) => {
-            if (health < 1) return 'Silence, as the world fades to black.';
-            return DamagePromptsdamageAction[Math.floor(Math.random() * damageAction.length)] + ', '
-            + DamagePromptsdamageResponse[Math.floor(Math.random() * damageResponse.length)] + '.';    
+            if (health < 1) return 'Your character has fallen.';
+            return DamagePrompts.damageTitle[Math.floor(Math.random() * DamagePrompts.damageTitle.length)];
         },
         getRandomDamageMessage: (health) => {
             if (health < 1) return 'Silence, as the world fades to black.';
-            return DamagePromptsdamageAction[Math.floor(Math.random() * damageAction.length)] + ', '
-            + DamagePromptsdamageResponse[Math.floor(Math.random() * damageResponse.length)] + '.';    
+            return DamagePrompts.damageAction[Math.floor(Math.random() * DamagePrompts.damageAction.length)] + ', '
+            + DamagePrompts.damageResponse[Math.floor(Math.random() * DamagePrompts.damageResponse.length)] + '.';
         },
     };
 
     static Healing = {
         getRandomHealingTitle: () => {},
-        getRandomHealingMessage: () => {},
+        getRandomHealingMessage: () => MedicinePrompts.healingAction[Math.floor(Math.random() * MedicinePrompts.healingAction.length)] + ', ' +
+            MedicinePrompts.healingResponse[Math.floor(Math.random() * MedicinePrompts.healingResponse.length)] + '.',
     }
 
     /**

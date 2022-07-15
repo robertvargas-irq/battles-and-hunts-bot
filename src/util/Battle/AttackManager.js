@@ -157,17 +157,6 @@ class AttackManager extends CoreUtil {
         });
         return false;
     }
-
-    static getRandomDamageMessage(health) {
-        if (health < 1) return 'Silence, as the world fades to black.';
-        return damageAction[Math.floor(Math.random() * damageAction.length)] + ', ' +
-            damageResponse[Math.floor(Math.random() * damageResponse.length)] + '.';
-    }
-
-    static getRandomHealingMessage() {
-        return healingAction[Math.floor(Math.random() * healingAction.length)] + ', ' +
-            healingResponse[Math.floor(Math.random() * healingResponse.length)] + '.';
-    }
 }
 
 module.exports = AttackManager;

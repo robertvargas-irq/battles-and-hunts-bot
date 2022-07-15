@@ -1,6 +1,7 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
+const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
 
 module.exports = {
     name: 'carry',
@@ -38,8 +39,8 @@ module.exports = {
         }
 
         // check if user is on cooldown
-        if (HuntManager.onCooldownDeposit(interaction.guild.id, interaction.user.id))
-            return HuntManager.displayCooldownDeposit(interaction);
+        if (HuntCooldowns.onCooldownDeposit(interaction.guild.id, interaction.user.id))
+            return HuntCooldowns.displayCooldownDeposit(interaction);
         
         // attach recently caught and interaction to proper variables
         recentlyCaught = recentlyCaughtResult.prey;

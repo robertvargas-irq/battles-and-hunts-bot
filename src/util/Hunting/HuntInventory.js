@@ -153,8 +153,16 @@ class HuntInventory {
      * @returns {Map<userId, [weight: number, prey[]]>} New Map of player inventories
      */
     static setCarrying(guildId, userId, newInventory) {
-        this.getCarrying(guildId, userId) = newInventory;
-        return this.#inventories.get(guildId);
+        
+        // instantiate server if not already
+        if (!this.#inventories.has(guildId))
+            this.#inventories.set(guildId, new Map());
+        
+        // get server
+        const server = this.#inventories.get(guildId);
+
+        // set inventory and return it
+        return server.set(userId, newInventory);
     }
 
 

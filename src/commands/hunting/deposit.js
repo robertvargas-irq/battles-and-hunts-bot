@@ -3,6 +3,7 @@ const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const PreyPile = require('../../util/Hunting/PreyPile');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
+const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
 
 module.exports = {
     name: 'deposit',
@@ -51,8 +52,8 @@ module.exports = {
         if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
 
         // check if user is on cooldown
-        if (HuntManager.onCooldownDeposit(interaction.guild.id, interaction.user.id))
-            return HuntManager.displayCooldownDeposit(interaction);
+        if (HuntCooldowns.onCooldownDeposit(interaction.guild.id, interaction.user.id))
+            return HuntCooldowns.displayCooldownDeposit(interaction);
 
         // if not carrying anything, inform
         const carrying = HuntInventory.clearCarrying(interaction.guild.id, interaction.user.id);
@@ -100,7 +101,7 @@ module.exports = {
         server.save();
 
         // add cooldown for user
-        HuntManager.addCooldownDeposit(interaction.guild.id, interaction.user.id);
+        HuntCooldowns.addCooldownDeposit(interaction.guild.id, interaction.user.id);
 
         // notify the clan
         const notifyEmbed = new MessageEmbed();

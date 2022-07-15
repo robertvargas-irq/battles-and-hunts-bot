@@ -1,5 +1,6 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
+const CoreUtil = require('../../util/CoreUtil');
 const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
 
 module.exports = {
@@ -32,15 +33,22 @@ module.exports = {
         const first = coin == 0;
         const side = first ? 'HEADS' : 'TAILS'
 
+        // build embed
+        const callerCharacter = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
+        const targetCharacter = CoreUtil.Characters.cache.get(interaction.guild.id, target.user.id);
         interaction.editReply({
             embeds: [new MessageEmbed()
                 .setColor(first ? 'GREEN' : 'YELLOW')
                 .setTitle('💭 __Let\'s see who\'s first!__')
-                .setThumbnail(first ? interaction.member.displayAvatarURL({ dynamic: true }) : target.displayAvatarURL({ dynamic: true }))
+                .setThumbnail(
+                    first
+                    ? callerCharacter.icon ?? interaction.member.displayAvatarURL({ dynamic: true })
+                    : targetCharacter.icon ?? target.displayAvatarURL({ dynamic: true })
+                )
                 .setDescription(
                 `> Time to flip a coin...\n\n` +
-                `🌿 (\`HEADS\`) **${interaction.member.displayName}**\n` +
-                `🆚 (\`TAILS\`) **${target.displayName}**\n\n` +
+                `🌿 (\`HEADS\`) **${callerCharacter.name ?? interaction.member.displayName + '\'s character'}**\n` +
+                `🆚 (\`TAILS\`) **${targetCharacter.name ?? target.displayName + '\'s character'}**\n\n` +
                 `🪙 The coin has landed on **\`${side}\`**\n` +
                 `> **<@${first ? interaction.user.id : target.user.id}> goes first!!**`
                 )

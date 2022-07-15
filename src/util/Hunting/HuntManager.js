@@ -4,7 +4,7 @@ const huntChecks = require('./huntChecks.json');
 const userSchema = require('../../database/schemas/user');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
-const { Collection, MessageEmbed, BaseCommandInteraction, GuildMember } = require('discord.js');
+const { Collection, MessageEmbed, CommandInteraction, GuildMember, MessageButton, MessageActionRow } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 /**
@@ -185,7 +185,7 @@ class HuntManager extends CoreUtil {
 
     /**
      * Display the resulting rolls to the player.
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      * @param {CharacterModel} character Character information from the database.
      * @param {MemberModel} member Member information from the database.
      * @param {serverSchema} server Server information from the database. 
@@ -250,8 +250,8 @@ class HuntManager extends CoreUtil {
             color: 'FUCHSIA',
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
-                text: 'Hunt Results for ' + interaction.member.displayName,
-                iconURL: interaction.member.displayAvatarURL({ dynamic: true })
+                text: 'Hunt Results for ' + (character.name ?? interaction.member.displayName + '\'s character'),
+                iconURL: character.icon ?? interaction.member.displayAvatarURL({ dynamic: true })
             },
             description: generateBriefDescription(tracked, caught, preyFromLocations.descriptors[prey.size - 1], prey)
             + '\n\n' + (
@@ -261,10 +261,29 @@ class HuntManager extends CoreUtil {
             ),
         }));
 
+        // // build buttons
+        // const rowOne = new MessageActionRow();
+        // if (tracked && caught) rowOne.addComponents([
+        //     new MessageButton({
+        //         customId: 'PREY:COLLECT',
+        //         label: 'Collect',
+        //         emoji: '🎒',
+        //         style: 'SUCCESS',
+        //     }),
+        //     new MessageButton({
+        //         customId: 'PREY:SHARE',
+        //         label: 'Share',
+        //         style: 'SECONDARY',
+        //     }),
+        //     new MessageButton({
+        //         customId: 'PREY:EAT',
+        //         label: 'Eat Secretly',
+        //         style: 'DANGER',
+        //     }),
+        // ]);
+
         // display results
-        return this.SafeReply(interaction, {
-            embeds: embeds
-        });
+        return this.SafeReply(interaction, { embeds, components: [/*rowOne*/] });
 
         // generates a brief summary of the hunt
         function generateBriefDescription(tracked, caught, preySizeDescriptor, /**@type {prey} */ prey) {
@@ -293,7 +312,7 @@ class HuntManager extends CoreUtil {
 
     /**
      * Set a user's recently caught to a prey
-     * @param {BaseCommandInteraction} originalInteraction The original interaction
+     * @param {CommandInteraction} originalInteraction The original interaction
      * @param {string} userId The player who caught the prey
      * @param {prey} prey The prey that was caught
      * @returns {prey}
@@ -383,7 +402,7 @@ class HuntManager extends CoreUtil {
      * Add to a user's caught prey
      * @param {string} userId The player to add to their carry
      * @param {prey} prey The prey to add to their carry
-     * @param {BaseCommandInteraction} originalInteraction The original interaction
+     * @param {CommandInteraction} originalInteraction The original interaction
      * @returns {[Array]} [`Over Encumbered`, `WeightCarried`, `CurrentlyCarrying`]
      */
     static addToCarry(userId, prey, originalInteraction) {
@@ -412,20 +431,24 @@ class HuntManager extends CoreUtil {
 
         // swap interaction sidebar to grey if possible
         originalInteraction.fetchReply().then(r => {
-            originalthis.editReply({
+            r.edit({
                 embeds: [r.embeds[0]
                     .setColor('GREYPLE')
-                    .setAuthor({
-                        name: '🐾 Prey was carried away',
-                        iconURL: originalInteraction.member.displayAvatarURL({ dynamic: true }) })
                     .setTitle('')
                     .setThumbnail(r.embeds[0].image?.url || '')
+                    .setDescription('')
                     .setImage('')
-                    .setDescription('🍃')
-                    .setFooter({ text: '' }),
-                ]
+                    .setFooter({
+                        text: '🐾 Prey was carried away',
+                        iconURL: r.embeds[0].footer?.iconURL
+                    }),
+                ],
+                components: [],
             });
-        }).catch(() => console.log("Original interaction may have been timed out or deleted."));
+        }).catch((e) => {
+            console.log("Original interaction may have been timed out or deleted.")
+            console.error(e);
+        });
         
         // return over-encumbered status and new weight and inventory
         return [false, inventory[0], inventory[1]];
@@ -493,7 +516,7 @@ class HuntManager extends CoreUtil {
 
     /**
      * Display that hunting is currently restricted
-     * @param {BaseCommandInteraction} interaction Interaction to edit
+     * @param {CommandInteraction} interaction Interaction to edit
      */
     static async displayRestrictedHunting(interaction) {
         return await this.SendAndDelete(interaction, {
@@ -511,7 +534,7 @@ class HuntManager extends CoreUtil {
 
     /**
      * Display that the user is on cooldown for /hunt
-     * @param {BaseCommandInteraction} interaction Original Discord interaction
+     * @param {CommandInteraction} interaction Original Discord interaction
      */
     static async displayCooldownHunt(interaction) {
         let minutes = ((this.#HUNT_COOLDOWN - (Date.now() - this.#cooldownHunt.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);
@@ -533,7 +556,7 @@ class HuntManager extends CoreUtil {
 
     /**
      * Display that the user is on cooldown for /deposit
-     * @param {BaseCommandInteraction} interaction Original Discord interaction
+     * @param {CommandInteraction} interaction Original Discord interaction
      */
     static async displayCooldownDeposit(interaction) {
         let minutes = ((this.#DEPOSIT_COOLDOWN - (Date.now() - this.#cooldownDeposit.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);

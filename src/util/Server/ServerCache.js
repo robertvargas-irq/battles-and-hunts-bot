@@ -3,8 +3,8 @@ const ServerSchema = require('../../database/schemas/server');
 const ServerModel = new mongoose.model('Server', ServerSchema);
 
 /**
- * @typedef {Map<guildId: string, Map<userId: string, ServerSchema>>} ServerCache
- * @type {ServerCache} */
+ * @typedef {Map<guildId, Map<userId, ServerSchema>>} ServerCacheMap
+ * @type {ServerCacheMap} */
 const cached = new Map();
 
 class ServerCache {
@@ -30,12 +30,7 @@ class ServerCache {
          */
         get(guildId) {
             let server = cached.get(guildId);
-
-            if (!server) {
-                server = new ServerModel({ guildId });
-                cached.set(guildId, server);
-                server.save();
-            }
+            if (!server) server = new ServerModel({ guildId });
 
             return server;
         },
@@ -45,6 +40,13 @@ class ServerCache {
          */
         getAll() {
             return cached;
+        },
+        /**
+         * Check to see if a Server is cached
+         * @param {string} guildId 
+         */
+        has(guildId) {
+            return cached.has(guildId) ?? false;
         },
     }
 }

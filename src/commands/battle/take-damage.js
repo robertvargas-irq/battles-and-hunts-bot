@@ -1,6 +1,7 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
+const HealthVisuals = require('../../util/Battle/HealthVisuals');
 const StatCalculator = require('../../util/Stats/StatCalculator');
 
 module.exports = {
@@ -53,18 +54,17 @@ module.exports = {
         
         // notify user along with any damage adjustments made
         interaction.reply({
-            embeds: [new MessageEmbed({
-                color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
-                author: { name: character.currentHealth < 1 ? '...' : '🩸 Hrrk...!' },
-                description: AttackManager.getRandomDamageMessage(character.currentHealth),
-                fields: [{
-                    name: 'CURRENT HEALTH 💔',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``
-                }],
-                footer: (finalDamageAmount !== originalDamageAmount ? {
-                    text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'
-                } : undefined),
-            })]
+            embeds: [
+                new MessageEmbed({
+                    color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
+                    author: { name: HealthVisuals.Damage.getRandomDamageTitle(character.currentHealth) },
+                    description: HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),
+                    footer: (finalDamageAmount !== originalDamageAmount ? {
+                        text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'
+                    } : undefined),
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
         })
     },
 };

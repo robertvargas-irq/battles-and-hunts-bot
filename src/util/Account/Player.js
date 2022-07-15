@@ -136,3 +136,12 @@ const allowedToEdit = (guildId, userId) => {
     const guild = usersAllowedToEdit.get(guildId);
     return guild && guild.has(userId);
 }
+
+module.exports = {
+    usersAllowedToEdit,
+    formatStats,
+    formatBattleStats,
+    allowEditing,
+    clearEditing,
+    allowedToEdit,
+}

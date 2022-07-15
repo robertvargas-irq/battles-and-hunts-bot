@@ -3,7 +3,7 @@ const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
-const { MessageEmbed, CommandInteraction, GuildMember } = require('discord.js');
+const { MessageEmbed, CommandInteraction, GuildMember, MessageActionRow, MessageButton, Message } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 /**
@@ -34,9 +34,9 @@ const CoreUtil = require('../CoreUtil');
 
 class HuntManager extends CoreUtil {
     static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
-    
+
     /**
-     * @type {Map<guildId, Map<userId, prey>>}
+     * @type {Map<guildId, Map<messageId, prey>>}
      * Player ID to their recently caught prey */
     static #recentlyCaught = new Map();
 
@@ -87,7 +87,6 @@ class HuntManager extends CoreUtil {
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) {
             if (tracked && caught) {
-                this.setRecentlyCaught(interaction, interaction.guild.id, interaction.user.id, prey);
                 character.hunting.hunts.successful++;
                 member.hunting.hunts.successful++;
             }
@@ -138,29 +137,34 @@ class HuntManager extends CoreUtil {
             ),
         }));
 
-        // // build buttons
-        // const rowOne = new MessageActionRow();
-        // if (tracked && caught) rowOne.addComponents([
-        //     new MessageButton({
-        //         customId: 'PREY:COLLECT',
-        //         label: 'Collect',
-        //         emoji: '🎒',
-        //         style: 'SUCCESS',
-        //     }),
-        //     new MessageButton({
-        //         customId: 'PREY:SHARE',
-        //         label: 'Share',
-        //         style: 'SECONDARY',
-        //     }),
-        //     new MessageButton({
-        //         customId: 'PREY:EAT',
-        //         label: 'Eat Secretly',
-        //         style: 'DANGER',
-        //     }),
-        // ]);
+        // build buttons
+        const rowOne = new MessageActionRow();
+        if (tracked && caught) rowOne.addComponents([
+            new MessageButton({
+                customId: 'PREY:COLLECT',
+                label: 'Collect',
+                emoji: '🎒',
+                style: 'SUCCESS',
+            }),
+            new MessageButton({
+                customId: 'PREY:SHARE',
+                label: 'Share',
+                style: 'SECONDARY',
+            }),
+            new MessageButton({
+                customId: 'PREY:EAT',
+                label: 'Eat Secretly',
+                style: 'DANGER',
+            }),
+        ]);
 
         // display results
-        return this.SafeReply(interaction, { embeds, components: [/*rowOne*/] });
+        return this.SafeReply(interaction, { embeds, components: [rowOne] }).then(async () => {
+            // add to recently caught if tracked and caught
+            if (!tracked || !caught) return;
+            const message = await interaction.fetchReply();
+            HuntManager.setRecentlyCaught(message, interaction.member, interaction.guild.id, prey);
+        });
 
         // generates a brief summary of the hunt
         function generateBriefDescription(tracked, caught, preySizeDescriptor, /**@type {prey} */ prey) {
@@ -189,13 +193,13 @@ class HuntManager extends CoreUtil {
 
     /**
      * Set a user's recently caught to a prey
-     * @param {CommandInteraction} originalInteraction The original interaction
+     * @param {Message} message The original interaction's message
+     * @param {GuildMember} originalMember The player who caught the prey
      * @param {string} guildId The guild in which it was caught in
-     * @param {string} userId The player who caught the prey
      * @param {prey} prey The prey that was caught
      * @returns {prey}
      */
-    static setRecentlyCaught(interaction, guildId, userId, prey) {
+    static setRecentlyCaught(message, originalMember, guildId, prey) {
 
         // instantiate server if not already
         if (!this.#recentlyCaught.has(guildId)) this.#recentlyCaught.set(guildId, new Map());
@@ -205,12 +209,12 @@ class HuntManager extends CoreUtil {
 
         // clear prey if null
         if (!prey) {
-            server.delete(userId);
-            return {prey: null, interaction: null};
+            server.delete(message.id);
+            return {prey: null, message: null};
         }
 
         // set recently caught
-        server.set(userId, {prey, interaction});
+        server.set(message.id, {prey, message, originalMember});
         console.log("UPDATED RECENTLY CAUGHT");
         console.log({ serverRecentlyCaught: server });
         return prey;
@@ -219,14 +223,14 @@ class HuntManager extends CoreUtil {
     /**
      * Get the user's most recently caught prey item
      * @param {string} guildId The guild the player is in
-     * @param {string} userId The player who caught the prey
-     * @returns {prey}
+     * @param {string} messageId The message the prey is held in
+     * @returns {{prey: prey, message: Message, originalMember: GuildMember}}
      */
-    static getRecentlyCaught(guildId, userId) {
+    static getRecentlyCaught(guildId, messageId) {
         const server = this.#recentlyCaught.get(guildId);
         if (!server) return null;
         
-        return server.get(userId) ?? null;
+        return server.get(messageId) ?? null;
     }
 
     /**

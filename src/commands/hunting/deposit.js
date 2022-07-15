@@ -2,6 +2,7 @@ const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const PreyPile = require('../../util/Hunting/PreyPile');
+const HuntInventory = require('../../util/Hunting/HuntInventory');
 
 module.exports = {
     name: 'deposit',
@@ -54,7 +55,7 @@ module.exports = {
             return HuntManager.displayCooldownDeposit(interaction);
 
         // if not carrying anything, inform
-        const carrying = HuntManager.clearCarrying(interaction.guild.id, interaction.user.id);
+        const carrying = HuntInventory.clearCarrying(interaction.guild.id, interaction.user.id);
         if (carrying.length < 1) {
             return interaction.reply({
                 ephemeral: true,
@@ -83,7 +84,7 @@ module.exports = {
             member.hunting.trips++;
 
             // perfect hunt if carrying weight matches the max carry weight
-            if (weight === HuntManager.INVENTORY_MAX_WEIGHT) {
+            if (weight === HuntInventory.INVENTORY_MAX_WEIGHT) {
                 character.hunting.fullInventoryTrips++;
                 member.hunting.fullInventoryTrips++;
             }

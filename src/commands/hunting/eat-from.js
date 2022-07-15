@@ -3,6 +3,7 @@ const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const HungerVisuals = require('../../util/Hunting/HungerVisuals');
+const HuntInventory = require('../../util/Hunting/HuntInventory');
 const CANON_MESSAGE = '🍃 This message is canon.'
 
 module.exports = {
@@ -132,7 +133,7 @@ module.exports = {
         switch (interaction.options.getSubcommand()) {
             case 'back': {
                 // if the player is not carrying anything, inform
-                const inventoryEntry = HuntManager.getCarrying(interaction.guild.id, interaction.user.id);
+                const inventoryEntry = HuntInventory.getCarrying(interaction.guild.id, interaction.user.id);
                 if (inventoryEntry[0] < 1) return interaction.reply({
                     ephemeral,
                     embeds: [
@@ -148,7 +149,7 @@ module.exports = {
                 });
 
                 // eat prey being carried on one's back and format them properly
-                const {bitesTaken, consumed} = HuntManager.pullFromCarrying(inventoryEntry, bitesNeeded);
+                const {bitesTaken, consumed} = HuntInventory.eatFromCarrying(inventoryEntry, bitesNeeded);
                 const consumedFormatted = consumed.map(({name, amountEaten}) => {
                     return `(\`${Number.isInteger(amountEaten) ? amountEaten : amountEaten.toFixed(2)}\`) **${name}**`
                 }).join(', ');

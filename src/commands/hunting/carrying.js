@@ -19,7 +19,7 @@ module.exports = {
         if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
         
         // display inventory
-        const [weightCarrying, preyCarrying] = HuntManager.getCarrying(interaction.guild.id, interaction.user.id);
+        const [weightCarrying, preyCarrying] = HuntInventory.getCarrying(interaction.guild.id, interaction.user.id);
         return interaction.reply({
             ephemeral: true,
             embeds: [HuntInventory.generateCarryingEmbed(preyCarrying, weightCarrying)]

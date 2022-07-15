@@ -23,30 +23,38 @@ module.exports = async (modal) => {
 
     // handle info correctly
     if (editTarget === 'INFO') {
+        const parseAge = (age) => {
+
+            if (isNaN(age)) {
+                errors.push([
+                    'moons', 'Please only enter numerical values.'
+                ]);
+            }
+            else if (age === '' || age < 0) {
+                age = 0;
+            }
+
+            return parseInt(age);
+        };
         const name = modal.fields.getField('name').value || null;
         const clan = modal.fields.getField('clan').value || null;
+        const age = parseAge(modal.fields.getField('age').value);
         const personality = modal.fields.getField('personality').value || null;
         const background = modal.fields.getField('background').value || null;
-        const image = modal.fields.getField('image').value || null;
-
+        
+        if (!isNaN(age)) instance.character.moons = age;
         if (clan) instance.character.clan = clan;
         instance.character.name = name;
         instance.character.personality = personality;
         instance.character.background = background;
-        instance.character.image = image;
     }
-    else if (editTarget === 'AGE') {
-        const age = modal.fields.getField('age').value;
-        let parsed = parseInt(age);
+    else if (editTarget === 'IMAGES') {
+        const image = modal.fields.getField('image').value || null;
+        const icon = modal.fields.getField('icon').value || null;
 
-        if (parsed === NaN) errors.push([
-            'moons', 'Please only enter numerical values.'
-        ]);
-        else if (age === '' || parsed < 0) {
-            parsed = -1;
-            instance.character.moons = parsed;
-        }
-        else instance.character.moons = parsed;
+        // set given image and icon
+        instance.character.image = image;
+        instance.character.icon = icon;
     }
 
     // handle section edits

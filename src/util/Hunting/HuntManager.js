@@ -3,7 +3,7 @@ const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
-const { Collection, MessageEmbed, CommandInteraction, GuildMember, MessageButton, MessageActionRow } = require('discord.js');
+const { MessageEmbed, CommandInteraction, GuildMember } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 /**
@@ -38,7 +38,6 @@ class HuntManager extends CoreUtil {
     static #HUNT_COOLDOWN = (30 * 1000) // 30 seconds
     static #DEPOSIT_COOLDOWN = (30 * 60 * 1000) // 30 minutes
     static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
-    static #RandomFromArray = (a) => { return a[this.#Random(0, a.length - 1)] }
     
     /**
      * @type {Map<guildId, Map<userId, prey>>}
@@ -228,27 +227,6 @@ class HuntManager extends CoreUtil {
      */
     static rollCatch(max) {
         return this.#Random(1, max);
-    }
-
-    /**
-     * Generate a random prey object
-     * @param {locations} location
-     * @returns {prey}
-     */
-    static generatePrey(location, maxSize) {
-        const preyName = this.#RandomFromArray(preyFromLocations[location]);
-        const overrides = preyFromLocations.overrides[preyName] || false;
-        const sizeRoll = this.#Random(
-            overrides?.bites?.min || 1,
-            overrides?.bites?.max || maxSize
-        );
-        return {
-            name: preyName,
-            size: sizeRoll,
-            bites_remaining: sizeRoll,
-            visual: preyFromLocations.visuals[preyName],
-            overrides,
-        }
     }
 
     /**

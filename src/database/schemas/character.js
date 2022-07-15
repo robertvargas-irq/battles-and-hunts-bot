@@ -84,6 +84,10 @@ const CharacterSchema = new Schema({
         type: String,
         default: null,
     },
+    lastAteAt: {
+        type: Number,
+        default: 0,
+    },
     hunting: {
         contributions: {
             preyCount: {
@@ -140,6 +144,7 @@ const CharacterSchema = new Schema({
  * currentHealth: number,
  * currentHunger: number,
  * clan: string,
+ * lastAteAt: number,
  * hunting: {
  *      contributions: {
  *          preyCount: number,

@@ -29,6 +29,7 @@ module.exports = async (button) => {
                     description: '> It looks like this character has already been approved!'
                 })]
             })
+            active.character.save();
             return SubmissionHandler.handleSubmission(button, active.character, server);
         }
         case 'EDIT': {

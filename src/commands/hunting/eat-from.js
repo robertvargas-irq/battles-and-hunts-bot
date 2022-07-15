@@ -2,6 +2,7 @@ const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const HungerVisuals = require('../../util/Hunting/HungerVisuals');
 const CANON_MESSAGE = '🍃 This message is canon.'
 
 module.exports = {
@@ -134,18 +135,16 @@ module.exports = {
                 const inventoryEntry = HuntManager.getCarrying(interaction.user.id);
                 if (inventoryEntry[0] < 1) return interaction.reply({
                     ephemeral,
-                    embeds: [new MessageEmbed({
-                        color: 'RED',
-                        title: '🦴 Huh...',
-                        description: '> Looks like you don\'t have much to eat on your back...'
-                        + '\n> You can go out and `/hunt`, and `/carry` what you caught... then come back to this command to sneak a bite while no-one\'s looking...'
-                        + '\n**This will leave bones behind for your clanmates to find.**',
-                        fields: [{
-                            name: 'Last Ate At',
-                            value: '> ' + (character.lastAteAt > 0 ? '<t:' + character.lastAteAt + '>, roughly <t:' + character.lastAteAt + ':R>' : 'Hmm... can\'t remember...'),
-                        }],
-                        footer: { text: CANON_MESSAGE },
-                    })]
+                    embeds: [
+                        new MessageEmbed({
+                            color: 'RED',
+                            title: '🦴 Huh...',
+                            description: '> Looks like you don\'t have much to eat on your back...'
+                            + '\n> You can go out and `/hunt`, and `/carry` what you caught... then come back to this command to sneak a bite while no-one\'s looking...'
+                            + '\n\n⚠️ **This will leave bones behind for your clanmates to find.**',
+                        }),
+                        HungerVisuals.generateHungerEmbed(interaction.member, character),
+                    ]
                 });
 
                 // eat prey being carried on one's back and format them properly
@@ -180,7 +179,13 @@ module.exports = {
                     ) + '...',
                     footer: { text: CANON_MESSAGE },
                 });
-                return interaction.reply({ ephemeral, embeds: [resultEmbed] });
+                return interaction.reply({
+                    ephemeral,
+                    embeds: [
+                        resultEmbed,
+                        HungerVisuals.generateHungerEmbed(interaction.member, character),
+                    ]
+                });
             }
             
             case 'prey-pile': {
@@ -191,17 +196,15 @@ module.exports = {
                 const preyPile = PreyPile.getPreyPile(clan, server);
                 if (preyPile.length < 1) return interaction.reply({
                     ephemeral,
-                    embeds: [new MessageEmbed({
-                        color: 'RED',
-                        title: '🦴 Wonderful...',
-                        description: '> Looks like there\'s nothing to eat.'
-                        + '\n> Someone didn\'t go on patrol. Go \`/hunt\` for more if your leader sends you out.',
-                        fields: [{
-                            name: 'Last Ate At',
-                            value: '> ' + (character.lastAteAt > 0 ? '<t:' + character.lastAteAt + '>, roughly <t:' + character.lastAteAt + ':R>' : 'Hmm... can\'t remember...'),
-                        }],
-                        footer: { text: CANON_MESSAGE },
-                    })]
+                    embeds: [
+                        new MessageEmbed({
+                            color: 'RED',
+                            title: '🦴 Wonderful...',
+                            description: '> Looks like there\'s nothing to eat.'
+                            + '\n> Someone didn\'t go on patrol. Go \`/hunt\` for more if your leader sends you out.',
+                        }),
+                        HungerVisuals.generateHungerEmbed(interaction.member, character),
+                    ]
                 });
 
                 // pull and eat the amount, and update hunger
@@ -272,7 +275,13 @@ module.exports = {
                     ),
                     footer: { text: CANON_MESSAGE }
                 });
-                return interaction.reply({ ephemeral, embeds: [resultEmbed] });
+                return interaction.reply({
+                    ephemeral,
+                    embeds: [
+                        resultEmbed,
+                        HungerVisuals.generateHungerEmbed(interaction.member, character),
+                    ]
+                });
             }
         }
 

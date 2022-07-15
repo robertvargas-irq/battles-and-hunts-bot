@@ -77,7 +77,7 @@ module.exports = {
                 new MessageEmbed({
                     color: 'AQUA',
                     title: '🥬 Healed up `' + finalHealAmount + '` HP',
-                    description: '> ' + AttackManager.getRandomHealingMessage(),
+                    description: '> ' + HealthVisuals.Healing.getRandomHealingMessage(),
                     footer: (finalHealAmount !== originalHealAmount ? {
                         text: 'Original input has been reduced by ' + (originalHealAmount - finalHealAmount) + '.'
                     } : undefined),

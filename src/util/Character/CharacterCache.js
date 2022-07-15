@@ -67,6 +67,14 @@ class CharacterCache {
             return cached.get(guildId).set(userId, characterDocument);
         },
         /**
+         * Check to see if a Character is cached for this user
+         * @param {string} guildId 
+         * @param {string} userId 
+         */
+        has(guildId, userId) {
+            return cached.get(guildId)?.has(userId) ?? false;
+        },
+        /**
          * Remove a mongoose document from the cache
          * @param {string} guildId 
          * @param {string} userId 

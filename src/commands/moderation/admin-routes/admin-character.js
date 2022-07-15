@@ -10,8 +10,12 @@ const CoreUtil= require('../../../util/CoreUtil');
  */
 module.exports = async (interaction, subcommand) => {
 
-    // fetch character
+    
+    // filter bots
     const author = interaction.options.getMember('character-author');
+    if (author.user.bot) return CoreUtil.denyBotInteraction(interaction);
+    
+    // fetch server and character
     const server = CoreUtil.Servers.cache.get(interaction.guild.id);
     const character = CoreUtil.Characters.cache.get(interaction.guild.id, author.user.id);
     if (!CoreUtil.Characters.cache.has(interaction.guild.id, author.user.id))

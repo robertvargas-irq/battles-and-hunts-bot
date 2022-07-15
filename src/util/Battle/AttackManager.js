@@ -3,9 +3,6 @@ const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
 const StatCalculator = require('../Stats/StatCalculator');
 const {p_hit_and_crit, p_hit, p_crit_but_miss, p_miss} = require('./attackPrompts.json');
-const {damageAction, damageResponse} = require('./damagePrompts.json');
-const {healingAction, healingResponse} = require('./medicinePrompts.json');
-
 
 /**@typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans */
 /**@typedef {{name: string, size: number, bites_remaining: number}} prey */

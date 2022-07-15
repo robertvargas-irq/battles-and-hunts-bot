@@ -46,7 +46,7 @@ module.exports = {
                 description: 'You feel at ease.',
                 fields: [{
                     name: 'CURRENT HEALTH 💘',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${Player.StatCalculator.calculateMaxHealth(character)}\``,
+                    value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
                 }],
             })]
         })
@@ -70,7 +70,7 @@ module.exports = {
                     description: AttackManager.getRandomHealingMessage(),
                     fields: [{
                         name: 'CURRENT HEALTH 💘',
-                        value: `> ↣ \`${character.currentHealth}\` / \`${Player.StatCalculator.calculateMaxHealth(character)}\``,
+                        value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
                     }],
                     footer: (finalHealAmount !== originalHealAmount ? {
                         text: 'Original input has been reduced by ' + (originalHealAmount - finalHealAmount) + '.'

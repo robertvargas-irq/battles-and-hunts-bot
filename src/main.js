@@ -10,7 +10,6 @@ const CharacterCache = require('./util/Character/CharacterCache');
 const MemberCache = require('./util/Member/MemberCache');
 const ServerCache = require('./util/Server/ServerCache');
 const ExcuseCache = require('./util/Excused/ExcuseCache');
-const SubmissionCache = require('./util/Submissions/SubmissionCache');
 dotenv.config({ path: '../.env' });
 
 // initialize Discord client
@@ -70,16 +69,6 @@ require('./database/connect.js')().then(() => {
             console.log(
                 '\tExcuses successfully cached',
                 'Map(' + cache.size + ')'
-            );
-        }),
-
-        // cache character submissions
-        SubmissionCache.CacheSubmissions().then((cache) => {
-            console.log(
-                '\tSubmissions successfully cached',
-                'Guilds(' + cache.size + ') {\n',
-                Array.from(cache).map(([guildId, data]) => `\t\t'${guildId}' => Map(${data.size})`).join('\n'),
-                '\n\t}'
             );
         }),
 

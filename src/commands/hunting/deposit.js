@@ -50,11 +50,11 @@ module.exports = {
         if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
 
         // check if user is on cooldown
-        if (HuntManager.onCooldownDeposit(interaction.user.id))
+        if (HuntManager.onCooldownDeposit(interaction.guild.id, interaction.user.id))
             return HuntManager.displayCooldownDeposit(interaction);
 
         // if not carrying anything, inform
-        const carrying = HuntManager.removeFromCarry(interaction.user.id);
+        const carrying = HuntManager.clearCarrying(interaction.guild.id, interaction.user.id);
         if (carrying.length < 1) {
             return interaction.reply({
                 ephemeral: true,
@@ -99,7 +99,7 @@ module.exports = {
         server.save();
 
         // add cooldown for user
-        HuntManager.addCooldownDeposit(interaction.user.id);
+        HuntManager.addCooldownDeposit(interaction.guild.id, interaction.user.id);
 
         // notify the clan
         const notifyEmbed = new MessageEmbed();

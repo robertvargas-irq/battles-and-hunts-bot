@@ -132,7 +132,7 @@ module.exports = {
         switch (interaction.options.getSubcommand()) {
             case 'back': {
                 // if the player is not carrying anything, inform
-                const inventoryEntry = HuntManager.getCarrying(interaction.user.id);
+                const inventoryEntry = HuntManager.getCarrying(interaction.guild.id, interaction.user.id);
                 if (inventoryEntry[0] < 1) return interaction.reply({
                     ephemeral,
                     embeds: [

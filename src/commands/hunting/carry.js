@@ -19,11 +19,11 @@ module.exports = {
         if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
         
         // if not carrying anything, inform
-        const recentlyCaughtResult = HuntManager.getRecentlyCaught(interaction.user.id);
+        const recentlyCaughtResult = HuntManager.getRecentlyCaught(interaction.guild.id, interaction.user.id);
         let recentlyCaught;
         let originalInteraction;
         if (!recentlyCaughtResult) {
-            const [weightCarrying, preyCarrying] = HuntManager.getCarrying(interaction.user.id);
+            const [weightCarrying, preyCarrying] = HuntManager.getCarrying(interaction.guild.id, interaction.user.id);
             return interaction.reply({
                 ephemeral: true,
                 embeds: [
@@ -38,7 +38,7 @@ module.exports = {
         }
 
         // check if user is on cooldown
-        if (HuntManager.onCooldownDeposit(interaction.user.id))
+        if (HuntManager.onCooldownDeposit(interaction.guild.id, interaction.user.id))
             return HuntManager.displayCooldownDeposit(interaction);
         
         // attach recently caught and interaction to proper variables
@@ -46,7 +46,7 @@ module.exports = {
         originalInteraction = recentlyCaughtResult.interaction;
         
         // add to carry
-        const [overEncumbered, weightCarrying, preyCarrying] = HuntManager.addToCarry(interaction.user.id, recentlyCaught, originalInteraction);
+        const [overEncumbered, weightCarrying, preyCarrying] = HuntManager.addToCarry(interaction.guild.id, interaction.user.id, recentlyCaught, originalInteraction);
         const resultEmbed = new MessageEmbed();
 
         // if successfully carried, notify

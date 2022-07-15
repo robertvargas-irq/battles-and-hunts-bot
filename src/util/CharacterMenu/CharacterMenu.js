@@ -64,7 +64,7 @@ class CharacterMenu {
         let statSection = 0;
         const c = character;
         const s = author;
-        return new MessageEmbed({
+        const embed = new MessageEmbed({
             title: '« ' + (c.name || s.displayName + '\'s unnamed character') + ' »',
             color: s.displayHexColor,
             author: { name: '🏓 ⟪BETA BUILD | WORK-IN-PROGRESS⟫' },
@@ -102,6 +102,11 @@ class CharacterMenu {
             ],
             footer: !character.approved ? { text: '⚠️ Character is not yet approved by an administrator.' } : undefined,
         });
+
+        // add image label if image provided
+        if (c.image) embed.addField('\u200B', '🖼️ **Character Reference Image**');
+
+        return embed;
     }
 
     /**
@@ -113,9 +118,7 @@ class CharacterMenu {
 
         // package message payload
         const components = [];
-        if (this.editingEnabled) components.push(new MessageActionRow({
-            components: generateEditButtons(this, statSections)
-        }));
+        if (this.editingEnabled) components.push(...generateEditingRows(this, statSections));
         if (this.registering) components.push(new MessageActionRow({
             components: [new MessageButton({
                 customId: 'CHARACTERMENU:SUBMIT',
@@ -240,12 +243,40 @@ function generateAuxilaryEmbeds(menuObject) {
 }
 
 /**
- * Generate buttons for the Main Menu render
+ * Generate editing button rows for the Main Menu render
+ * @param {CharacterMenu} menuObject
+ * @param {string[]} statSections 
+ * @returns {MessageActionRow[]}
+ */
+function generateEditingRows(menuObject, statSections) {
+    // return single-row buttons
+    if (!menuObject.isAdmin && menuObject.editingEnabled && menuObject.statsLocked) return [
+        new MessageActionRow({
+            components: [
+                ...generateStatEditButtons(menuObject, statSections),
+                ...generateMiscEditButtons(menuObject),
+            ],
+        })
+    ]
+
+    // return dual-row buttons
+    return [
+        new MessageActionRow({
+            components: generateStatEditButtons(menuObject, statSections)
+        }),
+        new MessageActionRow({
+            components: generateMiscEditButtons(menuObject)
+        }),
+    ]
+}
+
+/**
+ * Generate stat edit buttons for the Main Menu render
  * @param {CharacterMenu} menuObject
  * @param {string[]} statSections 
  * @returns {MessageButton[]}
  */
-function generateEditButtons(menuObject, statSections) {
+function generateStatEditButtons(menuObject, statSections) {
     return [
         ...!menuObject.isAdmin && menuObject.statsLocked
         ? [new MessageButton({
@@ -256,14 +287,24 @@ function generateEditButtons(menuObject, statSections) {
             disabled: true,
         })]
         : generateSectionEditButtons(menuObject.isAdmin, menuObject.isAuthor, statSections),
+    ]
+}
+
+/**
+ * Generate miscellaneous edit buttons for the Main Menu render
+ * @param {CharacterMenu} menuObject 
+ * @returns {MessageButton[]}
+ */
+function generateMiscEditButtons(menuObject) {
+    return [
         new MessageButton({
             customId: 'CHARACTERMENU:EDIT:INFO',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Basic Info',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
         }),
         new MessageButton({
-            customId: 'CHARACTERMENU:EDIT:AGE',
-            label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Age (Moons)',
+            customId: 'CHARACTERMENU:EDIT:IMAGES',
+            label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Icon/Reference',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
         }),
     ]
@@ -339,6 +380,17 @@ function getEditModal(instance, toEdit) {
             ]}),
             new MessageActionRow({ components: [
                 new TextInputComponent({
+                    customId: 'age',
+                    label: 'Character Age (Moons)',
+                    placeholder: 'No character age provided',
+                    value: instance.character.moons ?? 0,
+                    style: 'SHORT',
+                    minLength: 1,
+                    maxLength: 3,
+                }),
+            ]}),
+            new MessageActionRow({ components: [
+                new TextInputComponent({
                     customId: 'background',
                     label: 'Basic Background',
                     placeholder: 'No name provided',
@@ -357,6 +409,21 @@ function getEditModal(instance, toEdit) {
                     maxLength: 700,
                 }),
             ]}),
+        ]
+    });
+    else if (toEdit.startsWith('IMAGES')) return new Modal({
+        customId: 'CHARACTERMENU:EDIT:' + toEdit,
+        title: '🌔 Editing Character\'s Age (Moons)',
+        components: [
+            new MessageActionRow({ components: [
+                new TextInputComponent({
+                    customId: 'icon',
+                    label: 'Character Icon (Image Link)',
+                    placeholder: 'Provide a link to an image',
+                    value: instance.character.icon || '',
+                    style: 'SHORT',
+                }),
+            ]}),
             new MessageActionRow({ components: [
                 new TextInputComponent({
                     customId: 'image',
@@ -364,23 +431,6 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'Provide a link to an image',
                     value: instance.character.image || '',
                     style: 'SHORT',
-                }),
-            ]}),
-        ]
-    });
-    else if (toEdit.startsWith('AGE')) return new Modal({
-        customId: 'CHARACTERMENU:EDIT:' + toEdit,
-        title: '🌔 Editing Character\'s Age (Moons)',
-        components: [
-            new MessageActionRow({ components: [
-                new TextInputComponent({
-                    customId: 'age',
-                    label: 'Character Age (Moons)',
-                    placeholder: 'No character age provided',
-                    value: instance.character.moons ?? 0,
-                    style: 'SHORT',
-                    minLength: 1,
-                    maxLength: 3,
                 }),
             ]}),
         ],

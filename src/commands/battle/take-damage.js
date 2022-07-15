@@ -30,15 +30,14 @@ module.exports = {
 
         // notify if health is already at 0
         if (character.currentHealth < 1) return interaction.reply({
-            embeds: [new MessageEmbed({
-                color: 'DARK_RED',
-                author: { name: 'The void has already consumed.' },
-                description: 'No more damage can be taken.',
-                fields: [{
-                    name: 'CURRENT HEALTH 💔',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``
-                }],
-            })]
+            embeds: [
+                new MessageEmbed({
+                    color: 'DARK_RED',
+                    author: { name: 'The void has already consumed.' },
+                    description: '> No more damage can be taken.',
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
         });
         
         // adjust for health tanking below 0
@@ -58,7 +57,7 @@ module.exports = {
                 new MessageEmbed({
                     color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
                     author: { name: HealthVisuals.Damage.getRandomDamageTitle(character.currentHealth) },
-                    description: HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),
+                    description: '> ' + HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),
                     footer: (finalDamageAmount !== originalDamageAmount ? {
                         text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'
                     } : undefined),

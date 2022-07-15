@@ -1,8 +1,5 @@
 const { ButtonInteraction, MessageEmbed } = require('discord.js');
-const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
-const SubmissionHandler = require('../../../../util/Submissions/SubmissionHandler');
 const HuntManager = require('../../../../util/Hunting/HuntManager');
-const CoreUtil = require('../../../../util/CoreUtil');
 const SharePool = require('../../../../util/Hunting/SharePool');
 const HuntInventory = require('../../../../util/Hunting/HuntInventory');
 
@@ -29,6 +26,7 @@ module.exports = async (button) => {
             // if no longer valid, wither
             if (!sharePoolPrey && !recentlyCaught) {
                 button.deferUpdate();
+                SharePool.removeShared(button.guild.id, button.message.id);
                 return SharePool.witherPrey(button.message);
             }
 
@@ -75,6 +73,7 @@ module.exports = async (button) => {
                     )
                     .setFooter({ text: '🍃 This carry is canon.' });
                 
+                SharePool.removeShared(button.guild.id, button.message.id);
                 return button.reply({
                     ephemeral: true,
                     embeds: [
@@ -134,6 +133,7 @@ module.exports = async (button) => {
                 )
                 .setFooter({ text: '🍃 This carry is canon.' });
             
+            SharePool.removeShared(button.guild.id, button.message.id);
             return button.reply({
                 ephemeral: true,
                 embeds: [

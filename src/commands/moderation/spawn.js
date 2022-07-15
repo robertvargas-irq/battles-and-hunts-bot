@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 const CoreUtil = require('../../util/CoreUtil');
@@ -85,7 +85,7 @@ module.exports = {
             ],
         },
     ],
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // filter out non-administrators

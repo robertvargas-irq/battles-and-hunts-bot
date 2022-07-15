@@ -1,5 +1,5 @@
 const {
-    BaseCommandInteraction,
+    CommandInteraction,
     MessageEmbed,
     GuildMember,
     Permissions,
@@ -28,7 +28,7 @@ class CharacterMenu {
 
     /**
      * Character Menu for Registration, Editing, and Admin Overrides
-     * @param {BaseCommandInteraction} interaction Discord Interaction
+     * @param {CommandInteraction} interaction Discord Interaction
      * @param {GuildMember} authorGuildMemberSnowflake Discord GuildMember object for author
      * @param {CharacterModel} character Character database entry
      */

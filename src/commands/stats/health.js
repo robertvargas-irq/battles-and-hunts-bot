@@ -1,11 +1,11 @@
-const { BaseCommandInteraction, MessageEmbed, Util: DiscordUtil } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Util: DiscordUtil } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
 module.exports = {
     name: 'health',
     description: 'Quickly view your health!',
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute( interaction ) {
         
         // if user is registered

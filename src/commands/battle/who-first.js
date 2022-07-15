@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
+const { CommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
 
@@ -15,7 +15,7 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 
@@ -62,7 +62,7 @@ module.exports = {
 
 /**
  * Inform the user they cannot attack bots.
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  */
 function denyBotAttack(interaction) {
     interaction.editReply({
@@ -77,7 +77,7 @@ function denyBotAttack(interaction) {
 
 /**
  * Inform the user they cannot attack themselves.
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  */
  function denySelfAttack(interaction) {
     interaction.editReply({

@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, GuildMember } = require('discord.js');
+const { CommandInteraction, GuildMember } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 
 
@@ -15,7 +15,7 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 

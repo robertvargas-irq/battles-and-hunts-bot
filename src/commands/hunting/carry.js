@@ -1,11 +1,11 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: 'carry',
     description: 'Put your most recently caught prey on your back.',
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 

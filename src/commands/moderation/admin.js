@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const DAY_CHOICES = [
     {
         name: 'Friday',
@@ -302,7 +302,7 @@ module.exports = {
             ]
         }
     ],
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // filter out non-administrators

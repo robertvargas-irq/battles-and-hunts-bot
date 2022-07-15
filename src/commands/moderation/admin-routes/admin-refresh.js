@@ -1,10 +1,10 @@
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const CoreUtil = require('../../../util/CoreUtil');
 const CharacterModel = require('../../../database/schemas/character');
 
 
 /**
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  * @param {string} subcommand 
  */
 module.exports = async (interaction, subcommand) => {

@@ -1,10 +1,10 @@
-const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
 const CoreUtil = require('../../../util/CoreUtil');
 
 
 /**
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  * @param {string} subcommand 
  */
 module.exports = async (interaction, subcommand) => {

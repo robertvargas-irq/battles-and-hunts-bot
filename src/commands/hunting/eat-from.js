@@ -1,7 +1,7 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const HungerVisuals = require('../../util/Hunting/HungerVisuals');
 const CANON_MESSAGE = '🍃 This message is canon.'
 
@@ -90,7 +90,7 @@ module.exports = {
         
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 

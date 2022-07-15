@@ -1,6 +1,6 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction } = require('discord.js');
+const { CommandInteraction } = require('discord.js');
 const LOCATION_TEMPLATE = {
 
 }
@@ -123,7 +123,7 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 

@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : dTypes, Locale } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const Player = require('../../util/Account/Player');
 const StatCalculator = require('../../util/Stats/StatCalculator');
@@ -26,7 +26,7 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     async execute(interaction) {
 

@@ -1,9 +1,9 @@
-const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const Player = require('../../../util/Account/Player');
 
 
 /**
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  * @param {string} subcommand 
  */
 module.exports = async (interaction, subcommand) => {

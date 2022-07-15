@@ -1,6 +1,6 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const PreyPile = require('../../util/Hunting/PreyPile');
 
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 

@@ -32,44 +32,44 @@ const CharacterSchema = new Schema({
     },
     moons: {
         type: Number,
-        default: -1,
+        default: 0,
     },
     stats: {
         cat_size: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         strength: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         dexterity: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         constitution: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         speed: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         intelligence: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         charisma: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         swimming: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         stalking: {
             type: Number,
-            default: -1
+            default: 0
         },
     },
     currentHealth: {

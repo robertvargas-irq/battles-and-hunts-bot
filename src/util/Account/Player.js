@@ -1,10 +1,9 @@
 const { GuildMember, MessageEmbed } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const stats = require('../CharacterMenu/stats.json');
-const hungerVisuals = require('../../commands/stats/hungerVisuals.json');
-const healthVisuals = require('../../commands/stats/healthVisuals.json');
-const CoreUtil = require('../CoreUtil');
 const StatCalculator = require('../Stats/StatCalculator');
+const HealthVisuals = require('../Battle/HealthVisuals');
+const HungerVisuals = require('../Hunting/HungerVisuals');
 const STATS_BANNER = 'https://cdn.discordapp.com/attachments/955294038263750716/966906542609821696/IMG_8666.gif';
 
 /**
@@ -20,7 +19,7 @@ const usersAllowedToEdit = new Map();
  * @returns {MessageEmbed[]}
  */
 function formatStats(member, character) {
-    
+    const maxHealth = StatCalculator.calculateMaxHealth(character);
     const generalStats = new MessageEmbed({
         color: '680d2b',
         title: (character.name ?? member.displayName + '\'s Character') + ' General Stats',
@@ -28,13 +27,13 @@ function formatStats(member, character) {
         fields: [
             {
                 name: 'Current Health '
-                + CoreUtil.GetArrayElementFromRatio(healthVisuals.flairs, character.currentHealth / StatCalculator.calculateMaxHealth(character)),
-                value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
+                + HealthVisuals.getFlair(character.currentHealth / maxHealth),
+                value: `> ↣ \`${character.currentHealth}\` / \`${maxHealth}\``,
                 inline: true
             },
             {
                 name: 'Current Hunger '
-                + CoreUtil.GetArrayElementFromRatio(hungerVisuals.flairs, 1 - character.currentHunger / character.stats.cat_size),
+                + HungerVisuals.getFlair(1 - character.currentHunger / character.stats.cat_size),
                 value: `> ↣ \`${character.stats.cat_size - character.currentHunger}\` / \`${character.stats.cat_size}\``,
                 inline: true,
             },
@@ -70,7 +69,7 @@ function formatStats(member, character) {
  * @param {CharacterModel} character 
  */
  function formatBattleStats(member, character) {
-    
+    const maxHealth = StatCalculator.calculateMaxHealth(character);
     const generalStats = new MessageEmbed({
         color: '680d2b',
         title: (character.name ?? member.displayName + '\'s Character') + ' Battle Stats',
@@ -78,8 +77,8 @@ function formatStats(member, character) {
         fields: [
             {
                 name: 'Current Health '
-                + CoreUtil.GetArrayElementFromRatio(healthVisuals.flairs, character.currentHealth / StatCalculator.calculateMaxHealth(character)),
-                value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
+                + HealthVisuals.getFlair(character.currentHealth / maxHealth),
+                value: `> ↣ \`${character.currentHealth}\` / \`${maxHealth}\``,
                 inline: true
             },
             {

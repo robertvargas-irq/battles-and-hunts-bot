@@ -1,7 +1,8 @@
 const { ApplicationCommandOptionType : dTypes, Locale } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
-const { calculateMaxHealth } = require('../../util/Account/Player');
+const Player = require('../../util/Account/Player');
+const StatCalculator = require('../../util/Stats/StatCalculator');
 
 module.exports = {
     name: 'medicine',
@@ -29,7 +30,6 @@ module.exports = {
     async execute(interaction) {
 
         // validate user input
-        // await interaction.deferReply({ ephemeral: false });
         const originalHealAmount = Math.max(0, interaction.options.getInteger('amount'));
         let finalHealAmount = originalHealAmount;
         
@@ -38,7 +38,7 @@ module.exports = {
         if (!character || !character.approved) return AttackManager.NotRegistered(interaction);
         
         // notify if already at max health
-        const maxHealth = calculateMaxHealth(character.stats.constitution);
+        const maxHealth = StatCalculator.calculateMaxHealth(character);
         if (character.currentHealth === maxHealth) return interaction.reply({
             embeds: [new MessageEmbed({
                 color: 'FUCHSIA',
@@ -46,7 +46,7 @@ module.exports = {
                 description: 'You feel at ease.',
                 fields: [{
                     name: 'CURRENT HEALTH 💘',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${character.stats.constitution * 5 + 50}\``,
+                    value: `> ↣ \`${character.currentHealth}\` / \`${Player.StatCalculator.calculateMaxHealth(character)}\``,
                 }],
             })]
         })
@@ -70,7 +70,7 @@ module.exports = {
                     description: AttackManager.getRandomHealingMessage(),
                     fields: [{
                         name: 'CURRENT HEALTH 💘',
-                        value: `> ↣ \`${character.currentHealth}\` / \`${character.stats.constitution * 5 + 50}\``,
+                        value: `> ↣ \`${character.currentHealth}\` / \`${Player.StatCalculator.calculateMaxHealth(character)}\``,
                     }],
                     footer: (finalHealAmount !== originalHealAmount ? {
                         text: 'Original input has been reduced by ' + (originalHealAmount - finalHealAmount) + '.'

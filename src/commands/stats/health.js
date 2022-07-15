@@ -1,7 +1,6 @@
 const { BaseCommandInteraction, MessageEmbed, Util: DiscordUtil } = require('discord.js');
-const { calculateMaxHealth } = require('../../util/Account/Player');
+const StatCalculator = require('../../util/Stats/StatCalculator');
 const CoreUtil = require('../../util/CoreUtil');
-const ColorUtil = require('color2k');
 const { colors, titles, descriptions, flairs } = require('./healthVisuals.json');
 
 module.exports = {
@@ -15,7 +14,7 @@ module.exports = {
         if (!found || !found.approved) return CoreUtil.NotRegistered(interaction);
 
         // show health bar
-        const maxHealth = calculateMaxHealth(found.stats.constitution);
+        const maxHealth = StatCalculator.calculateMaxHealth(found);
         const healthRatio = found.currentHealth / maxHealth;
         const description = getDescription(healthRatio);
         interaction.reply({
@@ -27,7 +26,7 @@ module.exports = {
                 fields: [
                     {
                         name: 'Current Health',
-                        value: `> ↣ \`${found.currentHealth}\` / \`${calculateMaxHealth(found.stats.constitution)}\` `
+                        value: `> ↣ \`${found.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(found)}\` `
                         + `**(**${Math.floor(healthRatio * 100)}%**)**`,
                         inline: true,
                     },

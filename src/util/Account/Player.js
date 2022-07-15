@@ -4,6 +4,7 @@ const stats = require('../CharacterMenu/stats.json');
 const hungerVisuals = require('../../commands/stats/hungerVisuals.json');
 const healthVisuals = require('../../commands/stats/healthVisuals.json');
 const CoreUtil = require('../CoreUtil');
+const StatCalculator = require('../Stats/StatCalculator');
 const STATS_BANNER = 'https://cdn.discordapp.com/attachments/955294038263750716/966906542609821696/IMG_8666.gif';
 
 /**
@@ -27,8 +28,8 @@ function formatStats(member, character) {
         fields: [
             {
                 name: 'Current Health '
-                + CoreUtil.GetArrayElementFromRatio(healthVisuals.flairs, character.currentHealth / calculateMaxHealth(character.stats.constitution)),
-                value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``,
+                + CoreUtil.GetArrayElementFromRatio(healthVisuals.flairs, character.currentHealth / StatCalculator.calculateMaxHealth(character)),
+                value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
                 inline: true
             },
             {
@@ -39,7 +40,7 @@ function formatStats(member, character) {
             },
             {
                 name: 'Battle Power 💪',
-                value: `> ↣ \`${character.stats.strength + character.stats.dexterity + character.stats.constitution + character.stats.speed}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`40\``,
             }
         ]
     });
@@ -77,13 +78,13 @@ function formatStats(member, character) {
         fields: [
             {
                 name: 'Current Health '
-                + CoreUtil.GetArrayElementFromRatio(healthVisuals.flairs, character.currentHealth / calculateMaxHealth(character.stats.constitution)),
-                value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``,
+                + CoreUtil.GetArrayElementFromRatio(healthVisuals.flairs, character.currentHealth / StatCalculator.calculateMaxHealth(character)),
+                value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``,
                 inline: true
             },
             {
                 name: 'Battle Power 💪',
-                value: `> ↣ \`${character.stats.strength + character.stats.dexterity + character.stats.constitution + character.stats.speed}\` / \`30\``,
+                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`30\``,
             },
             {
                 name: 'Attack',
@@ -136,14 +137,3 @@ const allowedToEdit = (guildId, userId) => {
     const guild = usersAllowedToEdit.get(guildId);
     return guild && guild.has(userId);
 }
-
-/**
- * Calculate a user's max health from their constitution
- * @param {number} constitution 
- * @returns {number} Max health
- */
-function calculateMaxHealth(constitution) {
-    return constitution * 5 + 50;
-}
-
-module.exports = { formatStats, formatBattleStats, calculateMaxHealth, allowEditing, clearEditing, allowedToEdit };

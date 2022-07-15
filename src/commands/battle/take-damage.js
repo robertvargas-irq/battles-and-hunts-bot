@@ -1,7 +1,7 @@
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
 const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
-const { calculateMaxHealth } = require('../../util/Account/Player');
+const StatCalculator = require('../../util/Stats/StatCalculator');
 
 module.exports = {
     name: 'take-damage',
@@ -35,7 +35,7 @@ module.exports = {
                 description: 'No more damage can be taken.',
                 fields: [{
                     name: 'CURRENT HEALTH 💔',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``
+                    value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``
                 }],
             })]
         });
@@ -59,7 +59,7 @@ module.exports = {
                 description: AttackManager.getRandomDamageMessage(character.currentHealth),
                 fields: [{
                     name: 'CURRENT HEALTH 💔',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``
+                    value: `> ↣ \`${character.currentHealth}\` / \`${StatCalculator.calculateMaxHealth(character)}\``
                 }],
                 footer: (finalDamageAmount !== originalDamageAmount ? {
                     text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'

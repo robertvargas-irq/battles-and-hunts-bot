@@ -254,6 +254,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No name provided',
                     value: instance.character.name || '',
                     style: 'SHORT',
+                    maxLength: 50,
                 }),
             ]}),
             new MessageActionRow({ components: [

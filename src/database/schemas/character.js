@@ -30,7 +30,11 @@ const CharacterSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    stats: {      // might become its own schema
+    moons: {
+        type: Number,
+        default: -1,
+    },
+    stats: {
         cat_size: {
             type: Number,
             default: -1,

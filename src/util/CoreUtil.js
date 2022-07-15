@@ -1,6 +1,7 @@
 const FILE_LANG_ID = 'CORE_UTIL';
 
-const { BaseCommandInteraction, MessageEmbed, MessagePayload } = require('discord.js');
+const { BaseCommandInteraction, MessageEmbed, MessagePayload, Util: DiscordUtil } = require('discord.js');
+const ColorUtil = require('color2k');
 const mongoose = require('mongoose');
 const userSchema = require('../database/schemas/user');
 const serverSchema = require('../database/schemas/server');
@@ -26,18 +27,33 @@ class CoreUtil {
     static roleplayName = ROLEPLAY_NAME;
 
     /**
+     * Parse array of Discord Color Resolvables into Hexidecimal strings
+     * @param {DiscordColor[] | Number[] | [r,g,b]} colors 
+     * @returns {string[]} Hexidecimal color strings
+     */
+    static DiscordColorArrayToHex = (colors) => colors.map(c => '#' + DiscordUtil.resolveColor(c).toString(16).replace('#', ''));
+
+    /**
+     * Get a Color from an array based on a ratio
+     * @param {DiscordColor[] | Number[] | [r,g,b]} colors 
+     * @param {number} ratio Decimal between `0` and `1`
+     * @returns {number} Hexidecimal color from the given array based on the given ratio
+     */
+    static GetColorFromRatio = (colors, ratio) => ColorUtil.toHex(ColorUtil.getScale(...CoreUtil.DiscordColorArrayToHex(colors))(ratio));
+
+    /**
      * Get an array index from a given ratio
      * @param {Array} array 
      * @param {number} ratio Decimal between `0` and `1`
      * @returns {number} An index between 0 and array.length - 1 based on the given ratio
      */
-    static getIndexFromRatio(array, ratio) {
+    static GetIndexFromRatio(array, ratio) {
         if (!array) throw Error('Array cannot be null');
         if (array.length < 1) throw Error('Array cannot be empty');
 
         // safeguard and return index
         ratio = Math.max(0, Math.min(ratio, array.length - 1));
-        return Math.floor(ratio * array.length);
+        return Math.floor(ratio * (array.length - 1));
     }
 
     /**
@@ -46,12 +62,12 @@ class CoreUtil {
      * @param {number} ratio Decimal between `0` and `1`
      * @returns {*} An index between 0 and array.length - 1 based on the given ratio
      */
-    static getArrayElementFromRatio(array, ratio) {
+    static GetArrayElementFromRatio(array, ratio) {
         if (!array) throw Error('Array cannot be null');
         if (array.length < 1) throw Error('Array cannot be empty');
 
         // return element from given ratio
-        return array[CoreUtil.getIndexFromRatio(array, ratio)];
+        return array[CoreUtil.GetIndexFromRatio(array, ratio)];
     }
 
     /**

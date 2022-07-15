@@ -175,9 +175,9 @@ module.exports = {
                     description: '> You look around to make sure no one is looking... before taking some prey from your back and tearing into it, hastily hiding ' + (consumed.length === 1 ? 'all':'') + ' the pair' + (consumed.length !== 1 ? 's':'') + ' of bones of the ' + consumedFormatted + ' before anyone could catch on. However, they are still visible to a trained eye.\n\n'
                     + (
                         character.currentHunger < 1
-                        ? 'You are fully satiated.'
-                        : 'Just... `' + character.currentHunger + '` more bite' + character.currentHunger !== 1 ? 's':''
-                    ) + '...',
+                        ? ('You are fully satiated.')
+                        : ('Just... `' + character.currentHunger + '` more bite' + (character.currentHunger !== 1 ? 's' : '')  + '...')
+                    ),
                     footer: { text: CANON_MESSAGE },
                 });
                 return interaction.reply({

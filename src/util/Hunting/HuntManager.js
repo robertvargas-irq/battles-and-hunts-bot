@@ -593,11 +593,13 @@ class HuntManager extends CoreUtil {
                     name: 'Hunting',
                     value: 'Successful Hunts: `' + character.hunting.hunts.successful + '`'
                     + '\nUnsuccessful Hunts: `' + character.hunting.hunts.unsuccessful + '`'
+                    + '\nSuccess/Fail Ratio: `' + ((character.hunting.hunts.successful + 1) / (character.hunting.hunts.unsuccessful + 1)).toFixed(2) + '`'
                 },
                 {
                     name: 'Contributions',
                     value: 'Total Prey Count: `' + character.hunting.contributions.preyCount + '`'
                     + '\nTotal Prey Weight: `' + character.hunting.contributions.preyWeight + '` `lbs.`'
+                    + '\nAverage Prey Weight: `' + ((character.hunting.contributions.preyWeight + 1) / (character.hunting.contributions.preyCount + 1)).toFixed(2) + '`'
                 },
                 {
                     name: 'Hunting Trips',

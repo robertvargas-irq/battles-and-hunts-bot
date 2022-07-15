@@ -1,11 +1,11 @@
-const { BaseCommandInteraction, MessageEmbed, Util: DiscordUtil } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const { colors, titles, descriptions, flairs } = require('./hungerVisuals.json');
 
 module.exports = {
     name: 'hunger',
     description: 'Quickly view your hunger!',
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
         
         // if user is registered
@@ -19,6 +19,7 @@ module.exports = {
                 color: getColor(hungerRatio),
                 title: '⟪' + getFlair(hungerRatio) + '⟫ ' + getTitle(hungerRatio),
                 description: '*' + getDescription(hungerRatio) + '*',
+                thumbnail: { url: found.icon ?? interaction.member.displayAvatarURL({ dynamic: true }) },
                 fields: [
                     {
                         name: 'Current Hunger',
@@ -36,7 +37,7 @@ module.exports = {
                         value: '> ' + (found.lastAteAt > 0 ? '<t:' + found.lastAteAt + '>, roughly <t:' + found.lastAteAt + ':R>' : 'Hmm... can\'t remember...'),
                     },
                 ],
-                footer: { text: '🍃 This hunger stat is canon.' }
+                footer: { text: '🍃 This hunger stat is canon' + ' : ' + (found.name ?? interaction.member.displayName + '\'s character')}
             })]
         });
     

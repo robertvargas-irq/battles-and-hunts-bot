@@ -122,7 +122,7 @@ class CharacterMenu {
             })]
         }));
         const payload = {
-            embeds: [embed],
+            embeds: [embed, ...generateAuxilaryEmbeds(this)],
             ephemeral: this.editingEnabled,
             components,
         }
@@ -201,6 +201,32 @@ class CharacterMenu {
 /*
  * Helper functions
  */
+
+/**
+ * Generate any additional embeds that need to be displayed
+ * @param {CharacterMenu} menuObject 
+ */
+function generateAuxilaryEmbeds(menuObject) {
+    const embeds = [];
+
+    // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
+    if (!menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new MessageEmbed({
+        color: 'BLURPLE',
+        title: '💡 Why am I unable to edit stats?',
+        description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
+        footer: { text: 'This is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.' },
+    }));
+
+    // if administrator providing overrides, inform about their permissions
+    if (menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new MessageEmbed({
+        color: 'RED',
+        title: '📌 Administrator Overrides',
+        description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',
+        footer: { text: 'Please ensure that the user is informed of any changes. Additionally, ensure that these changes are reasonable and are only used to enforce a standard set in place by the server.' }
+    }));
+
+    return embeds;
+}
 
 /**
  * Generate buttons for the Main Menu render

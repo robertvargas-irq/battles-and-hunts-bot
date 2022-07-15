@@ -1,4 +1,4 @@
-const { MessageEmbed, GuildMember } = require("discord.js");
+const { MessageEmbed, GuildMember, Message } = require("discord.js");
 const HuntManager = require("./HuntManager");
 
 class HuntInventory {
@@ -79,10 +79,10 @@ class HuntInventory {
      * @param {string} guildId The guild the user caught the prey
      * @param {string} userId The player to add to their carry
      * @param {prey} prey The prey to add to their carry
-     * @param {CommandInteraction} originalInteraction The original interaction
-     * @returns {[Array]} [`Over Encumbered`, `WeightCarried`, `CurrentlyCarrying`]
+     * @param {Message} originalMessage The original interaction
+     * @returns {[overEncumbered, weightCarrying, currentlyCarrying]} [`Over Encumbered`, `WeightCarried`, `CurrentlyCarrying`]
      */
-    static addToCarry(guildId, userId, prey, originalInteraction) {
+    static addToCarry(guildId, userId, prey, originalMessage) {
 
         // get player inventory else create one
         const inventory = this.getCarrying(guildId, userId);
@@ -98,27 +98,25 @@ class HuntInventory {
         inventory[0] = inventory[0] + prey.bites_remaining;
 
         // remove from recently caught
-        HuntManager.setRecentlyCaught(null, guildId, userId, null);
+        HuntManager.setRecentlyCaught(originalMessage, null, guildId, null);
         console.log(inventory);
 
         // swap interaction sidebar to grey if possible
-        originalInteraction.fetchReply().then(r => {
-            r.edit({
-                embeds: [r.embeds[0]
-                    .setColor('GREYPLE')
-                    .setTitle('')
-                    .setThumbnail(r.embeds[0].image?.url || '')
-                    .setDescription('')
-                    .setImage('')
-                    .setFooter({
-                        text: '🐾 Prey was carried away',
-                        iconURL: r.embeds[0].footer?.iconURL
-                    }),
-                ],
-                components: [],
-            });
+        originalMessage.edit({
+            embeds: [originalMessage.embeds[0]
+                .setColor('GREYPLE')
+                .setTitle('')
+                .setThumbnail(originalMessage.embeds[0].image?.url || '')
+                .setDescription('')
+                .setImage('')
+                .setFooter({
+                    text: '🐾 Prey was carried away',
+                    iconURL: originalMessage.embeds[0].footer?.iconURL
+                }),
+            ],
+            components: [],
         }).catch((e) => {
-            console.log("Original interaction may have been timed out or deleted.")
+            console.log("Original message may have been deleted.")
             console.error(e);
         });
         
@@ -177,7 +175,7 @@ class HuntInventory {
         return new MessageEmbed({
             color: 'BLURPLE',
             title: '🎒 Hunting Carrying Inventory',
-            description: preyCarrying.length > 1
+            description: preyCarrying.length > 0
             ? '**Currently Carrying**\n' + HuntManager.formatPrey(preyCarrying)
             : '> Not currently carrying anything.\n\n⇸',
             fields: [

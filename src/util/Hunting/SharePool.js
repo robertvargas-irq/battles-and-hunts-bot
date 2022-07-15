@@ -39,6 +39,16 @@ class SharePool {
 
     }
 
+    static removeShared = (guildId, messageId) => {
+
+        // get server
+        const server = this.#sharePool.get(guildId);
+        if (!server) return false;
+        
+        // remove shared
+        return server.delete(messageId);
+    }
+
     static getShared = (message) => {
         
         // instantiate server if not already
@@ -99,6 +109,8 @@ class SharePool {
     static generateShareEmbed = (prey, character, member) => new MessageEmbed({
         color: 'GOLD',
         title: '💖🥬 Shared Prey',
+        thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
+        image: prey.visual ? { url: prey.visual } : undefined,
         description: '**' + (character.name ?? member.displayName + '\'s character') + '** has shared the following:'
         + '\n\n**Prey Information**'
         + '\n> Name: ' + HuntManager.ProperCapitalization(prey.name)

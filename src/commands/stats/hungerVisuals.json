@@ -7,9 +7,15 @@
     ],
     "titles": [
         "Satiated",
-        "Could go for a bite",
-        "Not feeling too good...",
-        "I might starve soon..."
+        "Peckish",
+        "Ill",
+        "Starving"
+    ],
+    "descriptions": [
+        "My hunger seems to be satiated, for now.",
+        "I could go for a bite.",
+        "I'm not really feeling well.",
+        "I might starve soon."
     ],
     "flairs": [
         "🍖",

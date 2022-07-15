@@ -98,7 +98,7 @@ class HuntInventory {
         inventory[0] = inventory[0] + prey.bites_remaining;
 
         // remove from recently caught
-        this.setRecentlyCaught(null, guildId, userId, null);
+        HuntManager.setRecentlyCaught(null, guildId, userId, null);
         console.log(inventory);
 
         // swap interaction sidebar to grey if possible

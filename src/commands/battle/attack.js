@@ -19,9 +19,6 @@ module.exports = {
      */
     async execute(interaction) {
 
-        // defer
-        // await interaction.deferReply({ ephemeral: false });
-
         // if target is bot or user, deny
         /**@type {GuildMember}*/
         const targetSnowflake = interaction.options.getMember('opponent');

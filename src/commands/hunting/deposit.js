@@ -107,7 +107,7 @@ module.exports = {
             notifyEmbed
                 .setColor('GREEN')
                 .setTitle('📦 Some food has arrived.')
-                .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
+                .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
                 **${interaction.member.displayName}** has deposited some food into the prey pile.\
                 \n\
@@ -124,7 +124,7 @@ module.exports = {
             notifyEmbed
                 .setColor('AQUA')
                 .setTitle('🎁 Some prey has been graciously gifted to us!')
-                .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
+                .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
                 **An outsider to our clan has gifted food to our prey pile!!**\
                 \n> The scent is coming from someone from **${character.clan?.toUpperCase() || 'an unknown clan or territory'}**...\

@@ -1,4 +1,5 @@
 const CharacterModel = require('../../database/schemas/character');
+const stats = require('../CharacterMenu/stats.json');
 
 class StatCalculator {
     static calculateMaxHealth = (/**@type {CharacterModel}*/character) => character.stats.constitution * 5 + 50;
@@ -6,6 +7,17 @@ class StatCalculator {
     static calculateAttackMax = (/**@type {CharacterModel}*/character) => character.stats.strength * 4;
     static calculateDodgeChance = (/**@type {CharacterModel}*/character) => character.stats.speed * 4;
     static calculateCritChance = (/**@type {CharacterModel}*/character) => character.stats.dexterity * 3;
+
+    static max = {
+        battlePower: 30,
+        attackMax: stats.strength.range[1] * 4,
+        dodgeChance: stats.speed.range[1] * 4,
+        critChance: stats.dexterity.range[1] * 3,
+    };
+
+    static min = {
+        critChance: 0,
+    }
 }
 
 module.exports = StatCalculator;

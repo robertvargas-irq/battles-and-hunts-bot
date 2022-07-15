@@ -39,7 +39,7 @@ function formatStats(member, character) {
             },
             {
                 name: 'Battle Power 💪',
-                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`${StatCalculator.max.battlePower}\``,
             }
         ]
     });
@@ -83,21 +83,21 @@ function formatStats(member, character) {
             },
             {
                 name: 'Battle Power 💪',
-                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`30\``,
+                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`${StatCalculator.max.battlePower}\``,
             },
             {
                 name: 'Attack',
-                value: `> ↣ \`${StatCalculator.calculateAttackMax(character)}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateAttackMax(character)}\` / \`${StatCalculator.max.attackMax}\``,
                 inline: true,
             },
             {
                 name: 'Dodge Chance',
-                value: `> ↣ \`${StatCalculator.calculateDodgeChance(character)}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateDodgeChance(character)}\` / \`${StatCalculator.max.dodgeChance}\``,
                 inline: true,
             },
             {
                 name: 'Crit. Chance',
-                value: `> ↣ \`0\` - \`${StatCalculator.calculateCritChance(character)}\``,
+                value: `> ↣ \`${StatCalculator.min.critChance}\` - \`${StatCalculator.calculateCritChance(character)}\``,
                 inline: true,
             },
         ]

@@ -80,6 +80,17 @@ class CharacterMenu {
                 {
                     name: 'Clan',
                     value: '> `' + (c.clan?.toUpperCase() || 'Not chosen') + '`',
+                    inline: true,
+                },
+                {
+                    name: 'Age (Moons)',
+                    value: '> `' + (c.moons > -1 ? c.moons : 'Not assigned').toString() + '`',
+                    inline: true,
+                },
+                {
+                    name: '\u200B',
+                    value: '\u200B',
+                    inline: true,
                 },
                 {
                     name: 'Personality',
@@ -212,7 +223,12 @@ function generateEditButtons(menuObject, statSections) {
             customId: 'CHARACTERMENU:EDIT:INFO',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Basic Info',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
-        })
+        }),
+        new MessageButton({
+            customId: 'CHARACTERMENU:EDIT:AGE',
+            label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Age (Moons)',
+            style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
+        }),
     ]
 }
 
@@ -314,6 +330,22 @@ function getEditModal(instance, toEdit) {
                 }),
             ]}),
         ]
+    });
+    else if (toEdit.startsWith('AGE')) return new Modal({
+        customId: 'CHARACTERMENU:EDIT:' + toEdit,
+        title: '🌔 Editing Character\'s Age (Moons)',
+        components: [
+            new MessageActionRow({ components: [
+                new TextInputComponent({
+                    customId: 'age',
+                    label: 'Character Age (Moons)',
+                    placeholder: 'No character age provided',
+                    value: instance.character.moons > -1 ? instance.character.moons : '',
+                    style: 'SHORT',
+                    maxLength: 3,
+                }),
+            ]}),
+        ],
     });
 
     // handle sections

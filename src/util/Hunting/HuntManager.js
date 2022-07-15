@@ -62,6 +62,12 @@ class HuntManager extends CoreUtil {
      * Map of 2 cooldown timers for /deposit */
     static #cooldownDeposit = new Map();
 
+    /**
+     * Get user's cooldown timers for /hunt;
+     * Remove cooldown if applicable
+     * @param {string} guildId Guild user is in
+     * @param {string} userId User to check for
+     */
     static getCooldownHunt(guildId, userId) {
         // get server
         const server = this.#cooldownHunt.get(guildId);
@@ -71,11 +77,17 @@ class HuntManager extends CoreUtil {
         const timers = server.get(userId);
 
         // if no cooldown at all
-        if (!timers) return false;
+        if (!timers || !timers.length) return false;
 
-        return timers[0];
+        return timers;
     }
 
+    /**
+     * Get user's cooldown timers for /deposit;
+     * Remove cooldown if applicable
+     * @param {string} guildId Guild user is in
+     * @param {string} userId User to check for
+     */
     static getCooldownDeposit(guildId, userId) {
         // get server
         const server = this.#cooldownDeposit.get(guildId);
@@ -85,9 +97,9 @@ class HuntManager extends CoreUtil {
         const timers = server.get(userId);
 
         // if no cooldown at all
-        if (!timers) return false;
+        if (!timers || !timers.length) return false;
 
-        return timers[0];
+        return timers;
     }
 
     /**
@@ -618,7 +630,7 @@ class HuntManager extends CoreUtil {
      * @param {CommandInteraction} interaction Original Discord interaction
      */
     static async displayCooldownHunt(interaction) {
-        let minutes = ((this.#HUNT_COOLDOWN - (Date.now() - this.getCooldownHunt(interaction.guild.id, interaction.user.id))) / 60 / 1000).toFixed(1);
+        let minutes = ((this.#HUNT_COOLDOWN - (Date.now() - this.getCooldownHunt(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
         return await this.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new MessageEmbed({
@@ -640,7 +652,7 @@ class HuntManager extends CoreUtil {
      * @param {CommandInteraction} interaction Original Discord interaction
      */
     static async displayCooldownDeposit(interaction) {
-        let minutes = ((this.#DEPOSIT_COOLDOWN - (Date.now() - this.getCooldownDeposit(interaction.guild.id, interaction.user.id))) / 60 / 1000).toFixed(1);
+        let minutes = ((this.#DEPOSIT_COOLDOWN - (Date.now() - this.getCooldownDeposit(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
         return await this.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new MessageEmbed({

@@ -405,7 +405,7 @@ class CoreUtil {
 
             // provide the word with proper casing
             return word[0].toUpperCase() + word.substring(1);
-        });
+        }).join(' ');
 
         // return the final concatenation
         return firstWordProper + ' ' + subsequentWords;

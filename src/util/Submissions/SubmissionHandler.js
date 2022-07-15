@@ -32,22 +32,34 @@ class SubmissionHandler {
         const sendAndSave = async () => {
             return channel.send({
                 embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
-                components: [new MessageActionRow({
-                    components: [
-                        new MessageButton({
-                            customId: 'CHARACTERSUBMISSION:APPROVE',
-                            label: 'Approve Submission',
-                            emoji: '✅',
-                            style: 'SUCCESS',
-                        }),
-                        new MessageButton({
-                            customId:'CHARACTERSUBMISSION:DELETE',
-                            label: 'Delete',
-                            emoji: '🗑️',
-                            style: 'SECONDARY',
-                        }),
-                    ]
-                })]
+                components: [
+                    new MessageActionRow({
+                        components: [
+                            new MessageButton({
+                                customId: 'CHARACTERSUBMISSION:APPROVE',
+                                label: 'Approve Submission',
+                                emoji: '✅',
+                                style: 'SUCCESS',
+                            }),
+                            new MessageButton({
+                                customId: 'CHARACTERSUBMISSION:REFRESH',
+                                label: 'Refresh Submission',
+                                emoji: '🔃',
+                                style: 'SECONDARY',
+                            }),
+                        ]
+                    }),
+                    new MessageActionRow({
+                        components: [
+                            new MessageButton({
+                                customId:'CHARACTERSUBMISSION:DELETE',
+                                label: 'Delete',
+                                emoji: '🗑️',
+                                style: 'SECONDARY',
+                            }),
+                        ]
+                    }),
+                ]
             }).then(m => {
                 // store as active submission
                 server.submissions?.messageIdToAuthorId?.set(m.id, character.userId);
@@ -69,22 +81,34 @@ class SubmissionHandler {
             if (message) {
                 message.edit({
                     embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
-                    components: [new MessageActionRow({
-                        components: [
-                            new MessageButton({
-                                customId: 'CHARACTERSUBMISSION:APPROVE',
-                                label: 'Approve Submission',
-                                emoji: '✅',
-                                style: 'SUCCESS',
-                            }),
-                            new MessageButton({
-                                customId:'CHARACTERSUBMISSION:DELETE',
-                                label: 'Delete',
-                                emoji: '🗑️',
-                                style: 'SECONDARY',
-                            }),
-                        ]
-                    })]
+                    components: [
+                        new MessageActionRow({
+                            components: [
+                                new MessageButton({
+                                    customId: 'CHARACTERSUBMISSION:APPROVE',
+                                    label: 'Approve Submission',
+                                    emoji: '✅',
+                                    style: 'SUCCESS',
+                                }),
+                                new MessageButton({
+                                    customId: 'CHARACTERSUBMISSION:REFRESH',
+                                    label: 'Refresh Submission',
+                                    emoji: '🔃',
+                                    style: 'SECONDARY',
+                                }),
+                            ]
+                        }),
+                        new MessageActionRow({
+                            components: [
+                                new MessageButton({
+                                    customId:'CHARACTERSUBMISSION:DELETE',
+                                    label: 'Delete',
+                                    emoji: '🗑️',
+                                    style: 'SECONDARY',
+                                }),
+                            ]
+                        }),
+                    ]
                 });
                 return interaction.reply({
                     ephemeral: true,

@@ -1,4 +1,5 @@
-const { MessageEmbed, BaseCommandInteraction } = require('discord.js');
+const { MessageEmbed, CommandInteraction, GuildMember } = require('discord.js');
+const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
 const {p_hit_and_crit, p_hit, p_crit_but_miss, p_miss} = require('./attackPrompts.json');
 const {damageAction, damageResponse} = require('./damagePrompts.json');
@@ -10,7 +11,7 @@ const {healingAction, healingResponse} = require('./medicinePrompts.json');
 
 /**
  * Initiate rolls.
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  * @param {userSchema} attacker 
  * @param {userSchema} target 
  * @param {GuildMember} targetSnowflake
@@ -34,6 +35,13 @@ class AttackManager extends CoreUtil {
 
     };
 
+    /**
+     * Roll and display the attack result
+     * @param {CommandInteraction} interaction 
+     * @param {CharacterModel} attacker 
+     * @param {CharacterModel} target 
+     * @param {GuildMember} targetMember 
+     */
     static async rollAndGiveAttackResult(interaction, attacker, target, targetMember) {
 
         // calculate rolls
@@ -52,7 +60,11 @@ class AttackManager extends CoreUtil {
         embeds.push(new MessageEmbed({
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#abfa7a' : '#fa877a',
             image: { url: interaction.member.displayAvatarURL({ dynamic: true }) },
-            author: { name: '🗡️ ' + interaction.member.displayName + ' has launched an attack!' },
+            author: {
+                name: '🗡️ '
+                + (attacker.name ?? interaction.member.displayName + '\'s character')
+                + ' has launched an attack!'
+            },
         }));
 
         // break down attack roll
@@ -76,8 +88,9 @@ class AttackManager extends CoreUtil {
             color: hit ? '#fa877a' : '#abfa7a',
             thumbnail: { url: targetMember.displayAvatarURL({ dynamic: true }) },
             title: (hit && crit ? '💥 CRITICAL HIT\n' : hit ? '⚔️ ' : '🍃 ')
-            + targetMember.displayName + ' ' + (hit ? 'has endured `' + damage + '` damage!' : 'has avoided the blow'),
-            description: '> **' + interaction.member.displayName + '** ' + getRandomDescription(hit, crit)
+            + (target.name ?? targetMember.displayName + '\'s character')
+            + ' ' + (hit ? 'has endured `' + damage + '` damage!' : 'has avoided the blow'),
+            description: '> **' + (attacker.name ?? interaction.member.displayName + '\'s character') + '** ' + getRandomDescription(hit, crit)
             + (hit ? '\n\n**' + targetMember.displayName + ' must now use `/take-damage` `' + damage + '`.' + '**' : ''),
         }));
 
@@ -102,7 +115,7 @@ class AttackManager extends CoreUtil {
 
     /**
      * Inform the user they cannot attack bots.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     static denyBotAttack(interaction) {
         this.SafeReply(interaction, {
@@ -117,7 +130,7 @@ class AttackManager extends CoreUtil {
 
     /**
      * Inform the user they cannot attack themselves.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     static denySelfAttack(interaction) {
         this.SafeReply(interaction, {
@@ -132,10 +145,10 @@ class AttackManager extends CoreUtil {
 
     /**
      * Inform the user that their target is not registered.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     static targetNotRegistered(interaction) {
-        this.SafeReply(interation, {
+        this.SafeReply(interaction, {
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
                 .setTitle('🛡️ WOAH THERE')

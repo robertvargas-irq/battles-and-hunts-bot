@@ -1,6 +1,6 @@
 const FILE_LANG_ID = 'CORE_UTIL';
 
-const { BaseCommandInteraction, MessageEmbed, MessagePayload, Util: DiscordUtil } = require('discord.js');
+const { CommandInteraction, MessageEmbed, MessagePayload, Util: DiscordUtil } = require('discord.js');
 const ColorUtil = require('color2k');
 const mongoose = require('mongoose');
 const userSchema = require('../database/schemas/user');
@@ -72,7 +72,7 @@ class CoreUtil {
 
     /**
      * Properly reply based on whether or not the interaction has been replied to already
-     * @param {BaseCommandInteraction} interaction Interaction to reply to/edit reply
+     * @param {CommandInteraction} interaction Interaction to reply to/edit reply
      * @param {MessagePayload} messagePayload The message to send
      */
     static async SafeReply(interaction, messagePayload) {
@@ -81,8 +81,38 @@ class CoreUtil {
     }
 
     /**
+     * Inform the user they cannot perform this action on bots.
+     * @param {CommandInteraction} interaction 
+     */
+     static denyBotInteraction(interaction, customMessage = null) {
+        CoreUtil.SafeReply(interaction, {
+            embeds : [new MessageEmbed()
+                .setColor('BLURPLE')
+                .setTitle('🛡️ WOAH THERE')
+                .setDescription(customMessage ?? 'You cannot perform this action on a bot! 🤖')
+            ]
+        });
+        return false;
+    }
+
+    /**
+     * Inform the user they cannot perform this action on themselves.
+     * @param {CommandInteraction} interaction 
+     */
+    static denySelfInteraction(interaction, customMessage = null) {
+        CoreUtil.SafeReply(interaction, {
+            embeds : [new MessageEmbed()
+                .setColor('BLURPLE')
+                .setTitle('🛡️ WOAH THERE')
+                .setDescription(customMessage ?? 'You cannot perform this action on yourself! 🥬')
+            ]
+        });
+        return false;
+    }
+
+    /**
      * Inform the user that they have not registered and must do so.
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     static async NotRegistered(interaction) {
         const reply = {
@@ -119,7 +149,7 @@ class CoreUtil {
 
     /**
      * Send a message and delete after a set amount of seconds
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {MessagePayload} messagePayload
      * @param {[number]} seconds
      */
@@ -271,7 +301,7 @@ class CoreUtil {
     
     /**
      * Prompts that time has run out.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformTimeout(interaction, translator) {
@@ -288,7 +318,7 @@ class CoreUtil {
 
     /**
      * Inform that input is invalid.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformInvalid(interaction, translator) {
@@ -305,7 +335,7 @@ class CoreUtil {
 
     /**
      * Inform that they have not been assigned a clan yet.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformNotRegistered(interaction, translator) {
@@ -322,7 +352,7 @@ class CoreUtil {
 
     /**
      * Show successful cancellation.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformSuccessfulCancel(interaction, translator) {
@@ -339,7 +369,7 @@ class CoreUtil {
 
     /**
      * Helper function; collects one input.
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     static async CollectOneMessage(interaction, filter) {
         let input = await interaction.channel.awaitMessages({ filter: filter, max: 1, time: TIME * 1000, errors: ['time'] })

@@ -41,6 +41,20 @@ class CoreUtil {
     }
 
     /**
+     * Get an array element from a given ratio
+     * @param {Array} array 
+     * @param {number} ratio Decimal between `0` and `1`
+     * @returns {*} An index between 0 and array.length - 1 based on the given ratio
+     */
+    static getArrayElementFromRatio(array, ratio) {
+        if (!array) throw Error('Array cannot be null');
+        if (array.length < 1) throw Error('Array cannot be empty');
+
+        // return element from given ratio
+        return array[CoreUtil.getIndexFromRatio(array, ratio)];
+    }
+
+    /**
      * Properly reply based on whether or not the interaction has been replied to already
      * @param {BaseCommandInteraction} interaction Interaction to reply to/edit reply
      * @param {MessagePayload} messagePayload The message to send

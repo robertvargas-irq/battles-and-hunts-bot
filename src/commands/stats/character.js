@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed, GuildMember } = require('discord.js');
+const { CommandInteraction } = require('discord.js');
 const CharacterMenu = require('../../util/CharacterMenu/CharacterMenu');
 const Player = require('../../util/Account/Player');
 const CoreUtil = require('../../util/CoreUtil');

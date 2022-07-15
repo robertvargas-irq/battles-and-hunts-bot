@@ -248,10 +248,35 @@ module.exports = {
                 // spawn menu to open a submission
                 interaction.channel.send({
                     embeds: [new MessageEmbed({
-                        author: { name: '🔨 WORK-IN-PROGRESS' },
+                        author: { name: '🏓 ⟪BETA BUILD | WORK-IN-PROGRESS⟫' },
                         color: 'FUCHSIA',
                         title: '🗃️ Character Submission Information',
-                        description: 'Do anim dolor est duis laborum mollit. Labore dolor aliqua nisi ullamco velit ad est. Ea reprehenderit enim magna deserunt magna reprehenderit qui enim. Ad aliquip deserunt dolore pariatur ullamco est adipisicing elit. Duis tempor laborum quis commodo amet voluptate deserunt cillum consectetur aliqua sint Lorem sint enim.\n\nNulla velit exercitation ad consequat excepteur cupidatat adipisicing aliqua reprehenderit aliquip. Officia irure tempor sunt aute laborum reprehenderit duis aute aliqua nostrud cillum reprehenderit est consectetur. Deserunt aute eu aute in do sunt nisi esse quis. Mollit nisi sit anim velit officia occaecat occaecat cupidatat laboris. Consequat magna qui quis consectetur cupidatat enim. Esse enim reprehenderit ut magna laborum enim adipisicing minim ut.'
+                        description: '> Welcome to **' + CoreUtil.roleplayName + '**! We\'re incredibly happy to have you join us!'
+                        + '\n> \n> Before you can get started with roleplay sessions and all of the features provided by **' + interaction.client.user.username + '**, let\'s get you started in writing your own path in **' + CoreUtil.roleplayName
+                        + '** by getting you on your way to penning your own character! There are just a few things you need to keep in mind while writing your character and whipping up their stats:',
+                        fields: [
+                            {
+                                name: '__Stat Rules (Ages in Moons)__',
+                                value: '__Kits__ (`<6`)\n> **10 MAX** stat points.'
+                                + '\n\n__Apprentices__ (`6`-`11`)\n> **20 MAX** stat points.'
+                                + '\n\n__Warriors__ (`12`-`50`)\n> **40 MAX** stat points.'
+                                + '\n\n__Seasoned Warriors__ (`51`-`119`)\n> **45 MAX** stat points.'
+                                + '\n\n__Elders__ (`120`-`Dead`)\n> **35 MAX** stat points.'
+                                + '\n\n__Leaders__\n> **50 MAX** stat points.'
+                                + '\n\n__Medicine Cats__\n> **35 MAX** as they are not as well trained as warriors, but know more than the average apprentice.'
+                                + '\n\n**Stat points can be distributed however you wish between the 8 available stats on your character sheet:**'
+                                + '\n> Strength, Dexterity, Constitution, Charisma, Speed, Swimming, Intelligence, Stalking.'
+                                + '\n\nMake sure they add up to the total amount of stat points you have, not more, not less! Moon rules still apply even if you\'re an Unforgiven member.',
+                                inline: true,
+                            },
+                            {
+                                name: '__Submission Rules__',
+                                value: '**1.** You **CANNOT** submit a character **UNTIL 24 HOURS** after you joined the server. This is to ensure you have enough time to truly delve deep into which character you would truly like to play during the roleplay session.'
+                                + '\n\n**2.** After the previous stated 24 hours, you will be given **3 DAYS** to submit a character **before being kicked for inactivity.**'
+                                + '\n\n**3.** You must look at the #CharacterTracker before submitting a character as well to make sure you have all the information needed.',
+                                inline: true,
+                            },
+                        ]
                     })],
                     components: [new MessageActionRow({
                         components: [new MessageButton({

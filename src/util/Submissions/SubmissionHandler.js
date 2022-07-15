@@ -20,6 +20,7 @@ class SubmissionHandler {
      */
     static async handleSubmission(interaction, character, server) {
         const channel = await this.fetchProcessingChannel(interaction, server);
+        console.log({channel});
         if (!channel) return interaction.reply({
             embeds: [new MessageEmbed({
                 title: '⚠️ Wait a minute-!',
@@ -31,26 +32,38 @@ class SubmissionHandler {
         const sendAndSave = async () => {
             return channel.send({
                 embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
-                components: [new MessageActionRow({
-                    components: [
-                        new MessageButton({
-                            customId: 'CHARACTERSUBMISSION:APPROVE',
-                            label: 'Approve Submission',
-                            emoji: '✅',
-                            style: 'SUCCESS',
-                        }),
-                        new MessageButton({
-                            customId:'CHARACTERSUBMISSION:DELETE',
-                            label: 'Delete',
-                            emoji: '🗑️',
-                            style: 'SECONDARY',
-                        }),
-                    ]
-                })]
+                components: [
+                    new MessageActionRow({
+                        components: [
+                            new MessageButton({
+                                customId: 'CHARACTERSUBMISSION:APPROVE',
+                                label: 'Approve Submission',
+                                emoji: '✅',
+                                style: 'SUCCESS',
+                            }),
+                            new MessageButton({
+                                customId: 'CHARACTERSUBMISSION:REFRESH',
+                                label: 'Refresh Submission',
+                                emoji: '🔃',
+                                style: 'SECONDARY',
+                            }),
+                        ]
+                    }),
+                    new MessageActionRow({
+                        components: [
+                            new MessageButton({
+                                customId:'CHARACTERSUBMISSION:DELETE',
+                                label: 'Delete',
+                                emoji: '🗑️',
+                                style: 'SECONDARY',
+                            }),
+                        ]
+                    }),
+                ]
             }).then(m => {
                 // store as active submission
-                server.submissions.messageIdToAuthorId.set(m.id, character.userId);
-                server.submissions.authorIdToMessageId.set(character.userId, m.id);
+                server.submissions?.messageIdToAuthorId?.set(m.id, character.userId);
+                server.submissions?.authorIdToMessageId?.set(character.userId, m.id);
                 server.save();
 
                 // start thread for discussions
@@ -68,28 +81,40 @@ class SubmissionHandler {
             if (message) {
                 message.edit({
                     embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
-                    components: [new MessageActionRow({
-                        components: [
-                            new MessageButton({
-                                customId: 'CHARACTERSUBMISSION:APPROVE',
-                                label: 'Approve Submission',
-                                emoji: '✅',
-                                style: 'SUCCESS',
-                            }),
-                            new MessageButton({
-                                customId:'CHARACTERSUBMISSION:DELETE',
-                                label: 'Delete',
-                                emoji: '🗑️',
-                                style: 'SECONDARY',
-                            }),
-                        ]
-                    })]
+                    components: [
+                        new MessageActionRow({
+                            components: [
+                                new MessageButton({
+                                    customId: 'CHARACTERSUBMISSION:APPROVE',
+                                    label: 'Approve Submission',
+                                    emoji: '✅',
+                                    style: 'SUCCESS',
+                                }),
+                                new MessageButton({
+                                    customId: 'CHARACTERSUBMISSION:REFRESH',
+                                    label: 'Refresh Submission',
+                                    emoji: '🔃',
+                                    style: 'SECONDARY',
+                                }),
+                            ]
+                        }),
+                        new MessageActionRow({
+                            components: [
+                                new MessageButton({
+                                    customId:'CHARACTERSUBMISSION:DELETE',
+                                    label: 'Delete',
+                                    emoji: '🗑️',
+                                    style: 'SECONDARY',
+                                }),
+                            ]
+                        }),
+                    ]
                 });
                 return interaction.reply({
                     ephemeral: true,
                     embeds: [new MessageEmbed({
                         title: '🔃 Refreshed submission',
-                        description: '<#' + server.submissions.channelId + '>'
+                        description: '<#' + server.submissions?.channelId + '>'
                     })]
                 });
             }
@@ -100,7 +125,7 @@ class SubmissionHandler {
                 ephemeral: true,
                 embeds: [new MessageEmbed({
                     title: '✅ Re-submitted!',
-                    description: '<#' + server.submissions.channelId + '>',
+                    description: '<#' + server.submissions?.channelId + '>',
                 })]
             });
 
@@ -113,7 +138,7 @@ class SubmissionHandler {
             ephemeral: true,
             embeds: [new MessageEmbed({
                 title: '✅ Submitted!',
-                description: '<#' + server.submissions.channelId + '>',
+                description: '<#' + server.submissions?.channelId + '>',
             })]
         });
     }
@@ -124,7 +149,7 @@ class SubmissionHandler {
      * @param {ServerSchema} server 
      */
     static async fetchProcessingChannel(interaction, server) {
-        return interaction.guild.channels.fetch(server.submissions.channelId).catch(() => false);
+        return interaction.guild.channels.fetch(server.submissions?.channelId || '0').catch(() => false);
     }
 
     /**
@@ -143,11 +168,11 @@ class SubmissionHandler {
      * @param {string} messageId 
      */
     static getSubmissionAuthorId(server, messageId) {
-        return server.submissions.messageIdToAuthorId.get(messageId);
+        return server.submissions?.messageIdToAuthorId?.get(messageId);
     }
 
     static getSubmissionMessageId(server, authorId) {
-        return server.submissions.authorIdToMessageId.get(authorId);
+        return server.submissions?.authorIdToMessageId?.get(authorId);
     }
 
     /**
@@ -159,11 +184,11 @@ class SubmissionHandler {
     static removeSubmission(server, authorId = null, messageId = null) {
         if (!authorId && !messageId) throw new Error('Submission needs at least an authorId or messageId.');
 
-        if (!authorId) authorId = server.submissions.messageIdToAuthorId.get(messageId);
-        if (!messageId) messageId = server.submissions.authorIdToMessageId.get(authorId);
+        if (!authorId) authorId = server.submissions?.messageIdToAuthorId?.get(messageId);
+        if (!messageId) messageId = server.submissions?.authorIdToMessageId?.get(authorId);
 
-        server.submissions.authorIdToMessageId.delete(authorId);
-        server.submissions.messageIdToAuthorId.delete(messageId);
+        server.submissions?.authorIdToMessageId?.delete(authorId);
+        server.submissions?.messageIdToAuthorId?.delete(messageId);
 
         server.save();
     }

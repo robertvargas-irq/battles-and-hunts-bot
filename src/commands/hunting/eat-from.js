@@ -118,6 +118,10 @@ module.exports = {
                     .setColor('AQUA')
                     .setTitle('🍖 Hmm...')
                     .setDescription('You are not really feeling hungry. Better to leave it for everyone else.')
+                    .setFields([{
+                        name: 'Last Ate At',
+                        value: '> ' + (character.lastAteAt > 0 ? '<t:' + character.lastAteAt + '>, roughly <t:' + character.lastAteAt + ':R>' : 'Hmm... can\'t remember...'),
+                    }])
                     .setFooter({ text: CANON_MESSAGE })
                 ]
             });
@@ -136,6 +140,10 @@ module.exports = {
                         description: '> Looks like you don\'t have much to eat on your back...'
                         + '\n> You can go out and `/hunt`, and `/carry` what you caught... then come back to this command to sneak a bite while no-one\'s looking...'
                         + '\n**This will leave bones behind for your clanmates to find.**',
+                        fields: [{
+                            name: 'Last Ate At',
+                            value: '> ' + (character.lastAteAt > 0 ? '<t:' + character.lastAteAt + '>, roughly <t:' + character.lastAteAt + ':R>' : 'Hmm... can\'t remember...'),
+                        }],
                         footer: { text: CANON_MESSAGE },
                     })]
                 });
@@ -148,6 +156,7 @@ module.exports = {
 
                 // update player's hunger based on total bites taken
                 character.currentHunger -= bitesTaken;
+                character.lastAteAt = Math.floor(Date.now() / 1000);
                 character.save();
         
                 // notify the clan bones were found
@@ -187,6 +196,10 @@ module.exports = {
                         title: '🦴 Wonderful...',
                         description: '> Looks like there\'s nothing to eat.'
                         + '\n> Someone didn\'t go on patrol. Go \`/hunt\` for more if your leader sends you out.',
+                        fields: [{
+                            name: 'Last Ate At',
+                            value: '> ' + (character.lastAteAt > 0 ? '<t:' + character.lastAteAt + '>, roughly <t:' + character.lastAteAt + ':R>' : 'Hmm... can\'t remember...'),
+                        }],
                         footer: { text: CANON_MESSAGE },
                     })]
                 });
@@ -199,8 +212,9 @@ module.exports = {
                 }).join(', ');
                 character.currentHunger = character.currentHunger - bitesTaken;
 
-                // update prey pile and save user's new hunger
+                // update prey pile and save user's new hunger with eat time
                 PreyPile.updatePreyPile(interaction, server, clan);
+                character.lastAteAt = Math.floor(Date.now() / 1000);
                 character.save();
                 server.save();
 

@@ -1,0 +1,7 @@
+{
+    "Kit":[0,5],
+    "Apprentice":[6,11],
+    "Warrior":[12,50],
+    "Seasoned Warrior":[51,119],
+    "Elder":[200, 9999]
+}

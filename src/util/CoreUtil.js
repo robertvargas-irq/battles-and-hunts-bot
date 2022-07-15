@@ -23,6 +23,7 @@ class CoreUtil {
     static Assets = {
         preloader: 'https://cdn.discordapp.com/attachments/984351616033517598/984352125129723934/807.gif'
     }
+    static roleplayName = ROLEPLAY_NAME;
 
     /**
      * Properly reply based on whether or not the interaction has been replied to already
@@ -222,9 +223,6 @@ class CoreUtil {
             return await ExcuseModel.find(extraParameters);
         }
     }
-
-    static Submissions = require('./Submissions/SubmissionCache');
-
     
     /**
      * Prompts that time has run out.

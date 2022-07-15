@@ -1,10 +1,11 @@
-const SubmissionModel = require('../../database/schemas/submission');
 const { Query } = require('mongoose');
 
+
 /**
- * @typedef {Map<guildId, Map<userId, SubmissionModel>>} SubmissionCache
- * @type {SubmissionCache}
+ * @deprecated
+ * Will be used as a basis for other Cache managers; DO NOT DELETE UNTIL OTHER CACHE MANAGERS ARE REFACTORED INTO THIS FORMAT
  */
+
 const cached = new Map();
 const cache = {
     get(guildId, userId) {
@@ -86,11 +87,3 @@ async function FetchAllGuildless(parameters = {}) {
 }
 
 
-
-module.exports = {
-    FetchOne,
-    FetchAll,
-    FetchAllGuildless,
-    CacheSubmissions,
-    cache,
-}

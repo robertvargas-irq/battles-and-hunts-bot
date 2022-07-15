@@ -56,6 +56,19 @@ module.exports = async (button) => {
                 })],
                 components: [],
             });
+            const authorMember = await button.guild.members.fetch(authorId).catch(() => false);
+            if (!authorMember) {
+                SubmissionHandler.removeSubmission(server, authorId, button.message.id);
+                return button.message.edit({
+                    embeds: [new MessageEmbed({
+                        color: 'RED',
+                        title: '⚠️ This submission is no longer available as the member is no longer in the server.',
+                    })],
+                    components: [],
+                });
+            }
+
+            // approve and save
             character.approved = true;
             character.save();
 
@@ -69,6 +82,56 @@ module.exports = async (button) => {
                     .setTimestamp(),
                 ],
                 components: [],
+            });
+            return;
+        }
+
+        case 'REFRESH': {
+            // filter out non-admins
+            if (!button.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) return button.reply({
+                ephemeral: true,
+                embeds: [new MessageEmbed({
+                    color: 'RED',
+                    title: '⚠️ Only members with the `MANAGE_ROLES` permission can delete submissions.',
+                })],
+            });
+
+            // defer update
+            button.deferUpdate();
+
+            // get character from submission and refresh
+            const server = CoreUtil.Servers.cache.get(button.guild.id);
+            const authorId = SubmissionHandler.getSubmissionAuthorId(server, button.message.id);
+            if (!authorId) return button.message.edit({
+                embeds: [new MessageEmbed({
+                    color: 'RED',
+                    title: '⚠️ This submission is no longer available.',
+                })],
+                components: [],
+            });
+            const character = CoreUtil.Characters.cache.get(button.guild.id, authorId);
+            if (!character) return button.message.edit({
+                embeds: [new MessageEmbed({
+                    color: 'RED',
+                    title: '⚠️ This character no longer exists.'
+                })],
+                components: [],
+            });
+            const authorMember = await button.guild.members.fetch(authorId).catch(() => false);
+            if (!authorMember) {
+                SubmissionHandler.removeSubmission(server, authorId, button.message.id);
+                return button.message.edit({
+                    embeds: [new MessageEmbed({
+                        color: 'RED',
+                        title: '⚠️ This submission is no longer available as the member is no longer in the server.',
+                    })],
+                    components: [],
+                });
+            }
+
+            // refresh embed
+            button.message.edit({
+                embeds: [CharacterMenu.constructEmbed(character, authorMember)]
             });
             return;
         }

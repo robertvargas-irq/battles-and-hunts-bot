@@ -18,6 +18,9 @@ const stats = require('./stats.json');
 const statSections = ['🍓', '🫐', '🍋'];
 const statArray = Object.entries(stats);
 
+const ageTitles = require('./ages.json');
+const ageTitlesArray = Object.entries(ageTitles);
+
 /** @type {Map<guildId, Map<userId, CharacterMenu>>} */
 const activeEdits = new Map();
 
@@ -62,9 +65,9 @@ class CharacterMenu {
         const c = character;
         const s = author;
         return new MessageEmbed({
-            title: c.name || s.displayName + '\'s unnamed character',
+            title: '« ' + (c.name || s.displayName + '\'s unnamed character') + ' »',
             color: s.displayHexColor,
-            author: { name: '🏓 <ALPHA BUILD>\nWORK-IN-PROGRESS\nEVERYTHING IS SUBJECT TO CHANGE' },
+            author: { name: '🏓 ⟪BETA BUILD | WORK-IN-PROGRESS⟫' },
             thumbnail: { url: c.icon || s.displayAvatarURL() },
             image: { url: c.image || undefined },
             description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',
@@ -78,8 +81,19 @@ class CharacterMenu {
                     inline: true,
                 }}),
                 {
+                    name: '🧮 Stat Point Total',
+                    value: '> `' + statArray.slice(1).reduce((previousValue, currentValue) => previousValue + c.stats[currentValue[0]], 0).toString() + '`',
+                    inline: true,
+                },
+                {
                     name: 'Clan',
                     value: '> `' + (c.clan?.toUpperCase() || 'Not chosen') + '`',
+                    inline: true,
+                },
+                {
+                    name: 'Age (Moons)',
+                    value: '> `' + (c.moons > -1 ? c.moons : 'Not assigned').toString() + '` **⟪ ' + CharacterMenu.getAgeTitle(c.moons ?? 0) + ' ⟫**',
+                    inline: true,
                 },
                 {
                     name: 'Personality',
@@ -111,7 +125,7 @@ class CharacterMenu {
             })]
         }));
         const payload = {
-            embeds: [embed],
+            embeds: [embed, ...generateAuxilaryEmbeds(this)],
             ephemeral: this.editingEnabled,
             components,
         }
@@ -185,11 +199,45 @@ class CharacterMenu {
     static getMenuFromModal(modal) {
         return activeEdits.get(modal.guild.id)?.get(modal.user.id);
     }
+
+    /**
+     * Get age-associated character title
+     * @param {number} age 
+     */
+    static getAgeTitle(age) {
+        return (ageTitlesArray.find(([_, [min, max]]) => min <= age && age <= max) || ["Unknown"])[0];
+    }
 }
 
 /*
  * Helper functions
  */
+
+/**
+ * Generate any additional embeds that need to be displayed
+ * @param {CharacterMenu} menuObject 
+ */
+function generateAuxilaryEmbeds(menuObject) {
+    const embeds = [];
+
+    // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
+    if (!menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new MessageEmbed({
+        color: 'BLURPLE',
+        title: '💡 Why am I unable to edit stats?',
+        description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
+        footer: { text: 'This is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.' },
+    }));
+
+    // if administrator providing overrides, inform about their permissions
+    if (menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new MessageEmbed({
+        color: 'RED',
+        title: '📌 Administrator Overrides',
+        description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',
+        footer: { text: 'Please ensure that the user is informed of any changes. Additionally, ensure that these changes are reasonable and are only used to enforce a standard set in place by the server.' }
+    }));
+
+    return embeds;
+}
 
 /**
  * Generate buttons for the Main Menu render
@@ -212,7 +260,12 @@ function generateEditButtons(menuObject, statSections) {
             customId: 'CHARACTERMENU:EDIT:INFO',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Basic Info',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
-        })
+        }),
+        new MessageButton({
+            customId: 'CHARACTERMENU:EDIT:AGE',
+            label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Age (Moons)',
+            style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
+        }),
     ]
 }
 
@@ -254,6 +307,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No name provided',
                     value: instance.character.name || '',
                     style: 'SHORT',
+                    maxLength: 50,
                 }),
             ]}),
             new MessageActionRow({ components: [
@@ -314,6 +368,23 @@ function getEditModal(instance, toEdit) {
             ]}),
         ]
     });
+    else if (toEdit.startsWith('AGE')) return new Modal({
+        customId: 'CHARACTERMENU:EDIT:' + toEdit,
+        title: '🌔 Editing Character\'s Age (Moons)',
+        components: [
+            new MessageActionRow({ components: [
+                new TextInputComponent({
+                    customId: 'age',
+                    label: 'Character Age (Moons)',
+                    placeholder: 'No character age provided',
+                    value: instance.character.moons ?? 0,
+                    style: 'SHORT',
+                    minLength: 1,
+                    maxLength: 3,
+                }),
+            ]}),
+        ],
+    });
 
     // handle sections
     const sectionNumber = parseInt(toEdit.replace(/[^0-9]/g, ''));
@@ -329,11 +400,12 @@ function getEditModal(instance, toEdit) {
             new MessageActionRow({ components: [
                 new TextInputComponent({
                     customId: stat,
-                    maxLength: statData.range[1].toString().length,
+                    minLength: Math.min(statData.range[0].toString().length, statData.range[1].toString().length),
+                    maxLength: Math.max(statData.range[0].toString().length, statData.range[1].toString().length),
                     label: statData.flair + ' ' + CoreUtil.ProperCapitalization(statData.name)
                     + ' (' + statData.range[0] + '-' + statData.range[1] + ')',
                     placeholder: 'No value yet',
-                    value: instance.character.stats[stat] != -1 ? instance.character.stats[stat] : undefined,
+                    value: instance.character.stats[stat] ?? statData.range[0],
                     style: 'SHORT',
                 })
             ]})

@@ -30,42 +30,46 @@ const CharacterSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    stats: {      // might become its own schema
+    moons: {
+        type: Number,
+        default: 0,
+    },
+    stats: {
         cat_size: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         strength: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         dexterity: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         constitution: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         speed: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         intelligence: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         charisma: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         swimming: {
             type: Number,
-            default: -1,
+            default: 0,
         },
         stalking: {
             type: Number,
-            default: -1
+            default: 0
         },
     },
     currentHealth: {
@@ -79,6 +83,10 @@ const CharacterSchema = new Schema({
     clan: {
         type: String,
         default: null,
+    },
+    lastAteAt: {
+        type: Number,
+        default: 0,
     },
     hunting: {
         contributions: {
@@ -121,6 +129,7 @@ const CharacterSchema = new Schema({
  * background: string,
  * image: string,
  * approved: string,
+ * moons: number,
  * stats: {
  *      cat_size: number,
  *      strength: number,
@@ -135,6 +144,7 @@ const CharacterSchema = new Schema({
  * currentHealth: number,
  * currentHunger: number,
  * clan: string,
+ * lastAteAt: number,
  * hunting: {
  *      contributions: {
  *          preyCount: number,

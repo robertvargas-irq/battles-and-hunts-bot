@@ -122,6 +122,9 @@ module.exports = async (interaction, subcommand) => {
         }
 
         case 'registration': {
+            return interaction.reply({
+                content: 'This command is under construction.'
+            });
             // get options and defer appropriately
             const ping = interaction.options.getString("ping-them") == 'yes';
             const ephemeral = interaction.options.getString("view-privately") == 'yes';
@@ -152,28 +155,22 @@ module.exports = async (interaction, subcommand) => {
                 
                 // if character is not registered, route to non-registered or non-submitted
                 if (!CharacterDocuments.has(id))
-                    if (member.displayName.startsWith('{+'))
-                        nonRegistered.push(member);
-                    else
-                        nonSubmitted.push(member);
+                    nonRegistered.push(member);
+                else if (!CharacterDocuments.get(id).approved)
+                    nonSubmitted.push(member);
             }
 
             // notify successful set
             return interaction.editReply({
                 content: (ping)
-                ? "**Don't forget to `/register` for the bot when you can!**\n||"
+                ? "**Don't forget to fill out your `/character` and submit when you can!**\n||"
                 + nonRegistered.map(m => "<@" + m.user.id + ">").join('')
                 + "||" : null,
                 embeds: [new MessageEmbed()
                     .setColor('GREEN')
                     .setTitle('✅ Audit complete.')
                     .setDescription(
-                        (nonRegistered.length > 0 ? (
-                            "__**Non-Registered Users:**__\n"
-                            + "*These players are eligible to sign up as their character has been approved by\n<@" + interaction.guild.ownerId + ">, this is required to hunt and battle; all is needed is your cat's stats from your OC submission! Use `/register` to get started!*\n------------\n"
-                            + nonRegistered.map(m => '> ' + m.displayName).join('\n')
-                        ) : '__**All eligble users have registered for the bot.**__')
-                        + '\n\n' + (nonSubmitted.length > 0 ? (
+                        (nonSubmitted.length > 0 ? (
                             "__**Users who haven't submitted an OC:**__\n"
                             + "*These players are unable to sign up as they still need approval from the server owner,\n<@" + interaction.guild.ownerId + ">.\n\nPick up a `template` from <#954246632550072350>\nthen `submit` over at <#954246543102337086> as soon as possible!*\n------------\n"
                             + nonSubmitted.map(m => '> ' + m.displayName + ' (<@' + m.user.id + '>)').join('\n')

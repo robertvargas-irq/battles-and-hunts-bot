@@ -18,6 +18,9 @@ const stats = require('./stats.json');
 const statSections = ['🍓', '🫐', '🍋'];
 const statArray = Object.entries(stats);
 
+const ageTitles = require('./ages.json');
+const ageTitlesArray = Object.entries(ageTitles);
+
 /** @type {Map<guildId, Map<userId, CharacterMenu>>} */
 const activeEdits = new Map();
 
@@ -78,18 +81,18 @@ class CharacterMenu {
                     inline: true,
                 }}),
                 {
+                    name: '🧮 Stat Point Total',
+                    value: '> `' + statArray.slice(1).reduce((previousValue, currentValue) => previousValue + c.stats[currentValue[0]], 0).toString() + '`',
+                    inline: true,
+                },
+                {
                     name: 'Clan',
                     value: '> `' + (c.clan?.toUpperCase() || 'Not chosen') + '`',
                     inline: true,
                 },
                 {
                     name: 'Age (Moons)',
-                    value: '> `' + (c.moons > -1 ? c.moons : 'Not assigned').toString() + '`',
-                    inline: true,
-                },
-                {
-                    name: '\u200B',
-                    value: '\u200B',
+                    value: '> `' + (c.moons > -1 ? c.moons : 'Not assigned').toString() + '` **⟪ ' + CharacterMenu.getAgeTitle(c.moons ?? 0) + ' ⟫**',
                     inline: true,
                 },
                 {
@@ -195,6 +198,14 @@ class CharacterMenu {
     /** @param {ModalSubmitInteraction} modal */
     static getMenuFromModal(modal) {
         return activeEdits.get(modal.guild.id)?.get(modal.user.id);
+    }
+
+    /**
+     * Get age-associated character title
+     * @param {number} age 
+     */
+    static getAgeTitle(age) {
+        return (ageTitlesArray.find(([_, [min, max]]) => min <= age && age <= max) || ["Unknown"])[0];
     }
 }
 
@@ -366,8 +377,9 @@ function getEditModal(instance, toEdit) {
                     customId: 'age',
                     label: 'Character Age (Moons)',
                     placeholder: 'No character age provided',
-                    value: instance.character.moons > -1 ? instance.character.moons : '',
+                    value: instance.character.moons ?? 0,
                     style: 'SHORT',
+                    minLength: 1,
                     maxLength: 3,
                 }),
             ]}),
@@ -388,11 +400,12 @@ function getEditModal(instance, toEdit) {
             new MessageActionRow({ components: [
                 new TextInputComponent({
                     customId: stat,
+                    minLength: Math.min(statData.range[0].toString().length, statData.range[1].toString().length),
                     maxLength: Math.max(statData.range[0].toString().length, statData.range[1].toString().length),
                     label: statData.flair + ' ' + CoreUtil.ProperCapitalization(statData.name)
                     + ' (' + statData.range[0] + '-' + statData.range[1] + ')',
                     placeholder: 'No value yet',
-                    value: instance.character.stats[stat] != -1 ? instance.character.stats[stat] : undefined,
+                    value: instance.character.stats[stat] ?? statData.range[0],
                     style: 'SHORT',
                 })
             ]})

@@ -189,7 +189,7 @@ module.exports = async (interaction, subcommand) => {
 
             // organize members based on hunger status
             const totalClanMembers = {};
-            for (const [userId, character] of Array.from(CharacterDocuments)) {
+            for (const [_, character] of Array.from(CharacterDocuments)) {
                 
                 // if user is not in the current server, continue
                 if (!GuildMembers.has(character.userId)) continue;

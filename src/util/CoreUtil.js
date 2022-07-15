@@ -11,8 +11,6 @@ const MemberModel = require('../database/schemas/member');
 const UserModel = mongoose.model('User', userSchema);
 const CharacterModel = require('../database/schemas/character');
 const ExcuseModel = require('../database/schemas/excuse');
-// const excuseModel = require('../database/schemas/excuse');
-
 
 const ROLEPLAY_NAME = 'The Black Sun';
 

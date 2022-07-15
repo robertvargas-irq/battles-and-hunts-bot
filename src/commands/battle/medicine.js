@@ -1,7 +1,6 @@
 const { ApplicationCommandOptionType : dTypes, Locale } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
-const Player = require('../../util/Account/Player');
 const StatCalculator = require('../../util/Stats/StatCalculator');
 const HealthVisuals = require('../../util/Battle/HealthVisuals');
 

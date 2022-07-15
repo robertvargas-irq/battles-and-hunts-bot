@@ -2,7 +2,6 @@ const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const HealthVisuals = require('../../util/Battle/HealthVisuals');
-const StatCalculator = require('../../util/Stats/StatCalculator');
 
 module.exports = {
     name: 'take-damage',

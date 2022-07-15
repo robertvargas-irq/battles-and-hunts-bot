@@ -23,6 +23,7 @@ module.exports = {
                 color: getColor(healthRatio),
                 title: '⟪' + getFlair(healthRatio) + '⟫ ' + getTitle(healthRatio),
                 description: description ? '*' + description + '*' : '',
+                thumbnail: { url: found.icon ?? interaction.member.displayAvatarURL({ dynamic: true }) },
                 fields: [
                     {
                         name: 'Current Health',
@@ -35,7 +36,8 @@ module.exports = {
                         value: '\u200B',
                         inline: true,
                     },
-                ]
+                ],
+                footer: { text: (found.name ?? interaction.member.displayName + '\'s character') },
             })]
         });
     

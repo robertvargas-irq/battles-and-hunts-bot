@@ -1,6 +1,7 @@
 const { MessageEmbed, CommandInteraction, GuildMember } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
+const StatCalculator = require('../Stats/StatCalculator');
 const {p_hit_and_crit, p_hit, p_crit_but_miss, p_miss} = require('./attackPrompts.json');
 const {damageAction, damageResponse} = require('./damagePrompts.json');
 const {healingAction, healingResponse} = require('./medicinePrompts.json');
@@ -49,9 +50,9 @@ class AttackManager extends CoreUtil {
         const d2Crit = this.#Random(1, 100);
         
         // check DCs
-        const hit = d1Hit > target.stats.speed * 4; // successful dodge DC
-        const crit = d2Crit <= attacker.stats.dexterity * 3; // successful crit DC
-        const damage = attacker.stats.strength * 4 * (crit ? 2 : 1); // attack damage
+        const hit = d1Hit > StatCalculator.calculateDodgeChance(target); // successful dodge DC
+        const crit = d2Crit <= StatCalculator.calculateCritChance(attacker); // successful crit DC
+        const damage = StatCalculator.calculateAttackMax(attacker) * (crit ? 2 : 1); // attack damage
 
         // populate embeds relative to rolls
         const embeds = [];
@@ -71,7 +72,7 @@ class AttackManager extends CoreUtil {
         embeds.push(new MessageEmbed({ 
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#7afabc' : '#faad7a',
             author: { name: hit ? '🎯 They manage to catch an opening-!' : '🍃 Their enemy, however, slipped away' },
-            description: '> **Enemy Dodge Chance**: `' + target.stats.speed * 4 + '`'
+            description: '> **Enemy Dodge Chance**: `' + StatCalculator.calculateDodgeChance(target) + '`'
             + '\n> **Rolled**: `' + d1Hit + '`/`100`'
         }));
 
@@ -79,7 +80,7 @@ class AttackManager extends CoreUtil {
         if (hit) embeds.push(new MessageEmbed({
             color: (hit && crit) ? '#fa7acb' : (crit) ? '#7afabc' : '#faad7a',
             author: { name: crit ? '🪨 They wind up for a critical blow-!' : '🍃 They opt for a normal attack' },
-            description: '> **Attacker\'s Critical Threshold**: `0`-`' + attacker.stats.dexterity * 3 + '`'
+            description: '> **Attacker\'s Critical Threshold**: `' + StatCalculator.min.critChance + '`-`' + StatCalculator.calculateCritChance(attacker) + '`'
             + '\n> **Rolled**: `' + d2Crit + '`/`100`'
         }));
 

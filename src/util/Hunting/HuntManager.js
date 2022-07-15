@@ -43,33 +43,67 @@ class HuntManager extends CoreUtil {
     static #RandomFromArray = (a) => { return a[this.#Random(0, a.length - 1)] }
     
     /**
-     * @type {Map<string, prey>}
+     * @type {Map<guildId, Map<userId, prey>>}
      * Player ID to their recently caught prey */
-    static #playerIdToRecentlyCaught = new Map();
+    static #recentlyCaught = new Map();
 
     /**
-     * @type {Map<string, [weight: number, prey[]]>}
+     * @type {Map<guildId, Map<userId, [weight: number, prey[]]>>}
      * Player ID to their inventory */
-    static #playerIdToInventory = new Map();
+    static #inventories = new Map();
 
     /**
-     * @type {Collection<string, number[]>}}
+     * @type {Map<guildId, Map<userId, number[]>>}}
      * Map of 2 cooldown timers for /hunt */
-    static #cooldownHunt = new Collection();
+    static #cooldownHunt = new Map();
 
     /**
-     * @type {Collection<string, number[]>}}
+     * @type {Map<guildId, Map<userId, number[]>>}}
      * Map of 2 cooldown timers for /deposit */
-    static #cooldownDeposit = new Collection();
+    static #cooldownDeposit = new Map();
+
+    static getCooldownHunt(guildId, userId) {
+        // get server
+        const server = this.#cooldownHunt.get(guildId);
+        if (!server) return false;
+
+        // get user timers
+        const timers = server.get(userId);
+
+        // if no cooldown at all
+        if (!timers) return false;
+
+        return timers[0];
+    }
+
+    static getCooldownDeposit(guildId, userId) {
+        // get server
+        const server = this.#cooldownDeposit.get(guildId);
+        if (!server) return false;
+
+        // get user timers
+        const timers = server.get(userId);
+
+        // if no cooldown at all
+        if (!timers) return false;
+
+        return timers[0];
+    }
 
     /**
      * Check to see if user is on cooldown for /hunt;
      * Remove cooldown if applicable
+     * @param {string} guildId Guild user is in
      * @param {string} userId User to check for
      */
-    static onCooldownHunt(userId) {
-        const timers = this.#cooldownHunt.get(userId);
-        console.log(this.#cooldownHunt.get(userId));
+    static onCooldownHunt(guildId, userId) {
+
+        // get server
+        const server = this.#cooldownHunt.get(guildId);
+        if (!server) return false;
+
+        // get user timers
+        const timers = server.get(userId);
 
         // if no cooldown at all
         if (!timers) return false;
@@ -79,7 +113,10 @@ class HuntManager extends CoreUtil {
 
         // if the front timer is satisfied, unqueue and return false
         if (Date.now() - timers[0] >= this.#HUNT_COOLDOWN) {
-            if (timers.length <= 1) this.#cooldownHunt.delete(userId);
+            if (timers.length <= 1) {
+                server.delete(userId);
+                if (server.size < 1) this.#cooldownHunt.delete(guildId);
+            }
             else timers.shift();
             return false;
         }
@@ -91,11 +128,17 @@ class HuntManager extends CoreUtil {
     /**
      * Check to see if user is on cooldown for /deposit;
      * Remove cooldown if applicable
+     * @param {string} guildId Guild user is in
      * @param {string} userId User to check for
      */
-    static onCooldownDeposit(userId) {
-        const timers = this.#cooldownDeposit.get(userId);
-        console.log(this.#cooldownDeposit.get(userId));
+    static onCooldownDeposit(guildId, userId) {
+
+        // get server
+        const server = this.#cooldownDeposit.get(guildId);
+        if (!server) return false;
+
+        // get user timers
+        const timers = server.get(userId);
 
         // if no cooldown at all
         if (!timers) return false;
@@ -105,7 +148,10 @@ class HuntManager extends CoreUtil {
 
         // if the front timer is satisfied, unqueue and return false
         if (Date.now() - timers[0] >= this.#DEPOSIT_COOLDOWN) {
-            if (timers.length <= 1) this.#cooldownDeposit.delete(userId);
+            if (timers.length <= 1) {
+                server.delete(userId);
+                if (server.size < 1) this.#cooldownDeposit.delete(guildId);
+            }
             else timers.shift();
             return false;
         }
@@ -116,28 +162,46 @@ class HuntManager extends CoreUtil {
 
     /**
      * Add a cooldown for /hunt
+     * @param {string} guildId Guild user is in
      * @param {string} userId The user ID to add to cooldown list
      */
-    static addCooldownHunt(userId) {
-        const cooldowns = this.#cooldownHunt;
-        const timers = cooldowns.get(userId);
+    static addCooldownHunt(guildId, userId) {
+        
+        // instantiate server if not already
+        if (!this.#cooldownHunt.has(guildId))
+            this.#cooldownHunt.set(guildId, new Map());
+
+        // get server
+        const server = this.#cooldownHunt.get(guildId);
+
+        // get user timers and push new one
+        const timers = server.get(userId);
         if (timers)
             timers.push(Date.now());
-        else cooldowns.set(userId, [Date.now()]);
-        console.log(cooldowns);
+        else server.set(userId, [Date.now()]);
+        console.log(server);
     }
 
     /**
      * Add a cooldown for /deposit
+     * @param {string} guildId Guild user is in
      * @param {string} userId The user ID to add to the cooldown list
      */
-    static addCooldownDeposit(userId) {
-        const cooldowns = this.#cooldownDeposit;
-        const timers = cooldowns.get(userId);
+    static addCooldownDeposit(guildId, userId) {
+
+        // instantiate server if not already
+        if (!this.#cooldownDeposit.has(guildId))
+            this.#cooldownDeposit.set(guildId, new Map());
+        
+        // get server
+        const server = this.#cooldownDeposit.get(guildId);
+
+        // get user timers and push new one
+        const timers = server.get(userId);
         if (timers)
             timers.push(Date.now());
-        else cooldowns.set(userId, [Date.now()]);
-        console.log(cooldowns);
+        else server.set(userId, [Date.now()]);
+        console.log(server);
     }
     
 
@@ -209,7 +273,7 @@ class HuntManager extends CoreUtil {
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) {
             if (tracked && caught) {
-                this.setRecentlyCaught(interaction, interaction.user.id, prey);
+                this.setRecentlyCaught(interaction, interaction.guild.id, interaction.user.id, prey);
                 character.hunting.hunts.successful++;
                 member.hunting.hunts.successful++;
             }
@@ -312,32 +376,43 @@ class HuntManager extends CoreUtil {
     /**
      * Set a user's recently caught to a prey
      * @param {CommandInteraction} originalInteraction The original interaction
+     * @param {string} guildId The guild in which it was caught in
      * @param {string} userId The player who caught the prey
      * @param {prey} prey The prey that was caught
      * @returns {prey}
      */
-    static setRecentlyCaught(interaction, userId, prey) {
+    static setRecentlyCaught(interaction, guildId, userId, prey) {
+
+        // instantiate server if not already
+        if (!this.#recentlyCaught.has(guildId)) this.#recentlyCaught.set(guildId, new Map());
+
+        // get server recently caught
+        const server = this.#recentlyCaught.get(guildId);
+
         // clear prey if null
         if (!prey) {
-            this.#playerIdToRecentlyCaught.delete(userId);
+            server.delete(userId);
             return {prey: null, interaction: null};
         }
 
         // set recently caught
-        this.#playerIdToRecentlyCaught.set(userId, {prey, interaction});
+        server.set(userId, {prey, interaction});
         console.log("UPDATED RECENTLY CAUGHT");
-        console.log(this.#playerIdToRecentlyCaught);
+        console.log({ serverRecentlyCaught: server });
         return prey;
     }
     
     /**
      * Get the user's most recently caught prey item
+     * @param {string} guildId The guild the player is in
      * @param {string} userId The player who caught the prey
      * @returns {prey}
      */
-    static getRecentlyCaught(userId) {
-        console.log(this.#playerIdToRecentlyCaught);
-        return this.#playerIdToRecentlyCaught.get(userId);
+    static getRecentlyCaught(guildId, userId) {
+        const server = this.#recentlyCaught.get(guildId);
+        if (!server) return null;
+        
+        return server.get(userId) ?? null;
     }
 
     /**
@@ -386,32 +461,36 @@ class HuntManager extends CoreUtil {
 
     /**
      * Get all the items being carried
+     * @param {string} guildId The guild this user is in
      * @param {string} userId The player's inventory to grab
-     * @returns {[weight: number,prey[]]} All the prey in their inventory
+     * @returns {[weight, prey[]]} All the prey in their inventory
      */
-    static getCarrying(userId) {
-        const inventory = this.#playerIdToInventory.get(userId);
-        if (!inventory) return [0, []];
+    static getCarrying(guildId, userId) {
+        // instantiate server if not already
+        if (!this.#inventories.has(guildId)) this.#inventories.set(guildId, new Map());
 
-        // return the inventory from index 1
-        return inventory;
+        // get server
+        const server = this.#inventories.get(guildId);
+
+        // if no inventory, instantiate
+        if (!server.has(userId)) server.set(userId, [0, []]);
+
+        // return inventory entry
+        return server.get(userId);
     }
 
     /**
      * Add to a user's caught prey
+     * @param {string} guildId The guild the user caught the prey
      * @param {string} userId The player to add to their carry
      * @param {prey} prey The prey to add to their carry
      * @param {CommandInteraction} originalInteraction The original interaction
      * @returns {[Array]} [`Over Encumbered`, `WeightCarried`, `CurrentlyCarrying`]
      */
-    static addToCarry(userId, prey, originalInteraction) {
+    static addToCarry(guildId, userId, prey, originalInteraction) {
 
         // get player inventory else create one
-        let inventory = this.#playerIdToInventory.get(userId);
-        if (!inventory) {
-            this.#playerIdToInventory.set(userId, [0, []]);
-            inventory = this.#playerIdToInventory.get(userId);
-        }
+        const inventory = this.getCarrying(guildId, userId);
         const weight = inventory[0];
         const carried = inventory[1];
 
@@ -424,9 +503,8 @@ class HuntManager extends CoreUtil {
         inventory[0] = inventory[0] + prey.bites_remaining;
 
         // remove from recently caught
-        this.setRecentlyCaught(null, userId, null);
+        this.setRecentlyCaught(null, guildId, userId, null);
         console.log(inventory);
-        console.log(this.#playerIdToInventory.get(userId));
 
         // swap interaction sidebar to grey if possible
         originalInteraction.fetchReply().then(r => {
@@ -454,30 +532,34 @@ class HuntManager extends CoreUtil {
     }
 
     /**
-     * Get all the carried items
-     * @param {string} userId The player to remove from carry
+     * Clear a player's inventory
+     * @param {string} guildId The player's guild
+     * @param {string} userId The player's inventory to delete
      * @returns {prey[]} All the prey in their inventory
      */
-    static removeFromCarry(userId) {
-        const inventory = this.#playerIdToInventory.get(userId);
-        if (!inventory) return [];
+    static clearCarrying(guildId, userId) {
+
+        // get inventory entry
+        const inventory = this.getCarrying(guildId, userId);
 
         // cache inventory then empty player inventory
         const inventoryItems = inventory[1];
-        this.#playerIdToInventory.set(userId, [0, []]);
+        this.setCarrying(guildId, userId, [0, []]);
 
-        // return inventory
+        // return inventory entry
         return inventoryItems;
     }
 
     /**
      * Override a player's inventory
+     * @param {string} guildId The player's guild
      * @param {string} userId The player to modify
      * @param {[weight: number, prey[]]} newInventory Inventory to replace the original
-     * @returns {Map<string, [weight: number, prey[]]>} New Map of player inventories
+     * @returns {Map<userId, [weight: number, prey[]]>} New Map of player inventories
      */
-    static setCarrying(userId, newInventory) {
-        return this.#playerIdToInventory.set(userId, newInventory);
+    static setCarrying(guildId, userId, newInventory) {
+        this.getCarrying(guildId, userId) = newInventory;
+        return this.#inventories.get(guildId);
     }
 
     /**
@@ -536,7 +618,7 @@ class HuntManager extends CoreUtil {
      * @param {CommandInteraction} interaction Original Discord interaction
      */
     static async displayCooldownHunt(interaction) {
-        let minutes = ((this.#HUNT_COOLDOWN - (Date.now() - this.#cooldownHunt.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);
+        let minutes = ((this.#HUNT_COOLDOWN - (Date.now() - this.getCooldownHunt(interaction.guild.id, interaction.user.id))) / 60 / 1000).toFixed(1);
         return await this.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new MessageEmbed({
@@ -558,7 +640,7 @@ class HuntManager extends CoreUtil {
      * @param {CommandInteraction} interaction Original Discord interaction
      */
     static async displayCooldownDeposit(interaction) {
-        let minutes = ((this.#DEPOSIT_COOLDOWN - (Date.now() - this.#cooldownDeposit.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);
+        let minutes = ((this.#DEPOSIT_COOLDOWN - (Date.now() - this.getCooldownDeposit(interaction.guild.id, interaction.user.id))) / 60 / 1000).toFixed(1);
         return await this.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new MessageEmbed({

@@ -26,6 +26,21 @@ class CoreUtil {
     static roleplayName = ROLEPLAY_NAME;
 
     /**
+     * Get an array index from a given ratio
+     * @param {Array} array 
+     * @param {number} ratio Decimal between `0` and `1`
+     * @returns {number} An index between 0 and array.length - 1 based on the given ratio
+     */
+    static getIndexFromRatio(array, ratio) {
+        if (!array) throw Error('Array cannot be null');
+        if (array.length < 1) throw Error('Array cannot be empty');
+
+        // safeguard and return index
+        ratio = Math.max(0, Math.min(ratio, array.length - 1));
+        return Math.floor(ratio * array.length);
+    }
+
+    /**
      * Properly reply based on whether or not the interaction has been replied to already
      * @param {BaseCommandInteraction} interaction Interaction to reply to/edit reply
      * @param {MessagePayload} messagePayload The message to send

@@ -1,5 +1,6 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { CommandInteraction, MessageEmbed } = require('discord.js');
+const HuntInventory = require('../../util/Hunting/HuntInventory');
 
 module.exports = {
     name: 'carry',
@@ -22,14 +23,16 @@ module.exports = {
         let recentlyCaught;
         let originalInteraction;
         if (!recentlyCaughtResult) {
+            const [weightCarrying, preyCarrying] = HuntManager.getCarrying(interaction.user.id);
             return interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed()
-                    .setColor('RED')
-                    .setTitle('⚠️ Woah wait! You haven\'t caught anything!')
-                    .setDescription(
-                        '> Go back and use \`/hunt\` first and then use this command to pick up and carry whatever you caught!'
-                    )
+                embeds: [
+                    new MessageEmbed({
+                        color: 'RED',
+                        title: '⚠️ Woah wait! You haven\'t caught anything!',
+                        description: '> Go back and use \`/hunt\` first and then use this command to pick up and carry whatever you caught!',
+                    }),
+                    HuntInventory.generateCarryingEmbed(preyCarrying, weightCarrying),
                 ]
             });
         }
@@ -56,10 +59,6 @@ module.exports = {
                 `> You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, ready to carry it as you venture forward.`
                 + '\n> ' 
                 + '\n> Your back gets a little heavier.'
-                + '\n\n🐈 __**Prey you are currently carrying**__'
-                + `\n\n${HuntManager.formatPrey(preyCarrying)}`
-                + '\n\n**- - - - - -**'
-                + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
                 )
                 .setFooter({ text: '🍃 This carry is canon.' });
             // else, the weight being carried is NOT at a respectable limit; the character is now over-encumbered
@@ -71,10 +70,6 @@ module.exports = {
                 `> You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, your legs struggling to keep the load on your back afloat.`
                 + '\n> '
                 + '\n> **You now have no other choice but to go back to camp and \`/deposit\` your prey before you can carry more.**'
-                + '\n\n🐈 **Prey you are currently carrying**'
-                + `\n\n${HuntManager.formatPrey(preyCarrying)}`
-                + '\n\n**- - - - - -**'
-                + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
                 + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
                 )
                 .setFooter({ text: '🍃 This carry is canon.' });
@@ -88,10 +83,6 @@ module.exports = {
             `> You carefully take the \`${recentlyCaught.name}\` between your teeth, but the sheer weight you are carrying simply causes you to let go, stumbling and nearly losing what you have piled onto your back.`
             + '\n> '
             + '\n> **You unfortunately must go back to camp and \`/deposit\` your prey before you can carry more.**'
-            + '\n\n🐈 **Prey you are currently carrying**'
-            + `\n\n${HuntManager.formatPrey(preyCarrying)}`
-            + '\n\n**- - - - - -**'
-            + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
             + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
             )
             .setFooter({ text: '🍃 This carry is canon.' });
@@ -99,7 +90,10 @@ module.exports = {
         // display result
         return interaction.reply({
             ephemeral: true,
-            embeds: [resultEmbed]
+            embeds: [
+                resultEmbed,
+                HuntInventory.generateCarryingEmbed(preyCarrying, weightCarrying)
+            ]
         });
     },
 };

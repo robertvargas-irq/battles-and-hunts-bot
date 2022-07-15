@@ -125,6 +125,7 @@ const CharacterSchema = new Schema({
  * background: string,
  * image: string,
  * approved: string,
+ * moons: number,
  * stats: {
  *      cat_size: number,
  *      strength: number,

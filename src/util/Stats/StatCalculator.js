@@ -10,9 +10,9 @@ class StatCalculator {
 
     static max = {
         battlePower: 30,
-        attackMax: stats.strength.range[1] * 4,
-        dodgeChance: stats.speed.range[1] * 4,
-        critChance: stats.dexterity.range[1] * 3,
+        attackMax: stats.strength.max * 4,
+        dodgeChance: stats.speed.max * 4,
+        critChance: stats.dexterity.max * 3,
     };
 
     static min = {

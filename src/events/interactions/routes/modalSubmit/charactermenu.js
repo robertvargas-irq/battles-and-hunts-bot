@@ -62,14 +62,14 @@ module.exports = async (modal) => {
         const { customId, value } = actionRow.components[0];
         let parsedValue = value.length > 0 ? parseInt(value) : '-1';
         if (parsedValue === '-1') return errors.push([
-            customId, 'Please ensure you don\'t forget to enter a value between `' + stats[customId].range[0] + '`-`' + stats[customId].range[1] + '`'
+            customId, 'Please ensure you don\'t forget to enter a value between `' + stats[customId].min + '`-`' + stats[customId].max + '`'
         ]);
         else if (parsedValue === NaN) return errors.push([
                 customId, 'Please only enter numerical values.'
         ]);
-        else if (parsedValue < stats[customId].range[0]
-        || parsedValue > stats[customId].range[1]) return errors.push([
-            customId, 'Please enter a number in the following range: `' + stats[customId].range[0] + '`-`' + stats[customId].range[1] + '`'
+        else if (parsedValue < stats[customId].min
+        || parsedValue > stats[customId].max) return errors.push([
+            customId, 'Please enter a number in the following range: `' + stats[customId].min + '`-`' + stats[customId].max + '`'
         ]);
 
         instance.character.stats[customId] = parseInt(value);

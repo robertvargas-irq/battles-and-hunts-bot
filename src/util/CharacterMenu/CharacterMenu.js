@@ -450,12 +450,12 @@ function getEditModal(instance, toEdit) {
             new MessageActionRow({ components: [
                 new TextInputComponent({
                     customId: stat,
-                    minLength: Math.min(statData.range[0].toString().length, statData.range[1].toString().length),
-                    maxLength: Math.max(statData.range[0].toString().length, statData.range[1].toString().length),
+                    minLength: Math.min(statData.min.toString().length, statData.max.toString().length),
+                    maxLength: Math.max(statData.min.toString().length, statData.max.toString().length),
                     label: statData.flair + ' ' + CoreUtil.ProperCapitalization(statData.name)
-                    + ' (' + statData.range[0] + '-' + statData.range[1] + ')',
+                    + ' (' + statData.min + '-' + statData.max + ')',
                     placeholder: 'No value yet',
-                    value: instance.character.stats[stat] ?? statData.range[0],
+                    value: instance.character.stats[stat] ?? statData.min,
                     style: 'SHORT',
                 })
             ]})

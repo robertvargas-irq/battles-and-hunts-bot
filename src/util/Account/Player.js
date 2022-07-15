@@ -51,7 +51,7 @@ function formatStats(member, character) {
         fields: Object.keys(character.stats).map(stat => {
             return {
                 name: stats[stat].flair + ' ' + stats[stat].name,
-                value: `> ↣ \`${character.stats[stat]}\` / \`${stats[stat].range[1]}\``,
+                value: `> ↣ \`${character.stats[stat]}\` / \`${stats[stat].max}\``,
                 inline: true,
             }
         }),

@@ -42,39 +42,39 @@ const CharacterSchema = new Schema({
     stats: {
         cat_size: {
             type: Number,
-            default: stats.cat_size.range[0],
+            default: stats.cat_size.min,
         },
         strength: {
             type: Number,
-            default: stats.strength.range[0],
+            default: stats.strength.min,
         },
         dexterity: {
             type: Number,
-            default: stats.dexterity.range[0],
+            default: stats.dexterity.min,
         },
         constitution: {
             type: Number,
-            default: stats.constitution.range[0],
+            default: stats.constitution.min,
         },
         speed: {
             type: Number,
-            default: stats.speed.range[0],
+            default: stats.speed.min,
         },
         intelligence: {
             type: Number,
-            default: stats.intelligence.range[0],
+            default: stats.intelligence.min,
         },
         charisma: {
             type: Number,
-            default: stats.charisma.range[0],
+            default: stats.charisma.min,
         },
         swimming: {
             type: Number,
-            default: stats.swimming.range[0],
+            default: stats.swimming.min,
         },
         stalking: {
             type: Number,
-            default: stats.stalking.range[0],
+            default: stats.stalking.min,
         },
     },
     currentHealth: {

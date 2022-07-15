@@ -388,7 +388,7 @@ function getEditModal(instance, toEdit) {
             new MessageActionRow({ components: [
                 new TextInputComponent({
                     customId: stat,
-                    maxLength: statData.range[1].toString().length,
+                    maxLength: Math.max(statData.range[0].toString().length, statData.range[1].toString().length),
                     label: statData.flair + ' ' + CoreUtil.ProperCapitalization(statData.name)
                     + ' (' + statData.range[0] + '-' + statData.range[1] + ')',
                     placeholder: 'No value yet',

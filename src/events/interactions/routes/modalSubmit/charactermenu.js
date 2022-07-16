@@ -10,7 +10,7 @@ module.exports = async (modal) => {
     
     const instance = CharacterMenu.getMenuFromModal(modal);
     if (!instance) return modal.reply({ content: 'No longer valid', ephemeral: true });
-
+    
     const [_, action, editTarget] = modal.customId.split(':');
     if (!instance.isAdmin && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id)
     && editTarget != 'INFO')
@@ -23,6 +23,7 @@ module.exports = async (modal) => {
     const errors = [];
 
     // handle info correctly
+    const server = CoreUtil.Servers.cache.get(modal.guild.id);
     if (editTarget === 'INFO') {
         const parseAge = (age) => {
 
@@ -37,6 +38,7 @@ module.exports = async (modal) => {
 
             return parseInt(age);
         };
+        const isValidClan = (clan) => server.clans.hasOwnProperty(clan.toLowerCase());
         const name = modal.fields.getField('name').value || null;
         const clan = modal.fields.getField('clan').value || null;
         const age = parseAge(modal.fields.getField('age').value);
@@ -44,7 +46,14 @@ module.exports = async (modal) => {
         const background = modal.fields.getField('background').value || null;
         
         if (!isNaN(age)) instance.character.moons = age;
-        if (clan) instance.character.clan = clan;
+        if (clan) {
+            if (clan.toLowerCase() === 'none') instance.character.clan = null;
+            else if (isValidClan(clan)) instance.character.clan = clan.toLowerCase();
+            else errors.push([
+                'clan',
+                'Clan must be one of the following: \n> '
+                + [...Object.keys(server.clans), 'None'].map(c => '`' + CoreUtil.ProperCapitalization(c) + '`').join(' | ')]);
+        }
         instance.character.name = name;
         instance.character.personality = personality;
         instance.character.background = background;
@@ -86,7 +95,9 @@ module.exports = async (modal) => {
         title: '⚠️ Whoops-! Something\'s a bit off...',
         color: 'RED',
         description: 'There were a few values that were\'t quite right! They have been reset to their original values.\n\n'
-        + errors.map(([customId, errorMessage]) => stats[customId].flair + ' **' + stats[customId].name + '**\n> ' + errorMessage).join('\n')
+        + errors.map(([customId, errorMessage]) =>
+        (stats[customId]?.flair ?? '') + ' **' +
+        (stats[customId]?.name ?? CoreUtil.ProperCapitalization(customId)) + '**\n> ' + errorMessage).join('\n')
     }));
     instance.character.save();
     CoreUtil.Characters.cache.set(instance.authorSnowflake.guild.id, instance.authorSnowflake.user.id, instance.character);

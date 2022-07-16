@@ -337,6 +337,8 @@ function getEditModal(instance, toEdit) {
 
     // catch anything other than sections
     console.log({toEdit});
+    const server = CoreUtil.Servers.cache.get(instance.interaction.guild.id);
+    const clanArray = [...Object.keys(server.clans), 'None'];
     if (toEdit.startsWith('INFO')) return new Modal({
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: '📝 Editing Basic Information',
@@ -352,30 +354,33 @@ function getEditModal(instance, toEdit) {
                 }),
             ]}),
             new MessageActionRow({ components: [
-                new MessageSelectMenu({
+                new TextInputComponent({
                     customId: 'clan',
-                    placeholder: (
-                        instance.character.clan
-                        ? (
-                            !instance.isAdmin && instance.registering
-                            ? 'Current Requested Clan: ' + instance.character.clan.toUpperCase()
-                            : 'Current Clan: ' + instance.character.clan.toUpperCase()
-                        )
-                        : (
-                            !instance.isAdmin && instance.registering
-                            ? 'Choose your requested clan'
-                            : 'No clan currently assigned.'
-                        )
+                    style: 'SHORT',
+                    label: (
+                        !instance.isAdmin && instance.registering
+                        ? 'Clan Request'
+                        : 'Current Clan'
                     ),
-                    disabled: !instance.isAdmin && !instance.registering,
-                    min_values: 0,
-                    max_values: 1,
-                    options: Object.keys(CoreUtil.Servers.cache.get(instance.interaction.guild.id).clans).map(clan => {
-                        return {
-                            label: CoreUtil.ProperCapitalization(clan),
-                            value: clan,
-                        }
-                    }),
+                    placeholder: instance.character.clan
+                    ? (
+                        !instance.isAdmin && instance.registering
+                        ? 'Current Requested Clan: ' + instance.character.clan.toUpperCase()
+                        : 'Current Clan: ' + instance.character.clan.toUpperCase()
+                    )
+                    : (
+                        !instance.isAdmin && instance.registering
+                        ? 'Choose: ' + clanArray.map(c => CoreUtil.ProperCapitalization(c)).join(' | ')
+                        : 'None. ' + clanArray.map(c => CoreUtil.ProperCapitalization(c)).join(' | ')
+                    ),
+                    value: (!instance.isAdmin && (!instance.registering || instance.statsLocked))
+                    ? ''
+                    : CoreUtil.ProperCapitalization(instance.character.clan ?? ''),
+                    maxLength: (!instance.isAdmin && (!instance.registering || instance.statsLocked))
+                    ? 0
+                    : clanArray.reduce((previousValue, currentValue) => {
+                        return currentValue.length > previousValue ? currentValue.length : previousValue
+                    }, clanArray[0].length),
                 })
             ]}),
             new MessageActionRow({ components: [

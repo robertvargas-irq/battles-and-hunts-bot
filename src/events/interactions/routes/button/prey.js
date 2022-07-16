@@ -2,6 +2,10 @@ const { ButtonInteraction, MessageEmbed } = require('discord.js');
 const HuntManager = require('../../../../util/Hunting/HuntManager');
 const SharePool = require('../../../../util/Hunting/SharePool');
 const HuntInventory = require('../../../../util/Hunting/HuntInventory');
+const Eating = require('../../../../util/Hunting/Eating');
+const Hunger = require('../../../../util/Hunting/Hunger');
+const HungerVisuals = require('../../../../util/Hunting/HungerVisuals');
+const PreyPile = require('../../../../util/Hunting/PreyPile');
 
 /** @param {ButtonInteraction} button */
 module.exports = async (button) => {
@@ -144,12 +148,64 @@ module.exports = async (button) => {
         }
 
         case 'SHARE': {
-            SharePool.markSharedFromHunt(button, button.message);
+            SharePool.markShareFromHunt(button, button.message);
             return;
         }
 
         case 'EAT': {
-            return;
+            // get prey information
+            const preyInformation = HuntManager.getRecentlyCaught(button.guild.id, button.message.id);
+            console.log({preyInformation});
+            if (!preyInformation) {
+                button.deferUpdate();
+                return this.witherPrey(button.message);
+            }
+
+            // deconstruct
+            const { prey, originalMember } = preyInformation;
+
+            // ensure original member is the one clicking
+            if (originalMember.user.id != button.user.id) return button.reply({
+                embeds: [new MessageEmbed({
+                    color: 'RED',
+                    title: '⚠️ You can only eat from your own catches!',
+                })]
+            });
+
+            // get character information
+            const character = HuntManager.Characters.cache.get(button.guild.id, button.user.id);
+
+            // iterate through the pile until prey is depleted or bites satisfied
+            /**@type {prey} */
+            if (Hunger.isSatiated(character)) return Eating.informNotHungry(button, character);
+            const bitesToSatisfy = Hunger.bitesToSatisfy(character);
+            const bitesTaken = Math.min(prey.bites_remaining, bitesToSatisfy);
+
+            // mark as taken
+            button.message.edit({
+                embeds: [HuntManager.editToDisplayCarried(button.message.embeds[button.message.embeds.length - 1])],
+                components: [],
+            });
+
+            // push update to clan
+            console.log({button, server, characterclan: character.clan});
+            PreyPile.pushPreyUpdateMessage(button, server, character.clan, {embeds: [
+                Eating.generateDishonestAlertEmbed([prey])
+            ]}).then(console.log).catch(console.error);
+
+            // satiate and save to database
+            Hunger.satiateHunger(character, bitesTaken);
+            character.save();
+            
+            // show results
+            return button.reply({
+                ephemeral: true,
+                embeds: [
+                    Eating.generateDishonestResultEmbed(character, [{name: prey.name, amountEaten: 1}]),
+                    HungerVisuals.generateHungerEmbed(button.member, character),
+                ]
+            });
+
         }
     }
 }

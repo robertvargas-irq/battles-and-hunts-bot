@@ -4,6 +4,7 @@ const stats = require('../Stats/stats.json');
 const StatCalculator = require('../Stats/StatCalculator');
 const HealthVisuals = require('../Battle/HealthVisuals');
 const HungerVisuals = require('../Hunting/HungerVisuals');
+const Hunger = require('../Hunting/Hunger');
 const STATS_BANNER = 'https://cdn.discordapp.com/attachments/955294038263750716/966906542609821696/IMG_8666.gif';
 
 /**
@@ -33,8 +34,8 @@ function formatStats(member, character) {
             },
             {
                 name: 'Current Hunger '
-                + HungerVisuals.getFlair(1 - character.currentHunger / character.stats.cat_size),
-                value: `> ↣ \`${character.stats.cat_size - character.currentHunger}\` / \`${character.stats.cat_size}\``,
+                + HungerVisuals.getFlair(Hunger.getHunger(character) / Hunger.getMaxHunger(character)),
+                value: `> ↣ \`${Hunger.getHunger(character)}\` / \`${Hunger.getMaxHunger(character)}\``,
                 inline: true,
             },
             {

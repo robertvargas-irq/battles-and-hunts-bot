@@ -3,6 +3,7 @@ const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const CoreUtil = require('../../../../util/CoreUtil');
 const Player = require('../../../../util/Account/Player');
 const stats = require('../../../../util/Stats/stats.json');
+const Hunger = require('../../../../util/Hunting/Hunger');
 
 /** @param {ModalSubmitInteraction} modal */
 module.exports = async (modal) => {
@@ -73,6 +74,7 @@ module.exports = async (modal) => {
         ]);
 
         instance.character.stats[customId] = parseInt(value);
+        if (customId === 'cat_size') Hunger.validateHunger(instance.character);
     });
 
     // save and re-render

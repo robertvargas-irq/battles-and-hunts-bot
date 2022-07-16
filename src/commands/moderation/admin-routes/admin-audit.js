@@ -1,6 +1,7 @@
 const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
 const CoreUtil = require('../../../util/CoreUtil');
+const Hunger = require('../../../util/Hunting/Hunger');
 
 
 /**
@@ -200,14 +201,11 @@ module.exports = async (interaction, subcommand) => {
                 totalClanMembers[character.clan]++;
                 
                 // if hunger is satiated, continue
-                if (character.currentHunger === 0) continue;
+                if (Hunger.isSatiated(character)) continue;
 
-                // begin fetching members based on starving or one away from starving
-                if (character.stats.cat_size <= character.currentHunger) {
-                    // initialize clan array and push the guild member
-                    if (!starving.hasOwnProperty(character.clan)) starving[character.clan] = [];
-                    starving[character.clan].push(GuildMembers.get(character.userId));
-                }
+                // initialize clan array and push the guild member
+                if (!starving.hasOwnProperty(character.clan)) starving[character.clan] = [];
+                starving[character.clan].push(GuildMembers.get(character.userId));
             }
 
             // generate embeds with the final audit

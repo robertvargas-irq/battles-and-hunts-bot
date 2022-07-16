@@ -2,6 +2,7 @@ const { CommandInteraction, MessageEmbed } = require('discord.js');
 const HuntManager = require('../../../util/Hunting/HuntManager');
 const PreyPile = require('../../../util/Hunting/PreyPile');
 const CharacterModel = require('../../../database/schemas/character');
+const Hunger = require('../../../util/Hunting/Hunger');
 
 
 /**
@@ -55,7 +56,7 @@ module.exports = async (interaction, subcommand) => {
             const characters = Array.from(HuntManager.Characters.cache.getAll(interaction.guild.id).values());
 
             // set all user's hunger to their size
-            for (let character of characters) character.currentHunger = character.stats.cat_size;
+            for (const character of characters) Hunger.starveFully(character);
 
             // save all character documents
             await CharacterModel.bulkSave(characters);

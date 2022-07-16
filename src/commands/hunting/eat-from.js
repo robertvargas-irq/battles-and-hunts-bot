@@ -1,9 +1,11 @@
-const HuntManager = require('../../util/Hunting/HuntManager')
-const PreyPile = require('../../util/Hunting/PreyPile')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed } = require('discord.js');
+const Eating = require('../../util/Hunting/Eating');
+const Hunger = require('../../util/Hunting/Hunger');
 const HungerVisuals = require('../../util/Hunting/HungerVisuals');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
+const HuntManager = require('../../util/Hunting/HuntManager');
+const PreyPile = require('../../util/Hunting/PreyPile');
 const CANON_MESSAGE = '🍃 This message is canon.'
 
 module.exports = {
@@ -109,25 +111,11 @@ module.exports = {
         // verify bites needed
         const bitesNeeded = Math.min(
             parseInt(interaction.options.getString('specific-amount', false) || '999'),
-            character.currentHunger
+            Hunger.bitesToSatisfy(character)
         );
 
         // if not hungry, inform the user and return
-        if (bitesNeeded < 1) {
-            return interaction.reply({
-                ephemeral,
-                embeds: [new MessageEmbed()
-                    .setColor('AQUA')
-                    .setTitle('🍖 Hmm...')
-                    .setDescription('You are not really feeling hungry. Better to leave it for everyone else.')
-                    .setFields([{
-                        name: 'Last Ate At',
-                        value: '> ' + (character.lastAteAt > 0 ? '<t:' + character.lastAteAt + '>, roughly <t:' + character.lastAteAt + ':R>' : 'Hmm... can\'t remember...'),
-                    }])
-                    .setFooter({ text: CANON_MESSAGE })
-                ]
-            });
-        }
+        if (bitesNeeded < 1) return Eating.informNotHungry(interaction, character);
 
         // route to requested food source
         switch (interaction.options.getSubcommand()) {
@@ -137,53 +125,29 @@ module.exports = {
                 if (inventoryEntry[0] < 1) return interaction.reply({
                     ephemeral,
                     embeds: [
-                        new MessageEmbed({
-                            color: 'RED',
-                            title: '🦴 Huh...',
-                            description: '> Looks like you don\'t have much to eat on your back...'
-                            + '\n> You can go out and `/hunt`, and `/carry` what you caught... then come back to this command to sneak a bite while no-one\'s looking...'
-                            + '\n\n⚠️ **This will leave bones behind for your clanmates to find.**',
-                        }),
+                        Eating.noFoodOnBackEmbed,
                         HungerVisuals.generateHungerEmbed(interaction.member, character),
                     ]
                 });
 
                 // eat prey being carried on one's back and format them properly
                 const {bitesTaken, consumed} = HuntInventory.eatFromCarrying(inventoryEntry, bitesNeeded);
-                const consumedFormatted = consumed.map(({name, amountEaten}) => {
-                    return `(\`${Number.isInteger(amountEaten) ? amountEaten : amountEaten.toFixed(2)}\`) **${name}**`
-                }).join(', ');
 
                 // update player's hunger based on total bites taken
-                character.currentHunger -= bitesTaken;
-                character.lastAteAt = Math.floor(Date.now() / 1000);
+                Hunger.satiateHunger(character, bitesTaken);
+                Hunger.markLastAte(character);
                 character.save();
         
                 // notify the clan bones were found
-                const notifyEmbed = new MessageEmbed({
-                    color: 'RED',
-                    author: { name: '☠️ Some prey bones have been discovered...' },
-                    description: '**Someone has been dishonest.** There '
-                    + (consumed.length === 1 ? 'is `1` pair' : 'are `' + consumed.length + '` pairs') + ' of bones lying within the territory, slightly buried but not well enough.'
-                });
-                PreyPile.pushPreyUpdateMessage(interaction, server, character.clan, {embeds: [notifyEmbed]});
+                PreyPile.pushPreyUpdateMessage(interaction, server, character.clan, {embeds: [
+                    Eating.generateDishonestAlertEmbed(consumed)
+                ]});
 
-                // display a summary of the prey eaten to the player
-                const resultEmbed = new MessageEmbed({
-                    color: 'DARK_GREEN',
-                    title: '☠️🍴 Finally... food... but at what cost?',
-                    description: '> You look around to make sure no one is looking... before taking some prey from your back and tearing into it, hastily hiding ' + (consumed.length === 1 ? 'all':'') + ' the pair' + (consumed.length !== 1 ? 's':'') + ' of bones of the ' + consumedFormatted + ' before anyone could catch on. However, they are still visible to a trained eye.\n\n'
-                    + (
-                        character.currentHunger < 1
-                        ? ('You are fully satiated.')
-                        : ('Just... `' + character.currentHunger + '` more bite' + (character.currentHunger !== 1 ? 's' : '')  + '...')
-                    ),
-                    footer: { text: CANON_MESSAGE },
-                });
+                // display a summary of the prey eaten to the playe
                 return interaction.reply({
                     ephemeral,
                     embeds: [
-                        resultEmbed,
+                        Eating.generateDishonestResultEmbed(character, consumed),
                         HungerVisuals.generateHungerEmbed(interaction.member, character),
                     ]
                 });
@@ -198,88 +162,31 @@ module.exports = {
                 if (preyPile.length < 1) return interaction.reply({
                     ephemeral,
                     embeds: [
-                        new MessageEmbed({
-                            color: 'RED',
-                            title: '🦴 Wonderful...',
-                            description: '> Looks like there\'s nothing to eat.'
-                            + '\n> Someone didn\'t go on patrol. Go \`/hunt\` for more if your leader sends you out.',
-                        }),
+                        Eating.noFoodInPileEmbed,
                         HungerVisuals.generateHungerEmbed(interaction.member, character),
                     ]
                 });
 
                 // pull and eat the amount, and update hunger
                 const {bitesTaken, consumed} = PreyPile.pullFromPreyPile(clan, server, bitesNeeded);
-                const consumedFormatted = consumed.map(({name, amountEaten}) => {
-                    return '`' + (Number.isInteger(amountEaten) ? amountEaten : amountEaten.toFixed(2)) + '`) **'
-                    + name + '**'
-                }).join(', ');
-                character.currentHunger = character.currentHunger - bitesTaken;
-
+                Hunger.satiateHunger(character, bitesTaken);
+                Hunger.markLastAte(character);
+                
                 // update prey pile and save user's new hunger with eat time
                 PreyPile.updatePreyPile(interaction, server, clan);
-                character.lastAteAt = Math.floor(Date.now() / 1000);
                 character.save();
                 server.save();
 
-                // notify the clan
-                const notifyEmbed = new MessageEmbed();
-                if (character.clan == clan) {
-                    notifyEmbed
-                        .setColor('AQUA')
-                        .setAuthor({name: '🦴 Some prey has been eaten', iconURL: character.icon ?? interaction.member.displayAvatarURL({ dynamic: true })})
-                        .setThumbnail('https://c.tenor.com/27kedvI8EwQAAAAd/cat-eating.gif')
-                        .setDescription(`\
-                        **${character.name ?? interaction.member.displayName + '\'s character'}** has eaten some food from the prey pile.\
-                        \n\
-                        \n**- - - - - -**\
-                        \n\
-                        \n**They have eaten \`${bitesTaken}\` bite${bitesTaken != 1 ? 's' : ''} of food, and have consumed the following**:\
-                        \n\
-                        \n${consumedFormatted}\
-                        \n\
-                        \n**- - - - - -**`)
-                        .setFooter({ text: CANON_MESSAGE });
-                }
-                else {
-                    notifyEmbed
-                        .setColor('RED')
-                        .setTitle('❗⚠️ Some prey has possibly been stolen!')
-                        .setThumbnail('https://www.wildliferemoval.com/wp-content/uploads/2019/02/Animal-Tracks.jpg')
-                        .setDescription(`\
-                        **An outsider to our clan has eaten from our prey pile!!**\
-                        \n> The scent is coming from someone from **${character.clan?.toUpperCase() || 'unknown clan or territory'}**.\
-                        \n\
-                        \n**SPOILER** \| WHO IT WAS: || ${(c.name ?? '') + ' (' + interaction.member.displayName + '\'s character' + '(' + interaction.user.id + '))'} ||
-                        \n\
-                        \n*(if someone has recently been given food, this can be ignored)*\
-                        \n**- - - - - -**\
-                        \n\
-                        \n**They have eaten \`${bitesTaken}\` bite${bitesTaken != 1 ? 's' : ''} of food, and have consumed the following**:\
-                        \n\
-                        \n${consumedFormatted}\
-                        \n\
-                        \n**- - - - - -**`)
-                        .setFooter({ text: CANON_MESSAGE });
-                }
-                PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[notifyEmbed]})
+                // notify the clan                
+                PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[
+                    Eating.generatePreyEatenClanAlertEmbed(character, interaction.member, bitesTaken, consumed)
+                ]});
 
                 // display a summary of the prey eaten to the player
-                const resultEmbed = new MessageEmbed({
-                    color: 'GREEN',
-                    title: '🍴 __Finally, food.__',
-                    description: `> ${consumed.length == 1 ? 'Y':'One after the other, y'}ou take ${consumedFormatted} between your teeth and tear into ${consumed.length == 1 ? 'it' : 'them'}, finally getting a good meal.`
-                    + '\n> \n> ' + (
-                        character.currentHunger < 1
-                        ? ('You are fully satiated.')
-                        : ('Just... `' + character.currentHunger + '` more bite' + (character.currentHunger !== 1 ? 's' : '') + '...')
-                    ),
-                    footer: { text: CANON_MESSAGE }
-                });
-                return interaction.reply({
+                interaction.reply({
                     ephemeral,
                     embeds: [
-                        resultEmbed,
+                        Eating.generateHonestResultEmbed(character, consumed),
                         HungerVisuals.generateHungerEmbed(interaction.member, character),
                     ]
                 });

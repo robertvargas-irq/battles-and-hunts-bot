@@ -1,5 +1,6 @@
 const { MessageEmbed, GuildMember } = require('discord.js');
 const CoreUtil = require("../CoreUtil");
+const Hunger = require('./Hunger');
 const HungerVisualsData = require('./hungerVisuals.json');
 
 class HungerVisuals {
@@ -14,7 +15,7 @@ class HungerVisuals {
      * @param {CharacterModel} character 
      */
     static generateHungerEmbed = (member, character) => {
-        const hungerRatio = character.currentHunger / character.stats.cat_size;
+        const hungerRatio = Hunger.getHunger(character) / Hunger.getMaxHunger(character);
         return new MessageEmbed({
             color: HungerVisuals.getColor(hungerRatio),
             title: '⟪' + HungerVisuals.getFlair(hungerRatio) + '⟫ ' + HungerVisuals.getTitle(hungerRatio),
@@ -23,7 +24,7 @@ class HungerVisuals {
             fields: [
                 {
                     name: 'Current Hunger',
-                    value: `> ↣ \`${character.stats.cat_size - character.currentHunger}\` / \`${character.stats.cat_size}\` `
+                    value: `> ↣ \`${Hunger.getHunger(character)}\` / \`${Hunger.getMaxHunger(character)}\` `
                     + `**(**${Math.floor((1 - hungerRatio) * 100)}%**)**`,
                     inline: true,
                 },

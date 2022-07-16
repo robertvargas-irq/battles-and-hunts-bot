@@ -86,7 +86,7 @@ class SharePool {
         });
 
         // get character information
-        const character = HuntManager.Characters.cache.get(message.guild.id, message.author.id);
+        const character = HuntManager.Characters.cache.get(message.guild.id, originalMember.user.id);
 
         // enter into SharePool
         this.storeShared(message, prey);

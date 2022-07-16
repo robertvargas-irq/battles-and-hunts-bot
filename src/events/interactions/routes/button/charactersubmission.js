@@ -1,4 +1,4 @@
-const { ButtonInteraction, MessageEmbed, Permissions, Message, MessageButton } = require('discord.js');
+const { GuildMember, ButtonInteraction, MessageEmbed, Permissions, Message, MessageButton } = require('discord.js');
 const CoreUtil = require('../../../../util/CoreUtil');
 const ServerSchema = require('../../../../database/schemas/server');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
@@ -45,7 +45,7 @@ module.exports = async (button) => {
             if (!authorId) return submissionNoLongerAvailable(button);
             const character = CoreUtil.Characters.cache.get(button.guild.id, authorId);
             if (!character) return characterNoLongerExists(button, server, authorId);
-            const authorMember = await button.guild.members.fetch(authorId).catch(() => false);
+            /**@type {GuildMember}*/const authorMember = await button.guild.members.fetch(authorId).catch(() => false);
             if (!authorMember) return authorNoLongerInServer(button, server, authorId);
 
             // approve and save
@@ -66,6 +66,13 @@ module.exports = async (button) => {
                 ],
                 components: [],
             });
+            authorMember.user.send({
+                embeds: [new MessageEmbed({
+                    color: 'GREEN',
+                    title: '📝 Update on Recent Character Submission',
+                    description: '> **Psst-! Your character in ' + button.guild.name + ' has been approved!\n\nGo check it out over at <#' + button.channel.id + '>!'
+                })]
+            }).then(console.log).catch(console.error);
             return;
         }
 

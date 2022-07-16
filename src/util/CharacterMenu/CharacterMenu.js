@@ -48,7 +48,7 @@ class CharacterMenu {
 
         this.messageId = null;
 
-        console.log({NewObject: this});
+        // // console.log({NewObject: this});
     }
 
     /**
@@ -336,7 +336,7 @@ function generateSectionEditButtons(admin, isAuthor, statSections) {
 function getEditModal(instance, toEdit) {
 
     // catch anything other than sections
-    console.log({toEdit});
+    // // console.log({toEdit});
     const server = CoreUtil.Servers.cache.get(instance.interaction.guild.id);
     const clanArray = [...Object.keys(server.clans), 'None'];
     if (toEdit.startsWith('INFO')) return new Modal({

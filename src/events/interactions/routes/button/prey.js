@@ -25,7 +25,7 @@ module.exports = async (button) => {
             const sharePoolPrey = SharePool.getShared(button.message);
             const recentlyCaught = HuntManager.getRecentlyCaught(button.guild.id, button.message.id);
 
-            console.log({sharePoolPrey, recentlyCaught});
+            // // console.log({sharePoolPrey, recentlyCaught});
 
             // if no longer valid, wither
             if (!sharePoolPrey && !recentlyCaught) {
@@ -155,7 +155,7 @@ module.exports = async (button) => {
         case 'EAT': {
             // get prey information
             const preyInformation = HuntManager.getRecentlyCaught(button.guild.id, button.message.id);
-            console.log({preyInformation});
+            // // console.log({preyInformation});
             if (!preyInformation) {
                 button.deferUpdate();
                 return this.witherPrey(button.message);
@@ -188,7 +188,7 @@ module.exports = async (button) => {
             });
 
             // push update to clan
-            console.log({button, server, characterclan: character.clan});
+            // // console.log({button, server, characterclan: character.clan});
             PreyPile.pushPreyUpdateMessage(button, server, character.clan, {embeds: [
                 Eating.generateDishonestAlertEmbed([prey])
             ]}).then(console.log).catch(console.error);

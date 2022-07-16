@@ -20,7 +20,7 @@ class SubmissionHandler {
      */
     static async handleSubmission(interaction, character, server) {
         const channel = await this.fetchProcessingChannel(interaction, server);
-        console.log({channel});
+        // // console.log({channel});
         if (!channel) return interaction.reply({
             embeds: [new MessageEmbed({
                 title: '⚠️ Wait a minute-!',

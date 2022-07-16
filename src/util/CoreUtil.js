@@ -389,6 +389,8 @@ class CoreUtil {
      */
     static ProperCapitalization(requestedWord) {
 
+        if (!requestedWord || !requestedWord.length) return requestedWord;
+
         // if it is only one word, capitalize the first letter and return
         if (!requestedWord.includes(' ')) return requestedWord[0].toUpperCase() + requestedWord.substring(1);
 

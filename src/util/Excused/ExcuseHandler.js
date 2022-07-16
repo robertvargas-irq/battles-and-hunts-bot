@@ -274,7 +274,7 @@ class ExcuseHandler extends CoreUtil {
         const threadId = server.excusesThreads.get(day);
         if (!threadId) return;
         
-        console.log({threadId});
+        // // console.log({threadId});
 
         // delete the corresponding thread
         interaction.guild.channels.fetch(threadId)

@@ -219,7 +219,7 @@ class HuntManager extends CoreUtil {
         // set recently caught
         server.set(message.id, {prey, message, originalMember});
         console.log("UPDATED RECENTLY CAUGHT");
-        console.log({ serverRecentlyCaught: server });
+        // // console.log({ serverRecentlyCaught: server });
         return prey;
     }
     

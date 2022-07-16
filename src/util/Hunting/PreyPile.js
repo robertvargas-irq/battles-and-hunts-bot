@@ -15,7 +15,7 @@ class PreyPile extends CoreUtil {
      * @param {clans} clan The clan to modify
      */
     static async setPreyPileChannelAndSpawn(interaction, server, clan) {
-        console.log({clan});
+        // // console.log({clan});
 
         // if channel being set is unique, set to the database
         if (server.clans[clan].preyPileChannelId ?? 0 != interaction.channel.id) {
@@ -181,7 +181,7 @@ class PreyPile extends CoreUtil {
 
             // unenqueue prey item
             pulled = preyPile[0];
-            console.log({pulled});
+            // // console.log({pulled});
             
             // see how many bites needed; either the full thing or bites needed to satisfy
             const originalBitesRemaining = pulled.bites_remaining;

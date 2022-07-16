@@ -68,7 +68,7 @@ class SharePool {
 
         // get prey information
         const preyInformation = HuntManager.getRecentlyCaught(message.guild.id, message.id);
-        console.log({preyInformation});
+        // // console.log({preyInformation});
         if (!preyInformation) {
             button.deferUpdate();
             return this.witherPrey(message);

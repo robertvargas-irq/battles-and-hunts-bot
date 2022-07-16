@@ -103,17 +103,7 @@ class HuntInventory {
 
         // swap interaction sidebar to grey if possible
         originalMessage.edit({
-            embeds: [originalMessage.embeds[0]
-                .setColor('GREYPLE')
-                .setTitle('')
-                .setThumbnail(originalMessage.embeds[0].image?.url || '')
-                .setDescription('')
-                .setImage('')
-                .setFooter({
-                    text: '🐾 Prey was carried away',
-                    iconURL: originalMessage.embeds[0].footer?.iconURL
-                }),
-            ],
+            embeds: [HuntManager.editToDisplayCarried(originalMessage.embeds[originalMessage.embeds.length - 1])],
             components: [],
         }).catch((e) => {
             console.log("Original message may have been deleted.")

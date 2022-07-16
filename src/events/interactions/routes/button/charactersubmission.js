@@ -75,7 +75,7 @@ module.exports = async (button) => {
                 ephemeral: true,
                 embeds: [new MessageEmbed({
                     color: 'RED',
-                    title: '⚠️ Only members with the `MANAGE_ROLES` permission can delete submissions.',
+                    title: '⚠️ Only members with the `MANAGE_ROLES` permission can refresh submissions.',
                 })],
             });
 
@@ -119,7 +119,7 @@ module.exports = async (button) => {
             if (!character) return characterNoLongerExists(button, server, authorId);
 
             // delete the thread
-            button.message.thread.delete('Submission was deleted; Thread no longer needed.').catch(() => console.log('Thread no longer exists.'));
+            safelyDeleteThread(button.message, 'Submission was deleted; Thread no longer needed.');
 
             // delete submission and inform author if possible
             SubmissionHandler.removeSubmission(server, authorId, button.message.id);
@@ -141,7 +141,7 @@ module.exports = async (button) => {
  * @param {Message} message 
  */
 async function safelyDeleteThread(message, reason = 'No reason provided,') {
-    if (!message.hasThread()) return;
+    if (!message.hasThread) return;
 
     return message.thread.delete(reason)
         .then(() => console.log('Successfully deleted thread.'))

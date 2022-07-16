@@ -34,11 +34,12 @@ module.exports = async (button) => {
         }
         case 'EDIT': {
             // ensure editing is valid
-            if (!active.isAdmin && !Player.allowedToEdit(active.interaction.guild.id, active.interaction.user.id)
+            if (!active.isAdmin && !active.registering && !Player.allowedToEdit(active.interaction.guild.id, active.interaction.user.id)
             && editTarget != 'INFO')
                 return button.reply({
+                    ephemeral: true,
                     embeds: [new MessageEmbed({
-                        title: '🔒 Your editing has been locked.'
+                        title: '🔒 Your editing is currently locked.'
                     })]
                 });
             return active.displayEditModal(button, editTarget);

@@ -133,7 +133,7 @@ class HuntManager extends CoreUtil {
             + '\n\n' + (
                 server.hunting.locked
                 ? '🔒 **Hunting is currently restricted.**\n> `/eat-from` `/carry` and `/deposit` are unavailable.'
-                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '> You may use `/carry` to carry it on your back, and `/deposit` when you return to camp.\n> *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
+                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '\n💡 **Reminders**\n> • Don\'t forget to `/deposit` when you finish all your hunting and return to camp.\n> • *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
             ),
         }));
 

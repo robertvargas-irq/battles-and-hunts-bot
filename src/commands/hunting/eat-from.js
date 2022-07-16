@@ -179,7 +179,7 @@ module.exports = {
 
                 // notify the clan                
                 PreyPile.pushPreyUpdateMessage(interaction, server, clan, {embeds:[
-                    Eating.generatePreyEatenClanAlertEmbed(character, interaction.member, bitesTaken, consumed)
+                    Eating.generatePreyEatenClanAlertEmbed(character, interaction.member, clan, bitesTaken, consumed)
                 ]});
 
                 // display a summary of the prey eaten to the player

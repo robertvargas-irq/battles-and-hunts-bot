@@ -1,7 +1,7 @@
 const FILE_LANG_ID = 'PREFERRED_LANGUAGE';
 
 const { ApplicationCommandOptionType: dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const Language = require('../../util/Language');
 const Translator = require('../../util/Translator');
@@ -39,7 +39,7 @@ module.exports = {
             ]
         }
     ],
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
         
         // defer

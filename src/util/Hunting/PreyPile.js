@@ -1,4 +1,4 @@
-const { BaseCommandInteraction, MessageEmbed, MessagePayload, Message, ThreadManager } = require('discord.js');
+const { CommandInteraction, MessageEmbed, MessagePayload, Message, ThreadManager } = require('discord.js');
 const serverSchema = require('../../database/schemas/server');
 const CoreUtil = require('../CoreUtil');
 const flairs = require('./preyPileFlairs.json');
@@ -10,7 +10,7 @@ class PreyPile extends CoreUtil {
 
     /**
      * Associate a channel for a prey pile
-     * @param {BaseCommandInteraction} interaction Discord interaction
+     * @param {CommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry
      * @param {clans} clan The clan to modify
      */
@@ -58,7 +58,7 @@ class PreyPile extends CoreUtil {
 
     /**
      * Spawn a new prey pile.
-     * @param {BaseCommandInteraction} interaction Discord interaction
+     * @param {CommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry
      * @param {clans} clan The clan to modify
      */
@@ -75,7 +75,7 @@ class PreyPile extends CoreUtil {
 
     /**
      * Push a message to the server
-     * @param {BaseCommandInteraction} interaction Original Discord interaction.
+     * @param {CommandInteraction} interaction Original Discord interaction.
      * @param {serverSchema} server The server database entry.
      * @param {clans} clan The clan to send it to.
      * @param {MessagePayload} messagePayload The desired message to send.
@@ -105,7 +105,7 @@ class PreyPile extends CoreUtil {
 
     /**
      * Update the prey pile file if needed
-     * @param {BaseCommandInteraction} interaction Discord interaction
+     * @param {CommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry
      * @param {clans} clan The clan's prey pile to update
      * @returns {Promise<boolean>} True if successful update | False if channel or message is missing

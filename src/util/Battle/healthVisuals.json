@@ -1,0 +1,37 @@
+{
+    "colors": [
+        "NOT_QUITE_BLACK",
+        "DARK_RED",
+        "RED",
+        "YELLOW",
+        "AQUA"
+    ],
+    "titles": [
+        "",
+        "Deathly Ill",
+        "Aching",
+        "Okay",
+        "Well",
+        "Serene"
+    ],
+    "descriptions": [
+        null,
+        "Please.",
+        "Dark.",
+        "Help me; it's far too dark.",
+        "It's getting rather dark.",
+        "Something really doesn't feel right within.",
+        "Is anyone seeing this dark aura?",
+        "Please, I need some medical attention.",
+        "This is starting to hurt, rather much.",
+        "I'm a bit out of it, but I should be alright",
+        "I'm feeling rather well"
+    ],
+    "flairs": [
+        "🪦",
+        "🩸",
+        "❤️‍🩹",
+        "💫",
+        "🌿"
+    ]
+}

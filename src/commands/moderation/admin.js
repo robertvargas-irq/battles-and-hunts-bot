@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const DAY_CHOICES = [
     {
         name: 'Friday',
@@ -97,7 +97,33 @@ module.exports = {
                             ],
                         },
                     ]
-                }
+                },
+                {
+                    name: 'approve',
+                    description: 'Set a Character\'s status to Approved',
+                    type: CommandTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'character-author',
+                            description: 'Who\'s character to approve',
+                            required: true,
+                            type: CommandTypes.User,
+                        },
+                    ]
+                },
+                {
+                    name: 'un-approve',
+                    description: 'Set a Character\'s status to Not Approved',
+                    type: CommandTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'character-author',
+                            description: 'Who\'s character to remove approval',
+                            required: true,
+                            type: CommandTypes.User,
+                        },
+                    ]
+                },
             ]
         },
         {
@@ -276,7 +302,7 @@ module.exports = {
             ]
         }
     ],
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // filter out non-administrators

@@ -2,51 +2,74 @@ const { ModalSubmitInteraction, MessageEmbed } = require('discord.js');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const CoreUtil = require('../../../../util/CoreUtil');
 const Player = require('../../../../util/Account/Player');
-const stats = require('../../../../util/CharacterMenu/stats.json');
+const stats = require('../../../../util/Stats/stats.json');
+const Hunger = require('../../../../util/Hunting/Hunger');
 
 /** @param {ModalSubmitInteraction} modal */
 module.exports = async (modal) => {
     
     const instance = CharacterMenu.getMenuFromModal(modal);
-    if (!instance) return modal.reply({ content: 'No longer valid', ephemeral: true });
-
+    if (!instance) return modal.reply({
+        ephemeral: true,
+        content: '**This editor is no longer valid. Please open a new one if you wish to proceed.**'
+        + '\n> This may have been caused by another editor being opened, or the bot having restarted.'
+    });
+    
     const [_, action, editTarget] = modal.customId.split(':');
-    if (!instance.isAdmin && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id)
+    if (!instance.isAdmin && !instance.registering && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id)
     && editTarget != 'INFO')
         return modal.reply({
+            ephemeral: true,
             embeds: [new MessageEmbed({
-                title: '🔒 Your editing has been locked.',
+                title: '🔒 Your editing is currently locked.',
                 description: '> All changes were discarded.'
             })]
         });
     const errors = [];
 
     // handle info correctly
+    const server = CoreUtil.Servers.cache.get(modal.guild.id);
     if (editTarget === 'INFO') {
+        const parseAge = (age) => {
+
+            if (isNaN(age)) {
+                errors.push([
+                    'moons', 'Please only enter numerical values.'
+                ]);
+            }
+            else if (age === '' || age < 0) {
+                age = 0;
+            }
+
+            return parseInt(age);
+        };
+        const isValidClan = (clan) => server.clans.hasOwnProperty(clan.toLowerCase());
         const name = modal.fields.getField('name').value || null;
         const clan = modal.fields.getField('clan').value || null;
+        const age = parseAge(modal.fields.getField('age').value);
         const personality = modal.fields.getField('personality').value || null;
         const background = modal.fields.getField('background').value || null;
-        const image = modal.fields.getField('image').value || null;
-
-        if (clan) instance.character.clan = clan;
+        
+        if (!isNaN(age)) instance.character.moons = age;
+        if (clan) {
+            if (clan.toLowerCase() === 'none') instance.character.clan = null;
+            else if (isValidClan(clan)) instance.character.clan = clan.toLowerCase();
+            else errors.push([
+                'clan',
+                'Clan must be one of the following: \n> '
+                + [...Object.keys(server.clans), 'None'].map(c => '`' + CoreUtil.ProperCapitalization(c) + '`').join(' | ')]);
+        }
         instance.character.name = name;
         instance.character.personality = personality;
         instance.character.background = background;
-        instance.character.image = image;
     }
-    else if (editTarget === 'AGE') {
-        const age = modal.fields.getField('age').value;
-        let parsed = parseInt(age);
+    else if (editTarget === 'IMAGES') {
+        const image = modal.fields.getField('image').value || null;
+        const icon = modal.fields.getField('icon').value || null;
 
-        if (parsed === NaN) errors.push([
-            'moons', 'Please only enter numerical values.'
-        ]);
-        else if (age === '' || parsed < 0) {
-            parsed = -1;
-            instance.character.moons = parsed;
-        }
-        else instance.character.moons = parsed;
+        // set given image and icon
+        instance.character.image = image;
+        instance.character.icon = icon;
     }
 
     // handle section edits
@@ -54,17 +77,18 @@ module.exports = async (modal) => {
         const { customId, value } = actionRow.components[0];
         let parsedValue = value.length > 0 ? parseInt(value) : '-1';
         if (parsedValue === '-1') return errors.push([
-            customId, 'Please ensure you don\'t forget to enter a value between `' + stats[customId].range[0] + '`-`' + stats[customId].range[1] + '`'
+            customId, 'Please ensure you don\'t forget to enter a value between `' + stats[customId].min + '`-`' + stats[customId].max + '`'
         ]);
         else if (parsedValue === NaN) return errors.push([
                 customId, 'Please only enter numerical values.'
         ]);
-        else if (parsedValue < stats[customId].range[0]
-        || parsedValue > stats[customId].range[1]) return errors.push([
-            customId, 'Please enter a number in the following range: `' + stats[customId].range[0] + '`-`' + stats[customId].range[1] + '`'
+        else if (parsedValue < stats[customId].min
+        || parsedValue > stats[customId].max) return errors.push([
+            customId, 'Please enter a number in the following range: `' + stats[customId].min + '`-`' + stats[customId].max + '`'
         ]);
 
         instance.character.stats[customId] = parseInt(value);
+        if (customId === 'cat_size') Hunger.validateHunger(instance.character);
     });
 
     // save and re-render
@@ -76,7 +100,9 @@ module.exports = async (modal) => {
         title: '⚠️ Whoops-! Something\'s a bit off...',
         color: 'RED',
         description: 'There were a few values that were\'t quite right! They have been reset to their original values.\n\n'
-        + errors.map(([customId, errorMessage]) => stats[customId].flair + ' **' + stats[customId].name + '**\n> ' + errorMessage).join('\n')
+        + errors.map(([customId, errorMessage]) =>
+        (stats[customId]?.flair ?? '') + ' **' +
+        (stats[customId]?.name ?? CoreUtil.ProperCapitalization(customId)) + '**\n> ' + errorMessage).join('\n')
     }));
     instance.character.save();
     CoreUtil.Characters.cache.set(instance.authorSnowflake.guild.id, instance.authorSnowflake.user.id, instance.character);

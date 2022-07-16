@@ -29,15 +29,17 @@ module.exports = async (button) => {
                     description: '> It looks like this character has already been approved!'
                 })]
             })
+            active.character.save();
             return SubmissionHandler.handleSubmission(button, active.character, server);
         }
         case 'EDIT': {
             // ensure editing is valid
-            if (!active.isAdmin && !Player.allowedToEdit(active.interaction.guild.id, active.interaction.user.id)
+            if (!active.isAdmin && !active.registering && !Player.allowedToEdit(active.interaction.guild.id, active.interaction.user.id)
             && editTarget != 'INFO')
                 return button.reply({
+                    ephemeral: true,
                     embeds: [new MessageEmbed({
-                        title: '🔒 Your editing has been locked.'
+                        title: '🔒 Your editing is currently locked.'
                     })]
                 });
             return active.displayEditModal(button, editTarget);

@@ -1,9 +1,8 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction } = require('discord.js');
-const LOCATION_TEMPLATE = {
-
-}
+const { CommandInteraction } = require('discord.js');
+const Prey = require('../../util/Hunting/Prey');
+const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
 
 module.exports = {
     name: 'hunt',
@@ -123,7 +122,7 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 
@@ -142,17 +141,17 @@ module.exports = {
         // if not locked, session is active, so check cooldowns
         if (!server.hunting.locked) {
             // return if on cooldown
-            if (HuntManager.onCooldownHunt(interaction.user.id))
-                return HuntManager.displayCooldownHunt(interaction);
+            if (HuntCooldowns.onCooldownHunt(interaction.guild.id, interaction.user.id))
+                return HuntCooldowns.displayCooldownHunt(interaction);
             
             // add cooldown
-            HuntManager.addCooldownHunt(interaction.user.id);
+            HuntCooldowns.addCooldownHunt(interaction.guild.id, interaction.user.id);
         }
 
         // roll for track
         const trackRoll = HuntManager.rollTrack(20);
         const catchRoll = HuntManager.rollCatch(20);
-        const prey = HuntManager.generatePrey(location, 3);
+        const prey = Prey.generateRandomPreyItem(location, 3);
 
         // display result
         return HuntManager.generateAndDisplayResults(

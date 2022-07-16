@@ -1,11 +1,12 @@
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const HuntManager = require('../../../util/Hunting/HuntManager');
 const PreyPile = require('../../../util/Hunting/PreyPile');
 const CharacterModel = require('../../../database/schemas/character');
+const Hunger = require('../../../util/Hunting/Hunger');
 
 
 /**
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  * @param {string} subcommand 
  */
 module.exports = async (interaction, subcommand) => {
@@ -55,7 +56,7 @@ module.exports = async (interaction, subcommand) => {
             const characters = Array.from(HuntManager.Characters.cache.getAll(interaction.guild.id).values());
 
             // set all user's hunger to their size
-            for (let character of characters) character.currentHunger = character.stats.cat_size;
+            for (const character of characters) Hunger.starveFully(character);
 
             // save all character documents
             await CharacterModel.bulkSave(characters);
@@ -85,7 +86,7 @@ module.exports = async (interaction, subcommand) => {
                         .setColor('RED')
                         .setTitle('🪰🦴 All of your food has gone to waste.')
                         .setDescription(`The entirety of the prey pile has rotted away, leaving behind a foul odor that absolutely engulfs your sense of smell.` +
-                        `\n\n__**All of the following prey has spoiled**__:\n${PreyPile.formatPrey(spoiledFood)}\n\n||**${interaction.member.displayName}** called the \`/spoil\` command.||`)
+                        `\n\n__**All of the following prey has spoiled**__:\n${PreyPile.formatPrey(spoiledFood)}\n\n||**${interaction.member.displayName} (${interaction.user.tag}(${interaction.user.id}))** called the \`/spoil\` command.||`)
                     ]
                 })
             }

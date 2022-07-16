@@ -1,9 +1,9 @@
-const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const Player = require('../../../util/Account/Player');
 
 
 /**
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  * @param {string} subcommand 
  */
 module.exports = async (interaction, subcommand) => {
@@ -30,7 +30,7 @@ module.exports = async (interaction, subcommand) => {
             return interaction.reply({
                 embeds: [new MessageEmbed({
                     color: 'GREEN',
-                    title: '🔓 /edit permission has been temporarily granted to ' + member.displayName + '.',
+                    title: '🔓 /edit permission has been temporarily granted to ' + member.displayName + '(' + member.user.tag + ').',
                     description: 'To lock everyone\'s usage of /edit again, use the `lock` subcommand.'
                     + '\n/admin stats lock'
                 })]

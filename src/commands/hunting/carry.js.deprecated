@@ -1,11 +1,13 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
+const HuntInventory = require('../../util/Hunting/HuntInventory');
+const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
 
 module.exports = {
     name: 'carry',
     description: 'Put your most recently caught prey on your back.',
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 
@@ -18,48 +20,46 @@ module.exports = {
         if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
         
         // if not carrying anything, inform
-        const recentlyCaughtResult = HuntManager.getRecentlyCaught(interaction.user.id);
+        const recentlyCaughtResult = HuntManager.getRecentlyCaught(interaction.guild.id, interaction.user.id);
         let recentlyCaught;
-        let originalInteraction;
+        let originalMessage;
         if (!recentlyCaughtResult) {
+            const [weightCarrying, preyCarrying] = HuntInventory.getCarrying(interaction.guild.id, interaction.user.id);
             return interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed()
-                    .setColor('RED')
-                    .setTitle('⚠️ Woah wait! You haven\'t caught anything!')
-                    .setDescription(
-                        '> Go back and use \`/hunt\` first and then use this command to pick up and carry whatever you caught!'
-                    )
+                embeds: [
+                    new MessageEmbed({
+                        color: 'RED',
+                        title: '⚠️ Woah wait! You haven\'t caught anything!',
+                        description: '> Go back and use \`/hunt\` first and then use this command to pick up and carry whatever you caught!',
+                    }),
+                    HuntInventory.generateCarryingEmbed(preyCarrying, weightCarrying),
                 ]
             });
         }
 
         // check if user is on cooldown
-        if (HuntManager.onCooldownDeposit(interaction.user.id))
-            return HuntManager.displayCooldownDeposit(interaction);
+        if (HuntCooldowns.onCooldownDeposit(interaction.guild.id, interaction.user.id))
+            return HuntCooldowns.displayCooldownDeposit(interaction);
         
-        // attach recently caught and interaction to proper variables
+        // attach recently caught and message to proper variables
         recentlyCaught = recentlyCaughtResult.prey;
-        originalInteraction = recentlyCaughtResult.interaction;
+        originalMessage = recentlyCaughtResult.message;
         
         // add to carry
-        const [overEncumbered, weightCarrying, preyCarrying] = HuntManager.addToCarry(interaction.user.id, recentlyCaught, originalInteraction);
+        const [overEncumbered, weightCarrying, preyCarrying] = HuntInventory.addToCarry(interaction.guild.id, interaction.user.id, recentlyCaught, originalMessage);
         const resultEmbed = new MessageEmbed();
 
         // if successfully carried, notify
         if (!overEncumbered) {
             // if weight being carried is at a respectable limit
-            if (weightCarrying <= HuntManager.INVENTORY_MAX_WEIGHT) resultEmbed
+            if (weightCarrying <= HuntInventory.INVENTORY_MAX_WEIGHT) resultEmbed
                 .setColor('GREEN')
                 .setTitle(`🎒 __Successfully picked up: \`${recentlyCaught.name}\`__`)
                 .setDescription(
                 `> You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, ready to carry it as you venture forward.`
                 + '\n> ' 
                 + '\n> Your back gets a little heavier.'
-                + '\n\n🐈 __**Prey you are currently carrying**__'
-                + `\n\n${HuntManager.formatPrey(preyCarrying)}`
-                + '\n\n**- - - - - -**'
-                + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
                 )
                 .setFooter({ text: '🍃 This carry is canon.' });
             // else, the weight being carried is NOT at a respectable limit; the character is now over-encumbered
@@ -71,11 +71,7 @@ module.exports = {
                 `> You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, your legs struggling to keep the load on your back afloat.`
                 + '\n> '
                 + '\n> **You now have no other choice but to go back to camp and \`/deposit\` your prey before you can carry more.**'
-                + '\n\n🐈 **Prey you are currently carrying**'
-                + `\n\n${HuntManager.formatPrey(preyCarrying)}`
-                + '\n\n**- - - - - -**'
-                + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
-                + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
+                + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntInventory.INVENTORY_MAX_WEIGHT}\``
                 )
                 .setFooter({ text: '🍃 This carry is canon.' });
         }
@@ -88,18 +84,17 @@ module.exports = {
             `> You carefully take the \`${recentlyCaught.name}\` between your teeth, but the sheer weight you are carrying simply causes you to let go, stumbling and nearly losing what you have piled onto your back.`
             + '\n> '
             + '\n> **You unfortunately must go back to camp and \`/deposit\` your prey before you can carry more.**'
-            + '\n\n🐈 **Prey you are currently carrying**'
-            + `\n\n${HuntManager.formatPrey(preyCarrying)}`
-            + '\n\n**- - - - - -**'
-            + `\n\nTotal weight being carried: \`${weightCarrying}\` / \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
-            + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntManager.INVENTORY_MAX_WEIGHT}\``
+            + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.bites_remaining}\`) > \`${HuntInventory.INVENTORY_MAX_WEIGHT}\``
             )
             .setFooter({ text: '🍃 This carry is canon.' });
 
         // display result
         return interaction.reply({
             ephemeral: true,
-            embeds: [resultEmbed]
+            embeds: [
+                resultEmbed,
+                HuntInventory.generateCarryingEmbed(preyCarrying, weightCarrying)
+            ]
         });
     },
 };

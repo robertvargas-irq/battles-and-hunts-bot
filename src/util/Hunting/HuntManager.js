@@ -1,10 +1,9 @@
 const serverSchema = require('../../database/schemas/server');
 const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
-const userSchema = require('../../database/schemas/user');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
-const { Collection, MessageEmbed, BaseCommandInteraction, GuildMember } = require('discord.js');
+const { MessageEmbed, CommandInteraction, GuildMember, MessageActionRow, MessageButton, Message } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 /**
@@ -34,113 +33,12 @@ const CoreUtil = require('../CoreUtil');
 
 
 class HuntManager extends CoreUtil {
-    static MAX_WEIGHT = 3;
-    static INVENTORY_MAX_WEIGHT = 7;
-    static #MAX_HUNT_TIMERS = 5;
-    static #MAX_DEPOSIT_TIMERS = 2;
-    static #HUNT_COOLDOWN = (30 * 1000) // 30 seconds
-    static #DEPOSIT_COOLDOWN = (30 * 60 * 1000) // 30 minutes
     static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
-    static #RandomFromArray = (a) => { return a[this.#Random(0, a.length - 1)] }
-    
+
     /**
-     * @type {Map<string, prey>}
+     * @type {Map<guildId, Map<messageId, prey>>}
      * Player ID to their recently caught prey */
-    static #playerIdToRecentlyCaught = new Map();
-
-    /**
-     * @type {Map<string, [weight: number, prey[]]>}
-     * Player ID to their inventory */
-    static #playerIdToInventory = new Map();
-
-    /**
-     * @type {Collection<string, number[]>}}
-     * Map of 2 cooldown timers for /hunt */
-    static #cooldownHunt = new Collection();
-
-    /**
-     * @type {Collection<string, number[]>}}
-     * Map of 2 cooldown timers for /deposit */
-    static #cooldownDeposit = new Collection();
-
-    /**
-     * Check to see if user is on cooldown for /hunt;
-     * Remove cooldown if applicable
-     * @param {string} userId User to check for
-     */
-    static onCooldownHunt(userId) {
-        const timers = this.#cooldownHunt.get(userId);
-        console.log(this.#cooldownHunt.get(userId));
-
-        // if no cooldown at all
-        if (!timers) return false;
-
-        // if the queue is not full
-        if (timers.length < this.#MAX_HUNT_TIMERS) return false;
-
-        // if the front timer is satisfied, unqueue and return false
-        if (Date.now() - timers[0] >= this.#HUNT_COOLDOWN) {
-            if (timers.length <= 1) this.#cooldownHunt.delete(userId);
-            else timers.shift();
-            return false;
-        }
-
-        // all checks failed, not on cooldown
-        return true;
-    }
-
-    /**
-     * Check to see if user is on cooldown for /deposit;
-     * Remove cooldown if applicable
-     * @param {string} userId User to check for
-     */
-    static onCooldownDeposit(userId) {
-        const timers = this.#cooldownDeposit.get(userId);
-        console.log(this.#cooldownDeposit.get(userId));
-
-        // if no cooldown at all
-        if (!timers) return false;
-
-        // if the queue is not full
-        if (timers.length < this.#MAX_DEPOSIT_TIMERS) return false;
-
-        // if the front timer is satisfied, unqueue and return false
-        if (Date.now() - timers[0] >= this.#DEPOSIT_COOLDOWN) {
-            if (timers.length <= 1) this.#cooldownDeposit.delete(userId);
-            else timers.shift();
-            return false;
-        }
-
-        // all checks failed, not on cooldown
-        return true;
-    }
-
-    /**
-     * Add a cooldown for /hunt
-     * @param {string} userId The user ID to add to cooldown list
-     */
-    static addCooldownHunt(userId) {
-        const cooldowns = this.#cooldownHunt;
-        const timers = cooldowns.get(userId);
-        if (timers)
-            timers.push(Date.now());
-        else cooldowns.set(userId, [Date.now()]);
-        console.log(cooldowns);
-    }
-
-    /**
-     * Add a cooldown for /deposit
-     * @param {string} userId The user ID to add to the cooldown list
-     */
-    static addCooldownDeposit(userId) {
-        const cooldowns = this.#cooldownDeposit;
-        const timers = cooldowns.get(userId);
-        if (timers)
-            timers.push(Date.now());
-        else cooldowns.set(userId, [Date.now()]);
-        console.log(cooldowns);
-    }
-    
+    static #recentlyCaught = new Map();
 
     /**
      * Roll for track.
@@ -163,29 +61,8 @@ class HuntManager extends CoreUtil {
     }
 
     /**
-     * Generate a random prey object
-     * @param {locations} location
-     * @returns {prey}
-     */
-    static generatePrey(location, maxSize) {
-        const preyName = this.#RandomFromArray(preyFromLocations[location]);
-        const overrides = preyFromLocations.overrides[preyName] || false;
-        const sizeRoll = this.#Random(
-            overrides?.bites?.min || 1,
-            overrides?.bites?.max || maxSize
-        );
-        return {
-            name: preyName,
-            size: sizeRoll,
-            bites_remaining: sizeRoll,
-            visual: preyFromLocations.visuals[preyName],
-            overrides,
-        }
-    }
-
-    /**
      * Display the resulting rolls to the player.
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      * @param {CharacterModel} character Character information from the database.
      * @param {MemberModel} member Member information from the database.
      * @param {serverSchema} server Server information from the database. 
@@ -210,7 +87,6 @@ class HuntManager extends CoreUtil {
         // if hunting is not locked, and prey has been caught, add to recently caught and record results
         if (!server.hunting.locked) {
             if (tracked && caught) {
-                this.setRecentlyCaught(interaction, interaction.user.id, prey);
                 character.hunting.hunts.successful++;
                 member.hunting.hunts.successful++;
             }
@@ -250,20 +126,44 @@ class HuntManager extends CoreUtil {
             color: 'FUCHSIA',
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
-                text: 'Hunt Results for ' + interaction.member.displayName,
-                iconURL: interaction.member.displayAvatarURL({ dynamic: true })
+                text: 'Hunt Results for ' + (character.name ?? interaction.member.displayName + '\'s character'),
+                iconURL: character.icon ?? interaction.member.displayAvatarURL({ dynamic: true })
             },
             description: generateBriefDescription(tracked, caught, preyFromLocations.descriptors[prey.size - 1], prey)
             + '\n\n' + (
                 server.hunting.locked
                 ? '🔒 **Hunting is currently restricted.**\n> `/eat-from` `/carry` and `/deposit` are unavailable.'
-                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '> You may use `/carry` to carry it on your back, and `/deposit` when you return to camp.\n> *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
+                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '\n💡 **Reminders**\n> • Don\'t forget to `/deposit` when you finish all your hunting and return to camp.\n> • *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
             ),
         }));
 
+        // build buttons
+        const rowOne = new MessageActionRow();
+        if (tracked && caught) rowOne.addComponents([
+            new MessageButton({
+                customId: 'PREY:COLLECT',
+                label: 'Collect',
+                emoji: '🎒',
+                style: 'SUCCESS',
+            }),
+            new MessageButton({
+                customId: 'PREY:SHARE',
+                label: 'Share',
+                style: 'SECONDARY',
+            }),
+            new MessageButton({
+                customId: 'PREY:EAT',
+                label: 'Eat Secretly',
+                style: 'DANGER',
+            }),
+        ]);
+
         // display results
-        return this.SafeReply(interaction, {
-            embeds: embeds
+        return this.SafeReply(interaction, { embeds, components: [rowOne] }).then(async () => {
+            // add to recently caught if tracked and caught
+            if (!tracked || !caught) return;
+            const message = await interaction.fetchReply();
+            HuntManager.setRecentlyCaught(message, interaction.member, interaction.guild.id, prey);
         });
 
         // generates a brief summary of the hunt
@@ -293,169 +193,44 @@ class HuntManager extends CoreUtil {
 
     /**
      * Set a user's recently caught to a prey
-     * @param {BaseCommandInteraction} originalInteraction The original interaction
-     * @param {string} userId The player who caught the prey
+     * @param {Message} message The original interaction's message
+     * @param {GuildMember} originalMember The player who caught the prey
+     * @param {string} guildId The guild in which it was caught in
      * @param {prey} prey The prey that was caught
      * @returns {prey}
      */
-    static setRecentlyCaught(interaction, userId, prey) {
+    static setRecentlyCaught(message, originalMember, guildId, prey) {
+
+        // instantiate server if not already
+        if (!this.#recentlyCaught.has(guildId)) this.#recentlyCaught.set(guildId, new Map());
+
+        // get server recently caught
+        const server = this.#recentlyCaught.get(guildId);
+
         // clear prey if null
         if (!prey) {
-            this.#playerIdToRecentlyCaught.delete(userId);
-            return {prey: null, interaction: null};
+            server.delete(message.id);
+            return {prey: null, message: null};
         }
 
         // set recently caught
-        this.#playerIdToRecentlyCaught.set(userId, {prey, interaction});
+        server.set(message.id, {prey, message, originalMember});
         console.log("UPDATED RECENTLY CAUGHT");
-        console.log(this.#playerIdToRecentlyCaught);
+        console.log({ serverRecentlyCaught: server });
         return prey;
     }
     
     /**
      * Get the user's most recently caught prey item
-     * @param {string} userId The player who caught the prey
-     * @returns {prey}
+     * @param {string} guildId The guild the player is in
+     * @param {string} messageId The message the prey is held in
+     * @returns {{prey: prey, message: Message, originalMember: GuildMember}}
      */
-    static getRecentlyCaught(userId) {
-        console.log(this.#playerIdToRecentlyCaught);
-        return this.#playerIdToRecentlyCaught.get(userId);
-    }
-
-    /**
-     * Pull from a player's carrying inventory
-     * @param {[weight: number,prey[]]} inventory Player's inventory entry.
-     * @param {number} bitesToSatisfy The amount of bites needed to satisfy hunger.
-     * @returns {{bites_taken: number, consumed: {name:string, totalEaten:number}[]}} The prey that was required to facilitate 
-     */
-    static pullFromCarrying(inventory, bitesToSatisfy) {
-
-        // iterate through the pile until prey is depleted or bites satisfied
-        /**@type {prey} */
-        let pulled = null;
-        let bites_taken = 0;
-        let total_bites_taken = 0;
-        let eatenPrey = new Map();
-        while (inventory[1].length > 0 && bitesToSatisfy > 0) {
-
-            // unenqueue prey item
-            pulled = inventory[1].shift();
-            console.log({pulled});
-            
-            // see how many bites needed; either the full thing or bites needed to satisfy
-            const originalBitesRemaining = pulled.bites_remaining;
-            bites_taken = Math.min(pulled.bites_remaining, bitesToSatisfy);
-            pulled.bites_remaining -= bites_taken;
-            bitesToSatisfy -= bites_taken;
-            total_bites_taken += bites_taken;
-            
-            // record to eaten prey
-            eatenPrey.set(
-                pulled.name,
-                (eatenPrey.get(pulled.name) || 0)
-                    + 1 * (bites_taken / originalBitesRemaining)
-            );
-        }
-
-        // format the prey eaten
-        console.log(eatenPrey);
-        const eaten = Array.from(eatenPrey.entries()).map(([p, count]) => { return {name: p, amountEaten: count} })
-
-        // return the prey needed to eat
-        return { bitesTaken: total_bites_taken, consumed: eaten };
-
-    }
-
-    /**
-     * Get all the items being carried
-     * @param {string} userId The player's inventory to grab
-     * @returns {[weight: number,prey[]]} All the prey in their inventory
-     */
-    static getCarrying(userId) {
-        const inventory = this.#playerIdToInventory.get(userId);
-        if (!inventory) return [0, []];
-
-        // return the inventory from index 1
-        return inventory;
-    }
-
-    /**
-     * Add to a user's caught prey
-     * @param {string} userId The player to add to their carry
-     * @param {prey} prey The prey to add to their carry
-     * @param {BaseCommandInteraction} originalInteraction The original interaction
-     * @returns {[Array]} [`Over Encumbered`, `WeightCarried`, `CurrentlyCarrying`]
-     */
-    static addToCarry(userId, prey, originalInteraction) {
-
-        // get player inventory else create one
-        let inventory = this.#playerIdToInventory.get(userId);
-        if (!inventory) {
-            this.#playerIdToInventory.set(userId, [0, []]);
-            inventory = this.#playerIdToInventory.get(userId);
-        }
-        const weight = inventory[0];
-        const carried = inventory[1];
-
-        // check if already over-encumbered
-        if (weight > this.INVENTORY_MAX_WEIGHT)
-            return [true, inventory[0], inventory[1]];
+    static getRecentlyCaught(guildId, messageId) {
+        const server = this.#recentlyCaught.get(guildId);
+        if (!server) return null;
         
-        // add to carried and increase weight
-        carried.push(prey);
-        inventory[0] = inventory[0] + prey.bites_remaining;
-
-        // remove from recently caught
-        this.setRecentlyCaught(null, userId, null);
-        console.log(inventory);
-        console.log(this.#playerIdToInventory.get(userId));
-
-        // swap interaction sidebar to grey if possible
-        originalInteraction.fetchReply().then(r => {
-            originalthis.editReply({
-                embeds: [r.embeds[0]
-                    .setColor('GREYPLE')
-                    .setAuthor({
-                        name: '🐾 Prey was carried away',
-                        iconURL: originalInteraction.member.displayAvatarURL({ dynamic: true }) })
-                    .setTitle('')
-                    .setThumbnail(r.embeds[0].image?.url || '')
-                    .setImage('')
-                    .setDescription('🍃')
-                    .setFooter({ text: '' }),
-                ]
-            });
-        }).catch(() => console.log("Original interaction may have been timed out or deleted."));
-        
-        // return over-encumbered status and new weight and inventory
-        return [false, inventory[0], inventory[1]];
-    }
-
-    /**
-     * Get all the carried items
-     * @param {string} userId The player to remove from carry
-     * @returns {prey[]} All the prey in their inventory
-     */
-    static removeFromCarry(userId) {
-        const inventory = this.#playerIdToInventory.get(userId);
-        if (!inventory) return [];
-
-        // cache inventory then empty player inventory
-        const inventoryItems = inventory[1];
-        this.#playerIdToInventory.set(userId, [0, []]);
-
-        // return inventory
-        return inventoryItems;
-    }
-
-    /**
-     * Override a player's inventory
-     * @param {string} userId The player to modify
-     * @param {[weight: number, prey[]]} newInventory Inventory to replace the original
-     * @returns {Map<string, [weight: number, prey[]]>} New Map of player inventories
-     */
-    static setCarrying(userId, newInventory) {
-        return this.#playerIdToInventory.set(userId, newInventory);
+        return server.get(messageId) ?? null;
     }
 
     /**
@@ -493,7 +268,7 @@ class HuntManager extends CoreUtil {
 
     /**
      * Display that hunting is currently restricted
-     * @param {BaseCommandInteraction} interaction Interaction to edit
+     * @param {CommandInteraction} interaction Interaction to edit
      */
     static async displayRestrictedHunting(interaction) {
         return await this.SendAndDelete(interaction, {
@@ -510,81 +285,50 @@ class HuntManager extends CoreUtil {
     }
 
     /**
-     * Display that the user is on cooldown for /hunt
-     * @param {BaseCommandInteraction} interaction Original Discord interaction
-     */
-    static async displayCooldownHunt(interaction) {
-        let minutes = ((this.#HUNT_COOLDOWN - (Date.now() - this.#cooldownHunt.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);
-        return await this.SafeReply(interaction, {
-            ephemeral: true,
-            embeds: [new MessageEmbed({
-                color: 'FUCHSIA',
-                title: '💫 Feeling a little winded',
-                description: '**You\'re feeling a bit tired...**'
-                + '\nMaybe take a brief rest after trying `'
-                + (this.#MAX_HUNT_TIMERS) + '` hunt' + (this.#MAX_HUNT_TIMERS != 1 ? 's' : '')
-                + ' for at least `'
-                + (minutes >= 1 ? minutes : minutes * 60)
-                + '` more '
-                + (minutes >= 1 ? 'minutes' : 'seconds') + '.'
-            })]
-        });
-    }
-
-    /**
-     * Display that the user is on cooldown for /deposit
-     * @param {BaseCommandInteraction} interaction Original Discord interaction
-     */
-    static async displayCooldownDeposit(interaction) {
-        let minutes = ((this.#DEPOSIT_COOLDOWN - (Date.now() - this.#cooldownDeposit.get(interaction.user.id)[0])) / 60 / 1000).toFixed(1);
-        return await this.SafeReply(interaction, {
-            ephemeral: true,
-            embeds: [new MessageEmbed({
-                color: 'FUCHSIA',
-                title: '💤 W...Wait...',
-                description: '**You\'re feeling a bit tired...**'
-                + '\nYou can feel everything ache.'
-                + '\nYou wish to rest after making `'
-                + (this.#MAX_DEPOSIT_TIMERS) + ' journey' + (this.#MAX_DEPOSIT_TIMERS != 1 ? 's' : '')
-                + '` for at least `'
-                + (minutes >= 1 ? minutes : minutes * 60)
-                + '` more '
-                + (minutes >= 1 ? 'minutes' : 'seconds') + '.'
-            })]
-        });
-    }
-
-    /**
      * Format hunting stats in an embed
-     * @param {userSchema} user User entry in the database
+     * @param {CharacterModel} character User entry in the database
      * @param {GuildMember} memberSnowflake Member desired
      */
-    static formatStats(user, memberSnowflake) {
+    static formatStats(character, memberSnowflake) {
         return new MessageEmbed({
             color: 'DARK_VIVID_PINK',
-            thumbnail: { url: memberSnowflake.displayAvatarURL({ dynamic: true }) },
+            thumbnail: { url: character.icon ?? memberSnowflake.displayAvatarURL({ dynamic: true }) },
             title: '🥩 Hunting Stats and Contributions',
             description: '**These are 🍃 canon contributions!**'
             + '\n*(These only update when Hunting is not `restricted`)*',
             fields: [
                 {
                     name: 'Hunting',
-                    value: 'Successful Hunts: `' + user.hunting.hunts.successful + '`'
-                    + '\nUnsuccessful Hunts: `' + user.hunting.hunts.unsuccessful + '`'
+                    value: 'Successful Hunts: `' + character.hunting.hunts.successful + '`'
+                    + '\nUnsuccessful Hunts: `' + character.hunting.hunts.unsuccessful + '`'
+                    + '\nSuccess/Fail Ratio: `' + ((character.hunting.hunts.successful + 1) / (character.hunting.hunts.unsuccessful + 1)).toFixed(2) + '`'
                 },
                 {
                     name: 'Contributions',
-                    value: 'Total Prey Count: `' + user.hunting.contributions.preyCount + '`'
-                    + '\nTotal Prey Weight: `' + user.hunting.contributions.preyWeight + '` `lbs.`'
+                    value: 'Total Prey Count: `' + character.hunting.contributions.preyCount + '`'
+                    + '\nTotal Prey Weight: `' + character.hunting.contributions.preyWeight + '` `lbs.`'
+                    + '\nAverage Prey Weight: `' + ((character.hunting.contributions.preyWeight + 1) / (character.hunting.contributions.preyCount + 1)).toFixed(2) + '`'
                 },
                 {
                     name: 'Hunting Trips',
                     value: '*(number of `/deposit`s)*'
-                    + '\nTrips Made: `' + user.hunting.trips + '`'
+                    + '\nTrips Made: `' + character.hunting.trips + '`'
                 }
-            ]
-        })
+            ],
+            footer: { text: character.name ?? memberSnowflake.displayName + '\'s character' },
+        });
     }
+
+    static editToDisplayCarried = (embed) => new MessageEmbed(embed)
+        .setColor('GREYPLE')
+        .setTitle('')
+        .setThumbnail(embed.image?.url || '')
+        .setDescription('')
+        .setImage('')
+        .setFooter({
+            text: '🐾 Prey was carried away',
+            iconURL: embed.footer?.iconURL
+        });
 
 }
 

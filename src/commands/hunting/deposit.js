@@ -1,7 +1,9 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const PreyPile = require('../../util/Hunting/PreyPile');
+const HuntInventory = require('../../util/Hunting/HuntInventory');
+const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
 
 module.exports = {
     name: 'deposit',
@@ -33,7 +35,7 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
 
@@ -50,11 +52,11 @@ module.exports = {
         if (server.hunting.locked) return HuntManager.displayRestrictedHunting(interaction);
 
         // check if user is on cooldown
-        if (HuntManager.onCooldownDeposit(interaction.user.id))
-            return HuntManager.displayCooldownDeposit(interaction);
+        if (HuntCooldowns.onCooldownDeposit(interaction.guild.id, interaction.user.id))
+            return HuntCooldowns.displayCooldownDeposit(interaction);
 
         // if not carrying anything, inform
-        const carrying = HuntManager.removeFromCarry(interaction.user.id);
+        const carrying = HuntInventory.clearCarrying(interaction.guild.id, interaction.user.id);
         if (carrying.length < 1) {
             return interaction.reply({
                 ephemeral: true,
@@ -83,7 +85,7 @@ module.exports = {
             member.hunting.trips++;
 
             // perfect hunt if carrying weight matches the max carry weight
-            if (weight === HuntManager.INVENTORY_MAX_WEIGHT) {
+            if (weight === HuntInventory.INVENTORY_MAX_WEIGHT) {
                 character.hunting.fullInventoryTrips++;
                 member.hunting.fullInventoryTrips++;
             }
@@ -99,7 +101,7 @@ module.exports = {
         server.save();
 
         // add cooldown for user
-        HuntManager.addCooldownDeposit(interaction.user.id);
+        HuntCooldowns.addCooldownDeposit(interaction.guild.id, interaction.user.id);
 
         // notify the clan
         const notifyEmbed = new MessageEmbed();
@@ -107,9 +109,9 @@ module.exports = {
             notifyEmbed
                 .setColor('GREEN')
                 .setTitle('📦 Some food has arrived.')
-                .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
+                .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
-                **${interaction.member.displayName}** has deposited some food into the prey pile.\
+                **${character.name ?? interaction.member.displayName + '\'s character'}** has deposited some food into the prey pile.\
                 \n\
                 \n**- - - - - -**\
                 \n\
@@ -124,11 +126,11 @@ module.exports = {
             notifyEmbed
                 .setColor('AQUA')
                 .setTitle('🎁 Some prey has been graciously gifted to us!')
-                .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
+                .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
                 **An outsider to our clan has gifted food to our prey pile!!**\
                 \n> The scent is coming from someone from **${character.clan?.toUpperCase() || 'an unknown clan or territory'}**...\
-                \n> If I recall, their name was **${interaction.member.displayName}**.
+                \n> If I recall, their name was **${character.name ?? interaction.member.displayName + '\'s character'}**.
                 \n\
                 \n**- - - - - -**\
                 \n\

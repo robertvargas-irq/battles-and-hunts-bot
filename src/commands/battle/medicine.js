@@ -1,7 +1,8 @@
 const { ApplicationCommandOptionType : dTypes, Locale } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
-const { calculateMaxHealth } = require('../../util/Account/Player');
+const StatCalculator = require('../../util/Stats/StatCalculator');
+const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
 module.exports = {
     name: 'medicine',
@@ -24,12 +25,11 @@ module.exports = {
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     async execute(interaction) {
 
         // validate user input
-        // await interaction.deferReply({ ephemeral: false });
         const originalHealAmount = Math.max(0, interaction.options.getInteger('amount'));
         let finalHealAmount = originalHealAmount;
         
@@ -38,17 +38,26 @@ module.exports = {
         if (!character || !character.approved) return AttackManager.NotRegistered(interaction);
         
         // notify if already at max health
-        const maxHealth = calculateMaxHealth(character.stats.constitution);
+        const maxHealth = StatCalculator.calculateMaxHealth(character);
+        if (character.currentHealth > maxHealth) return interaction.reply({
+            embeds: [
+                new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: '💖 You are over-healed!',
+                    description: 'You feel at ease.',
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
+        });
         if (character.currentHealth === maxHealth) return interaction.reply({
-            embeds: [new MessageEmbed({
-                color: 'FUCHSIA',
-                title: '✨ You are already at Max Health!',
-                description: 'You feel at ease.',
-                fields: [{
-                    name: 'CURRENT HEALTH 💘',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${character.stats.constitution * 5 + 50}\``,
-                }],
-            })]
+            embeds: [
+                new MessageEmbed({
+                    color: 'FUCHSIA',
+                    title: '✨ You are already at Max Health!',
+                    description: 'You feel at ease.',
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
         })
 
         // adjust for over-heal
@@ -66,16 +75,13 @@ module.exports = {
             embeds: [
                 new MessageEmbed({
                     color: 'AQUA',
-                    title: '🌿 Serene',
-                    description: AttackManager.getRandomHealingMessage(),
-                    fields: [{
-                        name: 'CURRENT HEALTH 💘',
-                        value: `> ↣ \`${character.currentHealth}\` / \`${character.stats.constitution * 5 + 50}\``,
-                    }],
+                    title: '🥬 Healed up `' + finalHealAmount + '` HP',
+                    description: '> ' + HealthVisuals.Healing.getRandomHealingMessage(),
                     footer: (finalHealAmount !== originalHealAmount ? {
                         text: 'Original input has been reduced by ' + (originalHealAmount - finalHealAmount) + '.'
                     } : undefined),
-                })
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
             ]
         });
 

@@ -1,5 +1,5 @@
 const {
-    BaseCommandInteraction, 
+    CommandInteraction, 
     GuildChannel, 
     ThreadManager, 
     MessageEmbed, 
@@ -24,7 +24,7 @@ class VerificationHandler extends CoreUtil {
 
     /**
      * Get the adult guild role
-     * @param {BaseCommandInteraction} interaction Original Discord interaction
+     * @param {CommandInteraction} interaction Original Discord interaction
      * @param {serverSchema} server Server database entry
      * @returns Adult Role if found | False if not found
      */
@@ -131,7 +131,7 @@ class VerificationHandler extends CoreUtil {
 
     /**
      * Fetch the verification notification thread
-     * @param {BaseCommandInteraction} interaction Discord interaction
+     * @param {CommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry
      * @returns {Promise<ThreadChannel>} Thread if found | False if no longer exists
      */

@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, GuildMember } = require('discord.js');
+const { CommandInteraction, MessageEmbed, GuildMember } = require('discord.js');
 const Player = require('../../util/Account/Player');
 const HuntManager = require('../../util/Hunting/HuntManager');
 const CoreUtil = require('../../util/CoreUtil');
@@ -49,7 +49,7 @@ module.exports = {
             ]
         }
     ],
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // defer reply and get stat type requested

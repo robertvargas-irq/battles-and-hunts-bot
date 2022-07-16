@@ -1,11 +1,11 @@
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
-const { calculateMaxHealth } = require('../../util/Account/Player');
+const { CommandInteraction, MessageEmbed, Util: DiscordUtil } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
+const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
 module.exports = {
     name: 'health',
     description: 'Quickly view your health!',
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute( interaction ) {
         
         // if user is registered
@@ -14,51 +14,8 @@ module.exports = {
 
         // show health bar
         interaction.reply({
-            embeds: [
-                new MessageEmbed()
-                    .setColor(getColor(found.currentHealth, found.stats.constitution))
-                    .setTitle(getTitle(found.currentHealth, found.stats.constitution))
-                    .addField('CURRENT HEALTH ' + (found.currentHealth > 0 ? '💘' : '💔'), `> ↣ \`${found.currentHealth}\` / \`${calculateMaxHealth(found.stats.constitution)}\``),
-            ]
+            embeds: [HealthVisuals.generateHealthEmbed(interaction.member, found)]
         });
     
     },
 };
-
-
-// ! PLEASE FORGIVE ME MY BRAIN FRIED
-const colors = [
-    'AQUA',
-    'YELLOW',
-    'RED',
-    'DARK_RED',
-    'NOT_QUITE_BLACK'
-];
-
-const titles = [
-    '🌿 Serene',
-    '💫 A bit out of it',
-    '❤️‍🩹 Hrrk...',
-    '🩸 Help..',
-    '🪦'
-]
-
-function getColor(health, constitution) {
-    let maxHealth = calculateMaxHealth(constitution);
-
-    if (health >= maxHealth / 4 * 3) return colors[0]
-    else if (health > maxHealth / 2) return colors[1];
-    else if (health > maxHealth / 4) return colors[2];
-    else if (health > 0) return colors[3];
-    else return colors[4];
-}
-
-function getTitle(health, constitution) {
-    let maxHealth = calculateMaxHealth(constitution);
-
-    if (health >= maxHealth / 4 * 3) return titles[0]
-    else if (health > maxHealth / 2) return titles[1];
-    else if (health > maxHealth / 4) return titles[2];
-    else if (health > 0) return titles[3];
-    else return titles[4];
-}

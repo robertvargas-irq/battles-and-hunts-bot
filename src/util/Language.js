@@ -1,6 +1,9 @@
 const userSchema = require('../database/schemas/user');
 const translations = require('./translations.json');
 
+/**
+ * @deprecated
+ */
 class Language {
 
     /**

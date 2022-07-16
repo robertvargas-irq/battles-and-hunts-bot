@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema, Model } = require('mongoose');
+const stats = require('../../util/Stats/stats.json');
 
 const CharacterSchema = new Schema({
     guildId: {
@@ -26,6 +27,10 @@ const CharacterSchema = new Schema({
         type: String,
         default: null,
     },
+    icon: {
+        type: String,
+        default: null,
+    },
     approved: {
         type: Boolean,
         default: false,
@@ -37,39 +42,39 @@ const CharacterSchema = new Schema({
     stats: {
         cat_size: {
             type: Number,
-            default: 0,
+            default: stats.cat_size.min,
         },
         strength: {
             type: Number,
-            default: 0,
+            default: stats.strength.min,
         },
         dexterity: {
             type: Number,
-            default: 0,
+            default: stats.dexterity.min,
         },
         constitution: {
             type: Number,
-            default: 0,
+            default: stats.constitution.min,
         },
         speed: {
             type: Number,
-            default: 0,
+            default: stats.speed.min,
         },
         intelligence: {
             type: Number,
-            default: 0,
+            default: stats.intelligence.min,
         },
         charisma: {
             type: Number,
-            default: 0,
+            default: stats.charisma.min,
         },
         swimming: {
             type: Number,
-            default: 0,
+            default: stats.swimming.min,
         },
         stalking: {
             type: Number,
-            default: 0
+            default: stats.stalking.min,
         },
     },
     currentHealth: {
@@ -128,6 +133,7 @@ const CharacterSchema = new Schema({
  * personality: string,
  * background: string,
  * image: string,
+ * icon: string,
  * approved: string,
  * moons: number,
  * stats: {

@@ -1,6 +1,7 @@
 const FILE_LANG_ID = 'CORE_UTIL';
 
-const { BaseCommandInteraction, MessageEmbed, MessagePayload } = require('discord.js');
+const { CommandInteraction, MessageEmbed, MessagePayload, Util: DiscordUtil } = require('discord.js');
+const ColorUtil = require('color2k');
 const mongoose = require('mongoose');
 const userSchema = require('../database/schemas/user');
 const serverSchema = require('../database/schemas/server');
@@ -10,8 +11,6 @@ const MemberModel = require('../database/schemas/member');
 const UserModel = mongoose.model('User', userSchema);
 const CharacterModel = require('../database/schemas/character');
 const ExcuseModel = require('../database/schemas/excuse');
-// const excuseModel = require('../database/schemas/excuse');
-
 
 const ROLEPLAY_NAME = 'The Black Sun';
 
@@ -26,8 +25,52 @@ class CoreUtil {
     static roleplayName = ROLEPLAY_NAME;
 
     /**
+     * Parse array of Discord Color Resolvables into Hexidecimal strings
+     * @param {DiscordColor[] | Number[] | [r,g,b]} colors 
+     * @returns {string[]} Hexidecimal color strings
+     */
+    static DiscordColorArrayToHex = (colors) => colors.map(c => '#' + DiscordUtil.resolveColor(c).toString(16).replace('#', ''));
+
+    /**
+     * Get a Color from an array based on a ratio
+     * @param {DiscordColor[] | Number[] | [r,g,b]} colors 
+     * @param {number} ratio Decimal between `0` and `1`
+     * @returns {number} Hexidecimal color from the given array based on the given ratio
+     */
+    static GetColorFromRatio = (colors, ratio) => ColorUtil.toHex(ColorUtil.getScale(...CoreUtil.DiscordColorArrayToHex(colors))(ratio));
+
+    /**
+     * Get an array index from a given ratio
+     * @param {Array} array 
+     * @param {number} ratio Decimal between `0` and `1`
+     * @returns {number} An index between 0 and array.length - 1 based on the given ratio
+     */
+    static GetIndexFromRatio(array, ratio) {
+        if (!array) throw Error('Array cannot be null');
+        if (array.length < 1) throw Error('Array cannot be empty');
+
+        // safeguard and return index
+        ratio = Math.max(0, Math.min(ratio, array.length - 1));
+        return Math.floor(ratio * (array.length - 1));
+    }
+
+    /**
+     * Get an array element from a given ratio
+     * @param {Array} array 
+     * @param {number} ratio Decimal between `0` and `1`
+     * @returns {*} An index between 0 and array.length - 1 based on the given ratio
+     */
+    static GetArrayElementFromRatio(array, ratio) {
+        if (!array) throw Error('Array cannot be null');
+        if (array.length < 1) throw Error('Array cannot be empty');
+
+        // return element from given ratio
+        return array[CoreUtil.GetIndexFromRatio(array, ratio)];
+    }
+
+    /**
      * Properly reply based on whether or not the interaction has been replied to already
-     * @param {BaseCommandInteraction} interaction Interaction to reply to/edit reply
+     * @param {CommandInteraction} interaction Interaction to reply to/edit reply
      * @param {MessagePayload} messagePayload The message to send
      */
     static async SafeReply(interaction, messagePayload) {
@@ -36,8 +79,38 @@ class CoreUtil {
     }
 
     /**
+     * Inform the user they cannot perform this action on bots.
+     * @param {CommandInteraction} interaction 
+     */
+     static denyBotInteraction(interaction, customMessage = null) {
+        CoreUtil.SafeReply(interaction, {
+            embeds : [new MessageEmbed()
+                .setColor('BLURPLE')
+                .setTitle('🛡️ WOAH THERE')
+                .setDescription(customMessage ?? 'You cannot perform this action on a bot! 🤖')
+            ]
+        });
+        return false;
+    }
+
+    /**
+     * Inform the user they cannot perform this action on themselves.
+     * @param {CommandInteraction} interaction 
+     */
+    static denySelfInteraction(interaction, customMessage = null) {
+        CoreUtil.SafeReply(interaction, {
+            embeds : [new MessageEmbed()
+                .setColor('BLURPLE')
+                .setTitle('🛡️ WOAH THERE')
+                .setDescription(customMessage ?? 'You cannot perform this action on yourself! 🥬')
+            ]
+        });
+        return false;
+    }
+
+    /**
      * Inform the user that they have not registered and must do so.
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     static async NotRegistered(interaction) {
         const reply = {
@@ -74,7 +147,7 @@ class CoreUtil {
 
     /**
      * Send a message and delete after a set amount of seconds
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {MessagePayload} messagePayload
      * @param {[number]} seconds
      */
@@ -226,7 +299,7 @@ class CoreUtil {
     
     /**
      * Prompts that time has run out.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformTimeout(interaction, translator) {
@@ -243,7 +316,7 @@ class CoreUtil {
 
     /**
      * Inform that input is invalid.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformInvalid(interaction, translator) {
@@ -260,7 +333,7 @@ class CoreUtil {
 
     /**
      * Inform that they have not been assigned a clan yet.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformNotRegistered(interaction, translator) {
@@ -277,7 +350,7 @@ class CoreUtil {
 
     /**
      * Show successful cancellation.
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {Translator} translator
      */
     static InformSuccessfulCancel(interaction, translator) {
@@ -294,7 +367,7 @@ class CoreUtil {
 
     /**
      * Helper function; collects one input.
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     static async CollectOneMessage(interaction, filter) {
         let input = await interaction.channel.awaitMessages({ filter: filter, max: 1, time: TIME * 1000, errors: ['time'] })
@@ -316,6 +389,8 @@ class CoreUtil {
      */
     static ProperCapitalization(requestedWord) {
 
+        if (!requestedWord || !requestedWord.length) return requestedWord;
+
         // if it is only one word, capitalize the first letter and return
         if (!requestedWord.includes(' ')) return requestedWord[0].toUpperCase() + requestedWord.substring(1);
 
@@ -332,7 +407,7 @@ class CoreUtil {
 
             // provide the word with proper casing
             return word[0].toUpperCase() + word.substring(1);
-        });
+        }).join(' ');
 
         // return the final concatenation
         return firstWordProper + ' ' + subsequentWords;

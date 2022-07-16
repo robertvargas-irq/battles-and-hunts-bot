@@ -66,18 +66,17 @@ module.exports = async (button) => {
                 ],
                 components: [],
             });
+            authorMember.user.send({
+                embeds: [new MessageEmbed({
+                    color: 'GREEN',
+                    title: '📝 Update on Recent Character Submission',
+                    description: '> **Psst-! Your character in ' + button.guild.name + ' has been approved!\n\nGo check it out over at <#' + button.channel.id + '>!'
+                })]
+            }).then(console.log).catch(console.error);
             return;
         }
 
         case 'REFRESH': {
-            // filter out non-admins
-            if (!button.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) return button.reply({
-                ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'RED',
-                    title: '⚠️ Only members with the `MANAGE_ROLES` permission can refresh submissions.',
-                })],
-            });
 
             // defer update
             button.deferUpdate();
@@ -86,6 +85,17 @@ module.exports = async (button) => {
             const server = CoreUtil.Servers.cache.get(button.guild.id);
             const authorId = SubmissionHandler.getSubmissionAuthorId(server, button.message.id);
             if (!authorId) return submissionNoLongerAvailable(button);
+
+            // filter out non-admins or non-original
+            if (!button.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)
+            && button.user.id != authorId) return button.reply({
+                ephemeral: true,
+                embeds: [new MessageEmbed({
+                    color: 'RED',
+                    title: '⚠️ Only members with the `MANAGE_ROLES` permission or the original submitter can refresh submissions.',
+                })],
+            });            
+
             const character = CoreUtil.Characters.cache.get(button.guild.id, authorId);
             if (!character) return characterNoLongerExists(button, server, authorId);
             const authorMember = await button.guild.members.fetch(authorId).catch(() => false);

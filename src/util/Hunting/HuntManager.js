@@ -319,6 +319,17 @@ class HuntManager extends CoreUtil {
         });
     }
 
+    static editToDisplayCarried = (embed) => new MessageEmbed(embed)
+        .setColor('GREYPLE')
+        .setTitle('')
+        .setThumbnail(embed.image?.url || '')
+        .setDescription('')
+        .setImage('')
+        .setFooter({
+            text: '🐾 Prey was carried away',
+            iconURL: embed.footer?.iconURL
+        });
+
 }
 
 

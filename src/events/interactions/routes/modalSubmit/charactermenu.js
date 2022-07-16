@@ -9,14 +9,19 @@ const Hunger = require('../../../../util/Hunting/Hunger');
 module.exports = async (modal) => {
     
     const instance = CharacterMenu.getMenuFromModal(modal);
-    if (!instance) return modal.reply({ content: 'No longer valid', ephemeral: true });
+    if (!instance) return modal.reply({
+        ephemeral: true,
+        content: '**This editor is no longer valid. Please open a new one if you wish to proceed.**'
+        + '\n> This may have been caused by another editor being opened, or the bot having restarted.'
+    });
     
     const [_, action, editTarget] = modal.customId.split(':');
-    if (!instance.isAdmin && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id)
+    if (!instance.isAdmin && !instance.registering && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id)
     && editTarget != 'INFO')
         return modal.reply({
+            ephemeral: true,
             embeds: [new MessageEmbed({
-                title: '🔒 Your editing has been locked.',
+                title: '🔒 Your editing is currently locked.',
                 description: '> All changes were discarded.'
             })]
         });

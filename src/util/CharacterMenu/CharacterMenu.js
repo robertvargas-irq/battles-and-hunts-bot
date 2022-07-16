@@ -278,7 +278,7 @@ function generateEditingRows(menuObject, statSections) {
  */
 function generateStatEditButtons(menuObject, statSections) {
     return [
-        ...!menuObject.isAdmin && menuObject.statsLocked
+        ...!menuObject.isAdmin && menuObject.statsLocked && !menuObject.registering
         ? [new MessageButton({
             customId: 'dummy',
             label: 'Stat editing is locked',
@@ -373,11 +373,11 @@ function getEditModal(instance, toEdit) {
                         ? 'Choose: ' + clanArray.map(c => CoreUtil.ProperCapitalization(c)).join(' | ')
                         : 'None. ' + clanArray.map(c => CoreUtil.ProperCapitalization(c)).join(' | ')
                     ),
-                    value: (!instance.isAdmin && (!instance.registering || instance.statsLocked))
+                    value: (!instance.isAdmin && !instance.registering || instance.statsLocked)
                     ? ''
                     : CoreUtil.ProperCapitalization(instance.character.clan ?? ''),
-                    maxLength: (!instance.isAdmin && (!instance.registering || instance.statsLocked))
-                    ? 0
+                    maxLength: (!instance.isAdmin && !instance.registering && instance.statsLocked)
+                    ? 1
                     : clanArray.reduce((previousValue, currentValue) => {
                         return currentValue.length > previousValue ? currentValue.length : previousValue
                     }, clanArray[0].length),

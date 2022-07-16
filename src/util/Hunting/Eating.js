@@ -93,7 +93,7 @@ class Eating {
         footer: { text: CANON_MESSAGE }
     });
 
-    static generatePreyEatenClanAlertEmbed = (character, member, bitesTaken, consumed) => {
+    static generatePreyEatenClanAlertEmbed = (character, member, clan, bitesTaken, consumed) => {
         // food was eaten by a clan member
         if (character.clan == clan) return this.generateEatenFoodAlertEmbed(character, member, bitesTaken, consumed);
 

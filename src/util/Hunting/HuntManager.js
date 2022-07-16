@@ -138,28 +138,31 @@ class HuntManager extends CoreUtil {
         }));
 
         // build buttons
-        const rowOne = new MessageActionRow();
-        if (tracked && caught) rowOne.addComponents([
-            new MessageButton({
-                customId: 'PREY:COLLECT',
-                label: 'Collect',
-                emoji: '🎒',
-                style: 'SUCCESS',
-            }),
-            new MessageButton({
-                customId: 'PREY:SHARE',
-                label: 'Share',
-                style: 'SECONDARY',
-            }),
-            new MessageButton({
-                customId: 'PREY:EAT',
-                label: 'Eat Secretly',
-                style: 'DANGER',
-            }),
-        ]);
+        const components = [];
+
+        if (tracked && caught) components.push(new MessageActionRow({
+            components: [
+                new MessageButton({
+                    customId: 'PREY:COLLECT',
+                    label: 'Collect',
+                    emoji: '🎒',
+                    style: 'SUCCESS',
+                }),
+                new MessageButton({
+                    customId: 'PREY:SHARE',
+                    label: 'Share',
+                    style: 'SECONDARY',
+                }),
+                new MessageButton({
+                    customId: 'PREY:EAT',
+                    label: 'Eat Secretly',
+                    style: 'DANGER',
+                }),
+            ]
+        }));
 
         // display results
-        return this.SafeReply(interaction, { embeds, components: [rowOne] }).then(async () => {
+        return this.SafeReply(interaction, { embeds, components }).then(async () => {
             // add to recently caught if tracked and caught
             if (!tracked || !caught) return;
             const message = await interaction.fetchReply();

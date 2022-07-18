@@ -33,7 +33,7 @@ class CharacterMenu {
      * @param {CharacterModel} character Character database entry
      */
     constructor(interaction, authorGuildMemberSnowflake, character,
-    editingEnabled = false, statsLocked = true) {
+    editingEnabled = false, statsLocked = true, forceNotEditing = false) {
         this.interaction = interaction;
         this.authorSnowflake = authorGuildMemberSnowflake;
         this.character = character || new CharacterModel({
@@ -43,8 +43,9 @@ class CharacterMenu {
         this.statsLocked = statsLocked;
         this.isAdmin = interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS);
         this.isAuthor = interaction.user.id === authorGuildMemberSnowflake.user.id;
-        this.registering = this.isAuthor && !character.approved;
-        this.editingEnabled = this.registering || (this.isAdmin || (this.isAuthor && editingEnabled));
+        this.registering = !forceNotEditing && this.isAuthor && !character.approved;
+        this.editingEnabled = !forceNotEditing && (this.registering || (this.isAdmin || (this.isAuthor && editingEnabled)));
+        this.forceNotEditing = forceNotEditing;
 
         this.messageId = null;
 
@@ -100,7 +101,10 @@ class CharacterMenu {
                     value: '>>> ' + (c.personality || '`None given.`'),
                 },
             ],
-            footer: !character.approved ? { text: '⚠️ Character is not yet approved by an administrator.' } : undefined,
+            footer: {
+                text: `This character belongs to ${s.user.tag}(${s.user.id})`
+                + (!character.approved ? ' | ⚠️ Character is not yet approved by an administrator.' : '')
+            },
         });
 
         // add image label if image provided
@@ -224,7 +228,7 @@ function generateAuxilaryEmbeds(menuObject) {
     const embeds = [];
 
     // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
-    if (!menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new MessageEmbed({
+    if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new MessageEmbed({
         color: 'BLURPLE',
         title: '💡 Why am I unable to edit stats?',
         description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
@@ -232,7 +236,7 @@ function generateAuxilaryEmbeds(menuObject) {
     }));
 
     // if administrator providing overrides, inform about their permissions
-    if (menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new MessageEmbed({
+    if (!menuObject.forceNotEditing && menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new MessageEmbed({
         color: 'RED',
         title: '📌 Administrator Overrides',
         description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',

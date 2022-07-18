@@ -6,7 +6,6 @@ const {
     MessageButton,
     MessageActionRow,
     TextInputComponent,
-    MessageSelectMenu,
     ButtonInteraction,
     ModalSubmitInteraction,
     Modal,
@@ -50,6 +49,15 @@ class CharacterMenu {
 
         // // console.log({NewObject: this});
     }
+
+    static statHelpEmbed = new MessageEmbed({
+        color: 'AQUA',
+        title: '💡 Stats & What They Mean',
+        fields: statArray.map(([_, statData]) => {return {
+            name: statData.flair + ' ' + statData.name,
+            value: statData.description,
+        }}),
+    });
 
     /**
      * Construct a character embed
@@ -249,6 +257,15 @@ function generateAuxilaryEmbeds(menuObject) {
  * @returns {MessageActionRow[]}
  */
 function generateEditingRows(menuObject, statSections) {
+    const helpButtonRow = new MessageActionRow({
+        components: [new MessageButton({
+            customId: 'CHARACTERMENU:HELP',
+            label: 'What do these stats mean?',
+            style: 'SECONDARY',
+            emoji: '💡',
+        })]
+    });
+
     // return single-row buttons
     if (!menuObject.isAdmin && menuObject.editingEnabled && menuObject.statsLocked) return [
         new MessageActionRow({
@@ -256,7 +273,8 @@ function generateEditingRows(menuObject, statSections) {
                 ...generateStatEditButtons(menuObject, statSections),
                 ...generateMiscEditButtons(menuObject),
             ],
-        })
+        }),
+        helpButtonRow,
     ]
 
     // return dual-row buttons
@@ -267,6 +285,7 @@ function generateEditingRows(menuObject, statSections) {
         new MessageActionRow({
             components: generateMiscEditButtons(menuObject)
         }),
+        helpButtonRow,
     ]
 }
 

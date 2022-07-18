@@ -10,6 +10,8 @@ module.exports = async (button) => {
 
     const [_, action, editTarget] = button.customId.split(':');
 
+    if (action === 'HELP') return button.reply({ ephemeral: true, embeds: [CharacterMenu.statHelpEmbed] });
+
     const active = await CharacterMenu.getActiveEdit(button);
     if (!active) return button.reply({
         ephemeral: true,

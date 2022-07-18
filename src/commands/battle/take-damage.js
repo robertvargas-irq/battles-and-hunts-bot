@@ -55,7 +55,7 @@ module.exports = {
             embeds: [
                 new MessageEmbed({
                     color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
-                    author: { name: HealthVisuals.Damage.getRandomDamageTitle(character.currentHealth) },
+                    title: '🪓 Took `' + finalDamageAmount + '` Damage',
                     description: '> ' + HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),
                     footer: (finalDamageAmount !== originalDamageAmount ? {
                         text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'

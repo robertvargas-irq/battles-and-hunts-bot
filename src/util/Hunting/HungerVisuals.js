@@ -25,11 +25,11 @@ class HungerVisuals {
                 {
                     name: 'Current Hunger',
                     value: `> ↣ \`${Hunger.getHunger(character)}\` / \`${Hunger.getMaxHunger(character)}\` `
-                    + `**(**${Math.floor((1 - hungerRatio) * 100)}%**)**`,
+                    + `**(**${Math.floor((hungerRatio) * 100)}%**)**`,
                     inline: true,
                 },
                 {
-                    name: '▣'.repeat(Math.floor((1 - hungerRatio) * 10)) + '▢'.repeat(Math.floor(hungerRatio * 10)),
+                    name: '▣'.repeat(Math.floor(hungerRatio * 10)) + '▢'.repeat(Math.floor((1 - hungerRatio) * 10)),
                     value: '\u200B',
                     inline: true,
                 },

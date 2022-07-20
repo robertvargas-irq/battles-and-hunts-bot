@@ -148,7 +148,24 @@ module.exports = async (button) => {
         }
 
         case 'SHARE': {
-            SharePool.markShareFromHunt(button, button.message);
+
+            // get prey information
+            const preyInformation = HuntManager.getRecentlyCaught(button.guild.id, button.message.id);
+            if (!preyInformation) {
+                button.deferUpdate();
+                return SharePool.witherPrey(button.message);
+            }
+
+            // ensure original member is the one clicking
+            if (preyInformation.originalMember.user.id != button.user.id) return button.reply({
+                ephemeral: true,
+                embeds: [new MessageEmbed({
+                    color: 'RED',
+                    title: '⚠️ You can only eat from your own catches!',
+                })]
+            });            
+
+            SharePool.markSharedFromHunt(button, button.message);
             return;
         }
 
@@ -158,7 +175,7 @@ module.exports = async (button) => {
             // // console.log({preyInformation});
             if (!preyInformation) {
                 button.deferUpdate();
-                return this.witherPrey(button.message);
+                return SharePool.witherPrey(button.message);
             }
 
             // deconstruct
@@ -166,6 +183,7 @@ module.exports = async (button) => {
 
             // ensure original member is the one clicking
             if (originalMember.user.id != button.user.id) return button.reply({
+                ephemeral: true,
                 embeds: [new MessageEmbed({
                     color: 'RED',
                     title: '⚠️ You can only eat from your own catches!',

@@ -79,10 +79,26 @@ class CoreUtil {
     }
 
     /**
+     * Inform the user that they need elevated permissions to perform an action.
+     * @param {CommandInteraction} interaction 
+     * @param {string} customMessage 
+     */
+    static InformNonAdministrator = (interaction, customMessage = null) => {
+        CoreUtil.SafeReply(interaction, {
+            embeds: [new MessageEmbed({
+                color: 'RED',
+                title: '❗ Woah wait-!',
+                description: customMessage ?? `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
+            })]
+        });
+        return false;
+    }
+
+    /**
      * Inform the user they cannot perform this action on bots.
      * @param {CommandInteraction} interaction 
      */
-     static denyBotInteraction(interaction, customMessage = null) {
+    static denyBotInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
@@ -97,7 +113,7 @@ class CoreUtil {
      * Inform the user they cannot perform this action on themselves.
      * @param {CommandInteraction} interaction 
      */
-    static denySelfInteraction(interaction, customMessage = null) {
+    static denySelfInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')

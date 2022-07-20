@@ -85,24 +85,75 @@ module.exports = {
                 }
             ],
         },
+        {
+            name: 'log',
+            description: 'Spawn log channels.',
+            type: dTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'admin',
+                    description: 'Set Admin Action Logging channel as the current.',
+                    type: dTypes.Subcommand,
+                },
+                {
+                    name: 'player',
+                    description: 'Set Player Action Logging channel as the current.',
+                    type: dTypes.Subcommand,
+                },
+            ]
+        },
     ],
     /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // filter out non-administrators
-        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-            return interaction.editReply({
-                embeds: [new MessageEmbed()
-                    .setColor('RED')
-                    .setTitle('❗ Woah wait-!')
-                    .setDescription(
-                        `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
-                    )
-                ]
-            });
-        }
+        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return CoreUtil.InformNonAdministrator(interaction);
 
-        switch (interaction.options.getSubcommand()) {
+        // get subcommand and group
+        const group = interaction.options.getSubcommandGroup(false);
+        const subcommand = interaction.options.getSubcommand();
+
+        // pull server from the database
+        const server = CoreUtil.Servers.cache.get(interaction.guild.id);
+
+        // catch groups
+        switch (group) {
+            case 'log': {
+                switch (subcommand) {
+                    case 'admin': {
+
+                        // attach channel id
+                        server.logging.admin = interaction.channel.id;
+                        server.save();
+                        break;
+                        
+                    } // end admin
+
+                    case 'player': {
+
+                        // attach channel id
+                        server.logging.player = interaction.channel.id;
+                        server.save();
+                        break;
+
+                    } // end player
+                } // end log group
+
+                // notify successful set
+                return interaction.reply({
+                    embeds: [new MessageEmbed({
+                        color: 'GREEN',
+                        title: '✅ Configuration Saved',
+                        description: '`Admin Action Logging Channel`: ' + (server.logging.admin ? `<#${server.logging.admin}>` : '`None.`')
+                        + '\n`Player Action Logging Channel`: ' + (server.logging.player ? `<#${server.logging.player}>` : '`None.`')
+                    })]
+                });
+
+            } // end log case
+        } // end group switch
+
+
+        switch (subcommand) {
             case 'excuses': {
                 // grab choice
                 const processingChannel = interaction.options.getChannel('excuse-processing-channel');
@@ -120,7 +171,6 @@ module.exports = {
                 }
 
                 // finally, spawn the menu and provide a loading screen
-                const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
                 const menuMessage = interaction.channel.send({
                     embeds: [new MessageEmbed()
                         .setColor('BLURPLE')
@@ -173,10 +223,7 @@ module.exports = {
                 const requestChannel = interaction.channel;
                 const processingChannel = interaction.options.getChannel('request-processing-channel');
                 const adultRole = interaction.options.getRole('adult-role');
-                
-                // pull server from the database
-                const server = VerificationHandler.Servers.cache.get(interaction.guild.id);
-                
+                                
                 // spawn verification request and processing thread
                 VerificationHandler.setAdultRole(server, adultRole.id);
                 await VerificationHandler.spawnVerificationRequest(requestChannel);
@@ -204,9 +251,6 @@ module.exports = {
                 // grab choice
                 const clan = interaction.options.getString('clan');
                 
-                // pull server from the database
-                const server = PreyPile.Servers.cache.get(interaction.guild.id);
-
                 // set current channel to the corresponding clan's preyPileChannelId
                 await PreyPile.setPreyPileChannelAndSpawn(interaction, server, clan);
                 await server.save()
@@ -242,7 +286,6 @@ module.exports = {
                 }
 
                 // assign to server
-                const server = CoreUtil.Servers.cache.get(interaction.guild.id);
                 server.submissions.channelId = processingChannel.id;
                 server.save();
 

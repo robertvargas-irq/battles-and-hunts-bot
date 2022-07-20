@@ -34,6 +34,7 @@ const CoreUtil = require('../CoreUtil');
 
 class HuntManager extends CoreUtil {
     static #Random = (min, max) => { return Math.floor(Math.random() * (max - min + 1) + min) };
+    static #MAX_RECENTLY_CAUGHT = 100;
 
     /**
      * @type {Map<guildId, Map<messageId, prey>>}
@@ -123,7 +124,7 @@ class HuntManager extends CoreUtil {
 
         // attach final summary of the hunt
         embeds.push(new MessageEmbed({
-            color: 'FUCHSIA',
+            color: tracked && caught ? 'GREEN' : 'FUCHSIA',
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
                 text: 'Hunt Results for ' + (character.name ?? interaction.member.displayName + '\'s character'),
@@ -132,8 +133,8 @@ class HuntManager extends CoreUtil {
             description: generateBriefDescription(tracked, caught, preyFromLocations.descriptors[prey.size - 1], prey)
             + '\n\n' + (
                 server.hunting.locked
-                ? '🔒 **Hunting is currently restricted.**\n> `/eat-from` `/carry` and `/deposit` are unavailable.'
-                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '\n💡 **Reminders**\n> • Don\'t forget to `/deposit` when you finish all your hunting and return to camp.\n> • *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
+                ? '🔒 **Hunting is currently restricted.**\n> `/eat` and `/deposit` are unavailable.'
+                : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '\n💡 **Reminders**\n> • Don\'t forget to `/deposit` when you finish all your hunting and return to camp.\n> • *You may also `/eat carrying` to eat off the pile on your carrying if you must without alerting others...*' : ''))
             ),
         }));
 
@@ -216,10 +217,23 @@ class HuntManager extends CoreUtil {
             return {prey: null, message: null};
         }
 
+        // clear first inserted if at max
+        if (server.size >= this.#MAX_RECENTLY_CAUGHT) {
+            const [[messageId, caughtData]] = server.entries();
+            caughtData.message.edit({
+                embeds: [new MessageEmbed({
+                    author: { name: 'Max active hunts reached.' },
+                    description: 'This server only allows `' + this.#MAX_RECENTLY_CAUGHT
+                    + '` active hunt(s) with buttons at a time.'
+                })],
+                components: []
+            }).catch(() => console.log('Message no longer exists; unable to notify max hunts.'));
+            server.delete(messageId);
+        }
+
         // set recently caught
         server.set(message.id, {prey, message, originalMember});
         console.log("UPDATED RECENTLY CAUGHT");
-        // // console.log({ serverRecentlyCaught: server });
         return prey;
     }
     

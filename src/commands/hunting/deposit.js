@@ -64,7 +64,7 @@ module.exports = {
                     .setColor('YELLOW')
                     .setTitle('⚠️ Woah wait! You aren\'t carrying anything!')
                     .setDescription(`\
-                    > Go back and use \`/hunt\` first, \`/carry\` anything you caught, and then use this command to go and deposit your prey to your clan\'s prey pile!
+                    > Go back and use \`/hunt\` first, collect anything you caught, and then use this command to go and deposit your prey to your clan\'s prey pile!
                     `)
                 ]
             });

@@ -37,7 +37,7 @@ module.exports = async (button) => {
         case 'EDIT': {
             // ensure editing is valid
             if (!active.isAdmin && !active.registering && !Player.allowedToEdit(active.interaction.guild.id, active.interaction.user.id)
-            && editTarget != 'INFO')
+            && !editTarget.startsWith('SECTION'))
                 return button.reply({
                     ephemeral: true,
                     embeds: [new MessageEmbed({

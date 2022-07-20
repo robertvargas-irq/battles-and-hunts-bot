@@ -5,7 +5,7 @@ class SharePool {
     
     /**
      * Maximum amount of active shared prey embeds */
-    static #MAX_SHARED_PREY = 2;
+    static #MAX_SHARED_PREY = 100;
 
     /**
      * @type {Map<guildId, Map<messageId, prey: prey>>}
@@ -30,12 +30,12 @@ class SharePool {
 
         // make room in the share pool if necessary
         const server = this.#sharePool.get(originalMessage.guild.id);
-
         if (server.size >= this.#MAX_SHARED_PREY) {
             const [messageId] = server.keys();
             server.delete(messageId);
         }
         server.set(originalMessage.id, prey);
+        console.log({server});
 
     }
 
@@ -68,7 +68,6 @@ class SharePool {
 
         // get prey information
         const preyInformation = HuntManager.getRecentlyCaught(message.guild.id, message.id);
-        // // console.log({preyInformation});
         if (!preyInformation) {
             button.deferUpdate();
             return this.witherPrey(message);

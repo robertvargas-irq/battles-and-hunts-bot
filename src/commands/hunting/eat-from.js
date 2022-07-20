@@ -1,12 +1,11 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction } = require('discord.js');
 const Eating = require('../../util/Hunting/Eating');
 const Hunger = require('../../util/Hunting/Hunger');
 const HungerVisuals = require('../../util/Hunting/HungerVisuals');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
 const HuntManager = require('../../util/Hunting/HuntManager');
 const PreyPile = require('../../util/Hunting/PreyPile');
-const CANON_MESSAGE = '🍃 This message is canon.'
 
 module.exports = {
     name: 'eat',

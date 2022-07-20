@@ -1,4 +1,4 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
@@ -12,12 +12,12 @@ module.exports = {
         {
             name: 'excuses',
             description: 'Spawn and configure Excuses.',
-            type: dTypes.Subcommand,
+            type: CommandTypes.Subcommand,
             options: [
                 {
                     name: 'excuse-processing-channel',
                     description: 'Which channel to spawn threads for each day.',
-                    type: dTypes.Channel,
+                    type: CommandTypes.Channel,
                     required: true,
                 }
             ],
@@ -25,18 +25,18 @@ module.exports = {
         {
             name: 'adult-verification',
             description: 'Spawn in adult role request prompt.',
-            type: dTypes.Subcommand,
+            type: CommandTypes.Subcommand,
             options: [
                 {
                     name: 'request-processing-channel',
                     description: 'Where administrators can process the requests.',
-                    type: dTypes.Channel,
+                    type: CommandTypes.Channel,
                     required: true,
                 },
                 {
                     name: 'adult-role',
                     description: 'The role to give upon verification.',
-                    type: dTypes.Role,
+                    type: CommandTypes.Role,
                     required: true,
                 }
             ],
@@ -44,12 +44,12 @@ module.exports = {
         {
             name: 'prey-pile',
             description: 'Spawn in a visual prey pile.',
-            type: dTypes.Subcommand,
+            type: CommandTypes.Subcommand,
             options: [
                 {
                     name: 'clan',
                     description: 'The clan you wish to spawn the pile visual in.',
-                    type: dTypes.String,
+                    type: CommandTypes.String,
                     required: true,
                     choices: [
                         {
@@ -75,12 +75,12 @@ module.exports = {
         {
             name: 'character-submissions',
             description: 'Spawn and configure Character Submissions.',
-            type: dTypes.Subcommand,
+            type: CommandTypes.Subcommand,
             options: [
                 {
                     name: 'submission-processing-channel',
                     description: 'Which channel to spawn threads for each day.',
-                    type: dTypes.Channel,
+                    type: CommandTypes.Channel,
                     required: true,
                 }
             ],
@@ -88,17 +88,17 @@ module.exports = {
         {
             name: 'log',
             description: 'Spawn log channels.',
-            type: dTypes.SubcommandGroup,
+            type: CommandTypes.SubcommandGroup,
             options: [
                 {
                     name: 'admin',
                     description: 'Set Admin Action Logging channel as the current.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                 },
                 {
                     name: 'player',
                     description: 'Set Player Action Logging channel as the current.',
-                    type: dTypes.Subcommand,
+                    type: CommandTypes.Subcommand,
                 },
             ]
         },
@@ -144,8 +144,8 @@ module.exports = {
                     embeds: [new MessageEmbed({
                         color: 'GREEN',
                         title: '✅ Configuration Saved',
-                        description: '`Admin Action Logging Channel`: ' + (server.logging.admin ? `<#${server.logging.admin}>` : '`None.`')
-                        + '\n`Player Action Logging Channel`: ' + (server.logging.player ? `<#${server.logging.player}>` : '`None.`')
+                        description: '`Admin Action Logging Channel`: ' + (server.logging.admin ? `<#${server.logging.admin}>` : '`None`')
+                        + '\n`Player Action Logging Channel`: ' + (server.logging.player ? `<#${server.logging.player}>` : '`None`')
                     })]
                 });
 

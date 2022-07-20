@@ -105,6 +105,10 @@ class CharacterMenu {
                     inline: true,
                 },
                 {
+                    name: 'Pronouns',
+                    value: '>>> `' + (c.pronouns.subjective ?? '____') + '`/`' + (c.pronouns.objective ?? '____') + '`/`' + (c.pronouns.possessive ?? '____') + '`'
+                },
+                {
                     name: 'Personality',
                     value: '>>> ' + (c.personality || '`None given.`'),
                 },
@@ -211,17 +215,13 @@ class CharacterMenu {
     }
 
     /** @param {ModalSubmitInteraction} modal */
-    static getMenuFromModal(modal) {
-        return activeEdits.get(modal.guild.id)?.get(modal.user.id);
-    }
+    static getMenuFromModal = (modal) => activeEdits.get(modal.guild.id)?.get(modal.user.id);
 
     /**
      * Get age-associated character title
      * @param {number} age 
      */
-    static getAgeTitle(age) {
-        return (ageTitlesArray.find(([_, [min, max]]) => min <= age && age <= max) || ["Unknown"])[0];
-    }
+    static getAgeTitle = (age) => (ageTitlesArray.find(([_, [min, max]]) => min <= age && age <= max) || ["Unknown"])[0];
 }
 
 /*
@@ -328,6 +328,11 @@ function generateMiscEditButtons(menuObject) {
         new MessageButton({
             customId: 'CHARACTERMENU:EDIT:IMAGES',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Icon/Reference',
+            style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
+        }),
+        new MessageButton({
+            customId: 'CHARACTERMENU:EDIT:PRONOUNS',
+            label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Pronouns',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
         }),
     ]
@@ -441,7 +446,7 @@ function getEditModal(instance, toEdit) {
     });
     else if (toEdit.startsWith('IMAGES')) return new Modal({
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
-        title: '🌔 Editing Character\'s Age (Moons)',
+        title: '🖼️ Editing Character\'s Icon and Appearance',
         components: [
             new MessageActionRow({ components: [
                 new TextInputComponent({
@@ -462,6 +467,42 @@ function getEditModal(instance, toEdit) {
                 }),
             ]}),
         ],
+    });
+    else if (toEdit.startsWith('PRONOUNS')) return new Modal({
+        customId: 'CHARACTERMENU:EDIT:' + toEdit,
+        title: '💬 Editing Character\'s Pronouns',
+        components: [
+            new MessageActionRow({ components: [
+                new TextInputComponent({
+                    customId: 'subjective',
+                    label: 'Subjective (Ex. he/she/they/xe etc.)',
+                    placeholder: 'No Subjective Pronoun provided',
+                    value: instance.character.pronouns.subjective || '',
+                    style: 'SHORT',
+                    maxLength: 10,
+                }),
+            ]}),
+            new MessageActionRow({ components: [
+                new TextInputComponent({
+                    customId: 'objective',
+                    label: 'Objective (Ex. him/her/them/xem etc.)',
+                    placeholder: 'No Objective Pronoun provided',
+                    value: instance.character.pronouns.objective || '',
+                    style: 'SHORT',
+                    maxLength: 10,
+                }),
+            ]}),
+            new MessageActionRow({ components: [
+                new TextInputComponent({
+                    customId: 'possessive',
+                    label: 'Possessive (Ex. his/hers/theirs/xeirs etc.)',
+                    placeholder: 'No Possessive Pronoun provided',
+                    value: instance.character.pronouns.possessive || '',
+                    style: 'SHORT',
+                    maxLength: 12,
+                }),
+            ]}),
+        ]
     });
 
     // handle sections

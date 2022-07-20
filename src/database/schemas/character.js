@@ -39,6 +39,20 @@ const CharacterSchema = new Schema({
         type: Number,
         default: 0,
     },
+    pronouns: {
+        subjective: { // he/she/they/xe
+            type: String,
+            default: null,
+        },
+        objective: { // him/her/them/xem
+            type: String,
+            default: null,
+        },
+        possessive: { // his/hers/theirs/xeirs
+            type: String,
+            default: null,
+        },
+    },
     stats: {
         cat_size: {
             type: Number,
@@ -136,6 +150,11 @@ const CharacterSchema = new Schema({
  * icon: string,
  * approved: string,
  * moons: number,
+ * pronouns: {
+ *      subjective: string,
+ *      objective: string,
+ *      possessive: string,
+ * },
  * stats: {
  *      cat_size: number,
  *      strength: number,

@@ -72,6 +72,12 @@ module.exports = async (modal) => {
         instance.character.icon = icon;
     }
 
+    else if (editTarget === 'PRONOUNS') {
+        instance.character.pronouns.subjective = modal.fields.getField('subjective').value?.toLowerCase().replace(/[^A-Za-z]/g, '') || null;
+        instance.character.pronouns.objective = modal.fields.getField('objective').value?.toLowerCase().replace(/[^A-Za-z]/g, '') || null;
+        instance.character.pronouns.possessive = modal.fields.getField('possessive').value?.toLowerCase().replace(/[^A-Za-z]/g, '') || null;
+    }
+
     // handle section edits
     else modal.fields.components.forEach((actionRow) => {
         const { customId, value } = actionRow.components[0];

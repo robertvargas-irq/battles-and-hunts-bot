@@ -124,7 +124,7 @@ class HuntManager extends CoreUtil {
 
         // attach final summary of the hunt
         embeds.push(new MessageEmbed({
-            color: 'FUCHSIA',
+            color: tracked && caught ? 'GREEN' : 'FUCHSIA',
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
                 text: 'Hunt Results for ' + (character.name ?? interaction.member.displayName + '\'s character'),

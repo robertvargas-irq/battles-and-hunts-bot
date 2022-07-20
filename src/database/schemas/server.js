@@ -15,6 +15,10 @@ const { Schema } = require("mongoose");
  *          locked: boolean,
  *      },
  *      characterApprovalRequired: boolean,
+ *      logging: {
+ *          admin: string,
+ *          player: string,
+ *      },
  *      verification: {
  *          verificationThreadId: string
  *          deniedVerificationIds: Set<string>
@@ -75,6 +79,16 @@ const serverSchema = new Schema({
                 preyPileThreadId: null,
                 clanRoleId: null,
             }
+        },
+    },
+    logging: {
+        admin: {
+            type: String,
+            default: null,
+        },
+        player: {
+            type: String,
+            default: null,
         },
     },
     characterApprovalRequired: {

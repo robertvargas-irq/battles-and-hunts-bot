@@ -182,8 +182,8 @@ module.exports = async (modal) => {
         // for logging purposes
         changes.push({
             property: (stats[customId]?.flair ?? '') + ' ' + stats[customId].name,
-            old: instance.character.stats[customId],
-            new: parseInt(value),
+            old: instance.character.stats[customId].toString(),
+            new: value.toString(),
         });
 
         // save to character

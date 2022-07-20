@@ -27,12 +27,25 @@ class PlayerLogger {
                 thumbnail: { url: player.user.avatarURL() },
                 title: '📝 Character Changes',
                 description: `<@${player.user.id}>(${player.user.tag}) has changed items from their Character.`,
-                fields: overrides.map((changes) => {return {
-                    name: '__' + changes.property?.toString()?.toUpperCase() + '__',
-                    value: '>>> **OLD VALUE**: `' + (changes.old ?? 'Unassigned') + '`\n**NEW VALUE**: `' + (changes.new ?? 'Unassigned') + '`',
-                    inline: true,
-                }}),
-            })]
+                fields: overrides.map((changes) => {
+                    const propertyName = changes.property?.toString()?.toUpperCase();
+                    const old = changes.old
+                    ? (changes.old.toString().substring(0, 400) + (changes.old.toString().length >= 400 ? '⟪...⟫' : '')) : 'Unassigned';
+                    const updated = changes.new
+                    ? (changes.new.toString().substring(0, 400) + (changes.new.toString().length >= 400 ? '⟪...⟫' : '')) : 'Unassigned';
+                    const tooLong = (old && old.length > 20) || (updated && updated.length > 20);
+                    console.log({old, oldLength: old.length, updated, updatedLength: updated.length})
+                    return {
+                        name: '__' + propertyName + '__',
+                        value: (!tooLong ? '>>> ' : '') + (
+                            (tooLong)
+                            ? 'Old Value ⇲\n```' + old + '```\nNew Value ⇲\n```' + updated + '```'
+                            : '`' + old + '` → `' + updated + '`' 
+                        ),
+                        inline: !tooLong,
+                    }
+                }),
+            })],
         });
     }
 

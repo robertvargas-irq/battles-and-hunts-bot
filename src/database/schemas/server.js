@@ -14,7 +14,7 @@ const { Schema } = require("mongoose");
  *          seasonDC: number,
  *          locked: boolean,
  *      },
- *      seasonDC: number,
+ *      characterApprovalRequired: boolean,
  *      verification: {
  *          verificationThreadId: string
  *          deniedVerificationIds: Set<string>
@@ -76,6 +76,10 @@ const serverSchema = new Schema({
                 clanRoleId: null,
             }
         },
+    },
+    characterApprovalRequired: {
+        type: Boolean,
+        default: true,
     },
     hunting: {
         seasonDC: {

@@ -1,10 +1,11 @@
 const { GuildMember, MessageEmbed } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
-const stats = require('../Stats/stats.json');
 const StatCalculator = require('../Stats/StatCalculator');
 const HealthVisuals = require('../Battle/HealthVisuals');
 const HungerVisuals = require('../Hunting/HungerVisuals');
 const Hunger = require('../Hunting/Hunger');
+const stats = require('../Stats/stats.json');
+const CoreUtil = require('../CoreUtil');
 const STATS_BANNER = 'https://cdn.discordapp.com/attachments/955294038263750716/966906542609821696/IMG_8666.gif';
 
 /**
@@ -12,6 +13,7 @@ const STATS_BANNER = 'https://cdn.discordapp.com/attachments/955294038263750716/
  * @typedef {string} AllowedUserId
  * @type {Map<GuildId, Set<AllowedUserId>>} */
 const usersAllowedToEdit = new Map();
+const guildsAllowingAllToEdit = new Set();
 
 /**
  * Format player stats.
@@ -107,6 +109,9 @@ function formatStats(member, character) {
     return [generalStats];
 }
 
+const allowGuildEditing = (guildId) => guildsAllowingAllToEdit.add(guildId);
+const disallowGuildEditing = (guildId) => guildsAllowingAllToEdit.delete(guildId);
+
 const allowEditing = (guildId, userId) => {
     // create set if not already done
     if (!usersAllowedToEdit.has(guildId)) usersAllowedToEdit.set(guildId, new Set())
@@ -128,12 +133,17 @@ const clearEditing = (guildId) => {
 }
 
 /**
- * Check to see if a user is allowed to /edit in the current guild
+ * Check to see if a user is allowed to edit their character stats in the current guild
  * @param {string} guildId 
  * @param {string} userId 
  * @returns {boolean} True if allowed | False if not
  */
 const allowedToEdit = (guildId, userId) => {
+    // return if guild does not require characters to be approved or edits are overriden
+    const guildData = CoreUtil.Servers.cache.get(guildId);
+    if (guildsAllowingAllToEdit.has(guildId)
+    || (guildData && !guildData.characterApprovalRequired)) return true;
+
     const guild = usersAllowedToEdit.get(guildId);
     return guild && guild.has(userId);
 }
@@ -145,4 +155,6 @@ module.exports = {
     allowEditing,
     clearEditing,
     allowedToEdit,
+    allowGuildEditing,
+    disallowGuildEditing,
 }

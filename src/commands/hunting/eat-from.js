@@ -9,11 +9,11 @@ const PreyPile = require('../../util/Hunting/PreyPile');
 const CANON_MESSAGE = '🍃 This message is canon.'
 
 module.exports = {
-    name: 'eat-from',
+    name: 'eat',
     description: 'Take food from a food source to try and satisfy your hunger.',
     options: [
         {
-            name: 'back',
+            name: 'carrying',
             description: '(This will leave behind bones) Secretly eat from the pile you are carrying on your back.',
             type: CommandTypes.Subcommand,
             options: [
@@ -35,12 +35,20 @@ module.exports = {
                             name: '3',
                             value: '3',
                         },
+                        {
+                            name: '4',
+                            value: '4',
+                        },
+                        {
+                            name: '5',
+                            value: '5',
+                        },
                     ]
                 }
             ]
         },
         {
-            name: 'prey-pile',
+            name: 'clan',
             description: '(This will notify the clan!) Eat from a clan\'s prey pile!',
             type: CommandTypes.Subcommand,
             options: [
@@ -86,6 +94,14 @@ module.exports = {
                             name: '3',
                             value: '3',
                         },
+                        {
+                            name: '4',
+                            value: '4',
+                        },
+                        {
+                            name: '5',
+                            value: '5',
+                        },
                     ]
                 }
             ]
@@ -98,7 +114,7 @@ module.exports = {
     async execute(interaction) {
 
         // hide if eating from the carried prey on one's back
-        const ephemeral = interaction.options.getSubcommand() === 'back';
+        const ephemeral = interaction.options.getSubcommand() === 'carrying';
         
         // pull character and server from the database
         const character = HuntManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
@@ -119,7 +135,7 @@ module.exports = {
 
         // route to requested food source
         switch (interaction.options.getSubcommand()) {
-            case 'back': {
+            case 'carrying': {
                 // if the player is not carrying anything, inform
                 const inventoryEntry = HuntInventory.getCarrying(interaction.guild.id, interaction.user.id);
                 if (inventoryEntry[0] < 1) return interaction.reply({
@@ -153,7 +169,7 @@ module.exports = {
                 });
             }
             
-            case 'prey-pile': {
+            case 'clan': {
                 // get clan
                 const clan = interaction.options.getString('clan-to-eat-from');
 

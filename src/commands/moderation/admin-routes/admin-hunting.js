@@ -128,7 +128,7 @@ module.exports = async (interaction, subcommand) => {
                     .setTitle('🔒 Hunting has been heavily restricted.')
                     .setDescription(
                         '> We hope you had a wonderful roleplay session, hunting is now restricted.'
-                        + '\n\n`/carry` `/deposit` `/eat-from` are now `disabled`.'
+                        + '\n\n`/deposit` `/eat-from` are now `disabled`.'
                     )
                 ]
             });
@@ -158,7 +158,7 @@ module.exports = async (interaction, subcommand) => {
                     .setTitle('🔓 Hunting is now fully available.')
                     .setDescription(
                         '> This probably means that a session is about to start, **happy roleplaying!**'
-                        + '\n\n`/carry` `/deposit` `/eat-from` are now `enabled`.'
+                        + '\n\n`/deposit` `/eat-from` are now `enabled`.'
                     )
                 ]
             });

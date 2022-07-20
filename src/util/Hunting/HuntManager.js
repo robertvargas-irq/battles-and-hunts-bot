@@ -133,7 +133,7 @@ class HuntManager extends CoreUtil {
             description: generateBriefDescription(tracked, caught, preyFromLocations.descriptors[prey.size - 1], prey)
             + '\n\n' + (
                 server.hunting.locked
-                ? '🔒 **Hunting is currently restricted.**\n> `/eat-from` `/carry` and `/deposit` are unavailable.'
+                ? '🔒 **Hunting is currently restricted.**\n> `/eat-from` and `/deposit` are unavailable.'
                 : ('🍃 **This hunt is canon.**\n' + (tracked && caught ? '\n💡 **Reminders**\n> • Don\'t forget to `/deposit` when you finish all your hunting and return to camp.\n> • *You may also `/eat-from back` to eat off the pile on your back if you must without alerting others...*' : ''))
             ),
         }));

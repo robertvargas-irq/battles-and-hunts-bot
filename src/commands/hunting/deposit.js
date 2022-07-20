@@ -1,5 +1,5 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const PreyPile = require('../../util/Hunting/PreyPile');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
@@ -12,7 +12,7 @@ module.exports = {
         {
             name: 'clan',
             description: 'The clan\'s prey pile you wish to deposit into.',
-            type: dTypes.String,
+            type: CommandTypes.String,
             required: true,
             choices: [
                 {

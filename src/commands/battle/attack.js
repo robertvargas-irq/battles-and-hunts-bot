@@ -1,4 +1,4 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { CommandInteraction, GuildMember } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 
@@ -10,7 +10,7 @@ module.exports = {
         {
             name: 'opponent',
             description: 'The target of this attack.',
-            type: dTypes.User,
+            type: CommandTypes.User,
             required: true,
         },
     ],

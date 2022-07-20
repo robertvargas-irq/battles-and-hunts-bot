@@ -1,4 +1,4 @@
-const { ApplicationCommandOptionType : dTypes, Locale } = require('discord-api-types/v10');
+const { ApplicationCommandOptionType : CommandTypes, Locale } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const StatCalculator = require('../../util/Stats/StatCalculator');
@@ -20,7 +20,7 @@ module.exports = {
                 [Locale.SpanishES]: 'puntos'
             },
             description: 'The amount of health to heal. (You will never heal past your max health)',
-            type: dTypes.Integer,
+            type: CommandTypes.Integer,
             required: true,
         },
     ],

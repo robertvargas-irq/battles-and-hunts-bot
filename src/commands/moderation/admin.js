@@ -275,18 +275,23 @@ module.exports = {
                     type: CommandTypes.Subcommand,
                 },
                 {
-                    name: 'unlock',
+                    name: 'unlock-one',
                     description: 'Unlock someone\'s stats to allow a quick edit.',
                     type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'user',
-                            description: 'Who to allow to /edit their stats.',
+                            description: 'Who\'s Stats to unlock.',
                             type: CommandTypes.User,
                             required: true,
                         }
                     ]
                 },
+                {
+                    name: 'unlock-all',
+                    description: 'Unlock everyone\'s stats to allow a quick edit.',
+                    type: CommandTypes.Subcommand,
+                }
             ]
         },
         {

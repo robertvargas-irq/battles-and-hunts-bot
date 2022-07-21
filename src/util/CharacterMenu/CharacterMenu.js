@@ -77,7 +77,7 @@ class CharacterMenu {
         const embed = new MessageEmbed({
             title: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »',
             color: s.displayHexColor,
-            author: { name: '🏓 ⟪BETA BUILD | WORK-IN-PROGRESS⟫' },
+            author: { name: '🌟 ⟪PRE-RELEASE⟫' },
             thumbnail: { url: c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
             description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',

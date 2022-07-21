@@ -292,7 +292,7 @@ module.exports = {
                 // spawn menu to open a submission
                 interaction.channel.send({
                     embeds: [new MessageEmbed({
-                        author: { name: '🏓 ⟪BETA BUILD | WORK-IN-PROGRESS⟫' },
+                        author: { name: '🌟 ⟪PRE-RELEASE⟫' },
                         color: 'FUCHSIA',
                         title: '🗃️ Character Submission Information',
                         description: '> Welcome to **' + CoreUtil.roleplayName + '**! We\'re incredibly happy to have you join us!'

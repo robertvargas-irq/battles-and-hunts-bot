@@ -12,7 +12,7 @@ class HuntInventory {
     static #inventories = new Map();
 
     /**@param {CharacterModel} character */
-    static calculateCarryWeight = (character) => Math.floor(character.stats.cat_size / 2) + this.INVENTORY_BASE_SIZE;
+    static calculateCarryWeight = (character) => Math.floor((character.stats.cat_size - 1) / 2) + this.INVENTORY_BASE_SIZE;
 
     /**
      * Pull from a player's carrying inventory
@@ -178,7 +178,7 @@ class HuntInventory {
                     value: '`' + weightCarrying + '` / `' + this.calculateCarryWeight(character) + '`'
                 }
             ],
-            footer: { text: '💡 How is carry weight calculated?\n| Your carry weight scales with your Cat Size!\n| It is found by: (Cat Size/2) + 5'}
+            footer: { text: '💡 How is carry weight calculated?\n| Your carry weight scales with your Cat Size!\n| It is found by: ((Cat Size - 1) / 2) + 5'}
         })
     }
 }

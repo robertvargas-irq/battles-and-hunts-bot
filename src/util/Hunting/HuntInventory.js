@@ -1,14 +1,18 @@
 const { MessageEmbed, GuildMember, Message } = require("discord.js");
+const CoreUtil = require("../CoreUtil");
 const HuntManager = require("./HuntManager");
 
 class HuntInventory {
 
-    static INVENTORY_MAX_WEIGHT = 7;
+    static INVENTORY_BASE_SIZE = 5;
 
     /**
      * @type {Map<guildId, Map<userId, [weight: number, prey[]]>>}
      * Player ID to their inventory */
     static #inventories = new Map();
+
+    /**@param {CharacterModel} character */
+    static calculateCarryWeight = (character) => Math.floor(character.stats.cat_size / 2) + this.INVENTORY_BASE_SIZE;
 
     /**
      * Pull from a player's carrying inventory
@@ -90,7 +94,7 @@ class HuntInventory {
         const carried = inventory[1];
 
         // check if already over-encumbered
-        if (weight > this.INVENTORY_MAX_WEIGHT)
+        if (weight > this.calculateCarryWeight(CoreUtil.Characters.cache.get(guildId, userId)))
             return [true, inventory[0], inventory[1]];
         
         // add to carried and increase weight
@@ -157,11 +161,11 @@ class HuntInventory {
 
     /**
      * Generate an embed for what a character is carrying
-     * @param {GuildMember} member 
+     * @param {CharacterModel} character
      * @param {import("./HuntManager").prey[]} preyCarrying 
      * @param {number} weightCarrying
      */
-    static generateCarryingEmbed(preyCarrying, weightCarrying) {
+    static generateCarryingEmbed(character, preyCarrying, weightCarrying) {
         return new MessageEmbed({
             color: 'BLURPLE',
             title: '🎒 Hunting Carrying Inventory',
@@ -171,9 +175,10 @@ class HuntInventory {
             fields: [
                 {
                     name: '⚖️ Total Weight',
-                    value: '`' + weightCarrying + '` / `' + HuntInventory.INVENTORY_MAX_WEIGHT + '`'
+                    value: '`' + weightCarrying + '` / `' + this.calculateCarryWeight(character) + '`'
                 }
-            ]
+            ],
+            footer: { text: '💡 How is carry weight calculated?\n| Your carry weight scales with your Cat Size!\n| It is found by: (Cat Size/2) + 5'}
         })
     }
 }

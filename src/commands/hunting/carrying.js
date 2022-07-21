@@ -22,7 +22,7 @@ module.exports = {
         const [weightCarrying, preyCarrying] = HuntInventory.getCarrying(interaction.guild.id, interaction.user.id);
         return interaction.reply({
             ephemeral: true,
-            embeds: [HuntInventory.generateCarryingEmbed(preyCarrying, weightCarrying)]
+            embeds: [HuntInventory.generateCarryingEmbed(hunter, preyCarrying, weightCarrying)]
         });
 
     }

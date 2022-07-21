@@ -1,6 +1,7 @@
 const FILE_LANG_ID = 'CORE_UTIL';
 
 const { CommandInteraction, MessageEmbed, MessagePayload, Util: DiscordUtil } = require('discord.js');
+const Pluralize = require('pluralize');
 const ColorUtil = require('color2k');
 const mongoose = require('mongoose');
 const userSchema = require('../database/schemas/user');
@@ -100,6 +101,7 @@ class CoreUtil {
      */
     static denyBotInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
+            ephemeral: true,
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
                 .setTitle('🛡️ WOAH THERE')
@@ -427,6 +429,14 @@ class CoreUtil {
 
         // return the final concatenation
         return firstWordProper + ' ' + subsequentWords;
+    }
+
+    static Plural = (requestedWord, count) => {
+        
+        if (!requestedWord || !requestedWord.length) return requestedWord;
+        
+        return Pluralize(requestedWord, count);
+
     }
 
 }

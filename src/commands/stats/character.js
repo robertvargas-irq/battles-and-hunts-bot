@@ -24,8 +24,11 @@ module.exports = {
     /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
-        // fetch target's character
+        // ensure target is not a bot
         const target = interaction.options.getMember('player', false) || interaction.member;
+        if (target.user.bot) return CoreUtil.denyBotInteraction(interaction);
+
+        // get character from cache
         const character = CoreUtil.Characters.cache.get(target.guild.id, target.user.id);
         const displayingPublicly = interaction.options.getBoolean('display-publicly', false) ?? false;
 

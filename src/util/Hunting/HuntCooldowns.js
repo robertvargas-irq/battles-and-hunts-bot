@@ -1,3 +1,6 @@
+const { MessageEmbed, CommandInteraction } = require('discord.js');
+const CoreUtil = require('../CoreUtil');
+
 class HuntCooldowns {
 
     static #MAX_HUNT_TIMERS = 5;
@@ -179,7 +182,7 @@ class HuntCooldowns {
      */
      static async displayCooldownHunt(interaction) {
         let minutes = ((HuntCooldowns.HUNT_COOLDOWN - (Date.now() - this.getCooldownHunt(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
-        return await this.SafeReply(interaction, {
+        return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new MessageEmbed({
                 color: 'FUCHSIA',
@@ -201,7 +204,7 @@ class HuntCooldowns {
      */
     static async displayCooldownDeposit(interaction) {
         let minutes = ((HuntCooldowns.DEPOSIT_COOLDOWN - (Date.now() - this.getCooldownDeposit(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
-        return await this.SafeReply(interaction, {
+        return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new MessageEmbed({
                 color: 'FUCHSIA',

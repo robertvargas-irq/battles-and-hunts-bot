@@ -42,7 +42,7 @@ module.exports = async (button) => {
                 // if successfully carried, notify
                 if (!overEncumbered) {
                     // if weight being carried is at a respectable limit
-                    if (weightCarrying <= HuntInventory.INVENTORY_MAX_WEIGHT) resultEmbed
+                    if (weightCarrying <= HuntInventory.calculateCarryWeight(hunter)) resultEmbed
                         .setColor('GREEN')
                         .setTitle(`🎒 __Successfully picked up: \`${sharePoolPrey.name}\`__`)
                         .setDescription(
@@ -60,7 +60,7 @@ module.exports = async (button) => {
                         `> You take the \`${sharePoolPrey.name}\` between your teeth and chuck it onto your back, your legs struggling to keep the load on your back afloat.`
                         + '\n> '
                         + '\n> **You now have no other choice but to go back to camp and \`/deposit\` your prey before you can carry more.**'
-                        + `\n> (\`${weightCarrying}\` + \`${sharePoolPrey.bites_remaining}\`) > \`${HuntInventory.INVENTORY_MAX_WEIGHT}\``
+                        + `\n> (\`${weightCarrying}\` + \`${sharePoolPrey.bites_remaining}\`) > \`${HuntInventory.calculateCarryWeight(hunter)}\``
                         )
                         .setFooter({ text: '🍃 This carry is canon.' });
                 }
@@ -73,7 +73,7 @@ module.exports = async (button) => {
                     `> You carefully take the \`${sharePoolPrey.name}\` between your teeth, but the sheer weight you are carrying simply causes you to let go, stumbling and nearly losing what you have piled onto your back.`
                     + '\n> '
                     + '\n> **You unfortunately must go back to camp and \`/deposit\` your prey before you can carry more.**'
-                    + `\n> (\`${weightCarrying}\` + \`${sharePoolPrey.bites_remaining}\`) > \`${HuntInventory.INVENTORY_MAX_WEIGHT}\``
+                    + `\n> (\`${weightCarrying}\` + \`${sharePoolPrey.bites_remaining}\`) > \`${HuntInventory.calculateCarryWeight(hunter)}\``
                     )
                     .setFooter({ text: '🍃 This carry is canon.' });
                 
@@ -82,7 +82,7 @@ module.exports = async (button) => {
                     ephemeral: true,
                     embeds: [
                         resultEmbed,
-                        HuntInventory.generateCarryingEmbed(currentlyCarrying, weightCarrying)
+                        HuntInventory.generateCarryingEmbed(hunter, currentlyCarrying, weightCarrying)
                     ]
                 });
             }
@@ -102,7 +102,7 @@ module.exports = async (button) => {
             // if successfully carried, notify
             if (!overEncumbered) {
                 // if weight being carried is at a respectable limit
-                if (weightCarrying <= HuntInventory.INVENTORY_MAX_WEIGHT) resultEmbed
+                if (weightCarrying <= HuntInventory.calculateCarryWeight(hunter)) resultEmbed
                     .setColor('GREEN')
                     .setTitle(`🎒 __Successfully picked up: \`${recentlyCaught.prey.name}\`__`)
                     .setDescription(
@@ -120,7 +120,7 @@ module.exports = async (button) => {
                     `> You take the \`${recentlyCaught.prey.name}\` between your teeth and chuck it onto your back, your legs struggling to keep the load on your back afloat.`
                     + '\n> '
                     + '\n> **You now have no other choice but to go back to camp and \`/deposit\` your prey before you can carry more.**'
-                    + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.prey.bites_remaining}\`) > \`${HuntInventory.INVENTORY_MAX_WEIGHT}\``
+                    + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.prey.bites_remaining}\`) > \`${HuntInventory.calculateCarryWeight(hunter)}\``
                     )
                     .setFooter({ text: '🍃 This carry is canon.' });
             }
@@ -133,7 +133,7 @@ module.exports = async (button) => {
                 `> You carefully take the \`${recentlyCaught.prey.name}\` between your teeth, but the sheer weight you are carrying simply causes you to let go, stumbling and nearly losing what you have piled onto your back.`
                 + '\n> '
                 + '\n> **You unfortunately must go back to camp and \`/deposit\` your prey before you can carry more.**'
-                + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.prey.bites_remaining}\`) > \`${HuntInventory.INVENTORY_MAX_WEIGHT}\``
+                + `\n> (\`${weightCarrying}\` + \`${recentlyCaught.prey.bites_remaining}\`) > \`${HuntInventory.calculateCarryWeight(hunter)}\``
                 )
                 .setFooter({ text: '🍃 This carry is canon.' });
             
@@ -142,7 +142,7 @@ module.exports = async (button) => {
                 ephemeral: true,
                 embeds: [
                     resultEmbed,
-                    HuntInventory.generateCarryingEmbed(currentlyCarrying, weightCarrying),
+                    HuntInventory.generateCarryingEmbed(hunter, currentlyCarrying, weightCarrying),
                 ]
             });
         }

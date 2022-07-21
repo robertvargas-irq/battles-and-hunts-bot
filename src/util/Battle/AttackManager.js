@@ -73,7 +73,9 @@ class AttackManager extends CoreUtil {
                 name: hit
                 ? '🎯 ' + CoreUtil.ProperCapitalization(attacker.pronouns.subjective ?? 'They') + ' '
                 + PronounsUtil.neutralResolver(attacker.pronouns.subjective ?? 'They', 'manage', 'manages') + ' to catch an opening-!'
-                : '🍃 ' + CoreUtil.ProperCapitalization(attacker.pronouns.possessive ?? 'Their') + ' enemy, however, slipped away'
+                : '🍃 ' + PronounsUtil.pluralToSingular(
+                    CoreUtil.ProperCapitalization(attacker.pronouns.possessive ?? 'Their')
+                ) + ' enemy, however, slipped away'
             },
             description: '> **Enemy Dodge Chance**: `' + StatCalculator.calculateDodgeChance(target) + '`'
             + '\n> **Rolled**: `' + d1Hit + '`/`100`'

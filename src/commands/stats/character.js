@@ -31,7 +31,10 @@ module.exports = {
 
         // if displaying publicly, send only an embed
         if (displayingPublicly) return interaction.reply({
-            embeds: [CharacterMenu.constructEmbed(character, target)]
+            embeds: [
+                CharacterMenu.iconEmbed(character, target),
+                CharacterMenu.constructEmbed(character, target),
+            ]
         });
 
         // instantiate character menu and display to user

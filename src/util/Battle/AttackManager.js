@@ -16,8 +16,6 @@ const {p_hit_and_crit, p_hit, p_crit_but_miss, p_miss} = require('./attackPrompt
  * @param {GuildMember} targetSnowflake
  */
 class AttackManager extends CoreUtil {
-    static MAX_WEIGHT = 3;
-    static INVENTORY_MAX_WEIGHT = 7;
     static #Random = (min, max) => {
         const ROLL_COUNT = 13;
         let rolls = [];

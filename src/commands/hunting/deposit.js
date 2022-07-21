@@ -85,7 +85,7 @@ module.exports = {
             member.hunting.trips++;
 
             // perfect hunt if carrying weight matches the max carry weight
-            if (weight === HuntInventory.INVENTORY_MAX_WEIGHT) {
+            if (weight === HuntInventory.calculateCarryWeight(character)) {
                 character.hunting.fullInventoryTrips++;
                 member.hunting.fullInventoryTrips++;
             }

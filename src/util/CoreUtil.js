@@ -100,6 +100,7 @@ class CoreUtil {
      */
     static denyBotInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
+            ephemeral: true,
             embeds : [new MessageEmbed()
                 .setColor('BLURPLE')
                 .setTitle('🛡️ WOAH THERE')

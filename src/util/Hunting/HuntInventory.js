@@ -177,7 +177,8 @@ class HuntInventory {
                     name: '⚖️ Total Weight',
                     value: '`' + weightCarrying + '` / `' + this.calculateCarryWeight(character) + '`'
                 }
-            ]
+            ],
+            footer: { text: '💡 How is carry weight calculated?\n| Your carry weight scales with your Cat Size!\n| It is found by: (Cat Size/2) + 5'}
         })
     }
 }

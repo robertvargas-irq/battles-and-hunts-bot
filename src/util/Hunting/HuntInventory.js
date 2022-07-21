@@ -4,7 +4,7 @@ const HuntManager = require("./HuntManager");
 
 class HuntInventory {
 
-    static INVENTORY_BASE_SIZE = 4;
+    static INVENTORY_BASE_SIZE = 5;
 
     /**
      * @type {Map<guildId, Map<userId, [weight: number, prey[]]>>}

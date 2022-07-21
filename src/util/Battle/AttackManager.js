@@ -2,6 +2,7 @@ const { MessageEmbed, CommandInteraction, GuildMember } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
 const StatCalculator = require('../Stats/StatCalculator');
+const PronounsUtil = require('../WritingUtil/PronounsUtil');
 const {p_hit_and_crit, p_hit, p_crit_but_miss, p_miss} = require('./attackPrompts.json');
 
 /**@typedef {'unforgiven'|'riverclan'|'shadowclan'|'thunderclan'} clans */
@@ -68,7 +69,14 @@ class AttackManager extends CoreUtil {
         // break down attack roll
         embeds.push(new MessageEmbed({ 
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#7afabc' : '#faad7a',
-            author: { name: hit ? '🎯 They manage to catch an opening-!' : '🍃 Their enemy, however, slipped away' },
+            author: {
+                name: hit
+                ? '🎯 ' + CoreUtil.ProperCapitalization(attacker.pronouns.subjective ?? 'They') + ' '
+                + PronounsUtil.neutralResolver(attacker.pronouns.subjective ?? 'They', 'manage', 'manages') + ' to catch an opening-!'
+                : '🍃 ' + PronounsUtil.pluralToSingular(
+                    CoreUtil.ProperCapitalization(attacker.pronouns.possessive ?? 'Their')
+                ) + ' enemy, however, slipped away'
+            },
             description: '> **Enemy Dodge Chance**: `' + StatCalculator.calculateDodgeChance(target) + '`'
             + '\n> **Rolled**: `' + d1Hit + '`/`100`'
         }));
@@ -76,7 +84,13 @@ class AttackManager extends CoreUtil {
         // if the user hit, then display crit results
         if (hit) embeds.push(new MessageEmbed({
             color: (hit && crit) ? '#fa7acb' : (crit) ? '#7afabc' : '#faad7a',
-            author: { name: crit ? '🪨 They wind up for a critical blow-!' : '🍃 They opt for a normal attack' },
+            author: {
+                name: crit
+                ? '🪨 ' + CoreUtil.ProperCapitalization(attacker.pronouns.subjective ?? 'They') + ' '
+                + PronounsUtil.neutralResolver(attacker.pronouns.subjective ?? 'They', 'wind', 'winds') + ' up for a critical blow-!'
+                : '🍃 ' + CoreUtil.ProperCapitalization(attacker.pronouns.subjective ?? 'They') + ' '
+                + PronounsUtil.neutralResolver(attacker.pronouns.subjective ?? 'They', 'opt', 'opted') + ' for a normal attack'
+            },
             description: '> **Attacker\'s Critical Threshold**: `' + StatCalculator.min.critChance + '`-`' + StatCalculator.calculateCritChance(attacker) + '`'
             + '\n> **Rolled**: `' + d2Crit + '`/`100`'
         }));

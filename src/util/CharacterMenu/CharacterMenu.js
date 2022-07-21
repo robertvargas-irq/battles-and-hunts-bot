@@ -12,6 +12,7 @@ const {
 } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
+const StatCalculator = require('../Stats/StatCalculator');
 
 const stats = require('../Stats/stats.json');
 const statSections = ['🍓', '🫐', '🍋'];
@@ -74,10 +75,10 @@ class CharacterMenu {
         const c = character;
         const s = author;
         const embed = new MessageEmbed({
-            title: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »',
+            // title: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »',
             color: s.displayHexColor,
-            author: { name: '🏓 ⟪BETA BUILD | WORK-IN-PROGRESS⟫' },
-            thumbnail: { url: c.icon ?? s.displayAvatarURL({ dynamic: true }) },
+            author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »' + ' | 🌟 ⟪PRE-RELEASE⟫', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
+            // thumbnail: { url: c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
             description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',
             fields: [
@@ -95,18 +96,26 @@ class CharacterMenu {
                     inline: true,
                 },
                 {
+                    name: '🦾 Battle Power',
+                    value: '> `' + StatCalculator.calculateBattlePower(c) + '`/`' + StatCalculator.max.battlePower + '`',
+                    inline: true,
+                },
+                {
+                    name: '\u200B',
+                    value: '\u200B',
+                    inline: true,
+                },
+                {
                     name: 'Clan',
                     value: '> `' + (c.clan?.toUpperCase() || 'Not chosen') + '`',
-                    inline: true,
                 },
                 {
                     name: 'Age (Moons)',
                     value: '> `' + (c.moons > -1 ? c.moons : 'Not assigned').toString() + '` **⟪ ' + CharacterMenu.getAgeTitle(c.moons ?? 0) + ' ⟫**',
-                    inline: true,
                 },
                 {
                     name: 'Pronouns',
-                    value: '>>> `' + (c.pronouns.subjective ?? '____') + '`/`' + (c.pronouns.objective ?? '____') + '`/`' + (c.pronouns.possessive ?? '____') + '`'
+                    value: '>>> `' + (c.pronouns.subjective ?? '____') + '`/`' + (c.pronouns.objective ?? '____') + '`/`' + (c.pronouns.possessive ?? '____') + '`',
                 },
                 {
                     name: 'Personality',
@@ -115,7 +124,8 @@ class CharacterMenu {
             ],
             footer: {
                 text: `This character belongs to ${s.user.tag}(${s.user.id})`
-                + (!character.approved ? ' | ⚠️ Character is not yet approved by an administrator.' : '')
+                + (!character.approved ? ' | ⚠️ Character is not yet approved by an administrator.' : ''),
+                iconURL: s.displayAvatarURL(),
             },
         });
 
@@ -126,10 +136,20 @@ class CharacterMenu {
     }
 
     /**
+     * Construct auxilary embed for character icon
+     * @param {CharacterModel} character 
+     * @param {GuildMember} author 
+     */
+    static iconEmbed = (character, author) => new MessageEmbed({ thumbnail: {
+        url: character.icon ?? author.displayAvatarURL({ dynamic: true }) }
+    });
+
+    /**
      * Render menu to the user
      * @returns {Promise<CharacterMenu>}
      */
     async render() {
+        const icon = CharacterMenu.iconEmbed(this.character, this.authorSnowflake);
         const embed = CharacterMenu.constructEmbed(this.character, this.authorSnowflake, this.editingEnabled, this.statsLocked, this.isAdmin);
 
         // package message payload
@@ -144,7 +164,7 @@ class CharacterMenu {
             })]
         }));
         const payload = {
-            embeds: [embed, ...generateAuxilaryEmbeds(this)],
+            embeds: [icon, embed, ...generateAuxilaryEmbeds(this)],
             ephemeral: this.editingEnabled,
             components,
         }

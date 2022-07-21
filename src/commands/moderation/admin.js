@@ -1,5 +1,6 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
 const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const CoreUtil = require('../../util/CoreUtil');
 const DAY_CHOICES = [
     {
         name: 'Friday',
@@ -295,7 +296,7 @@ module.exports = {
             ]
         },
         {
-            name: 'refresh',
+        name: 'refresh',
             description: 'Something not quite right?',
             type: CommandTypes.SubcommandGroup,
             options: [
@@ -311,17 +312,8 @@ module.exports = {
     async execute(interaction) {
 
         // filter out non-administrators
-        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-            return interaction.reply({
-                embeds: [new MessageEmbed()
-                    .setColor('RED')
-                    .setTitle('❗ Woah wait-!')
-                    .setDescription(
-                        `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
-                    )
-                ]
-            });
-        }
+        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
+            return CoreUtil.InformNonAdministrator(interaction);
         
         // route
         const group = interaction.options.getSubcommandGroup();

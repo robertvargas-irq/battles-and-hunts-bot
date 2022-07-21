@@ -12,6 +12,7 @@ const {
 } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
+const StatCalculator = require('../Stats/StatCalculator');
 
 const stats = require('../Stats/stats.json');
 const statSections = ['🍓', '🫐', '🍋'];
@@ -95,6 +96,11 @@ class CharacterMenu {
                     inline: true,
                 },
                 {
+                    name: '🦾 Battle Power',
+                    value: '> `' + StatCalculator.calculateBattlePower(c) + '`/`' + StatCalculator.max.battlePower + '`',
+                    inline: true,
+                },
+                {
                     name: 'Clan',
                     value: '> `' + (c.clan?.toUpperCase() || 'Not chosen') + '`',
                     inline: true,
@@ -106,7 +112,8 @@ class CharacterMenu {
                 },
                 {
                     name: 'Pronouns',
-                    value: '>>> `' + (c.pronouns.subjective ?? '____') + '`/`' + (c.pronouns.objective ?? '____') + '`/`' + (c.pronouns.possessive ?? '____') + '`'
+                    value: '>>> `' + (c.pronouns.subjective ?? '____') + '`/`' + (c.pronouns.objective ?? '____') + '`/`' + (c.pronouns.possessive ?? '____') + '`',
+                    inline: true,
                 },
                 {
                     name: 'Personality',

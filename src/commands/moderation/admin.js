@@ -312,7 +312,7 @@ module.exports = {
 
         // filter out non-administrators
         if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-            return interaction.editReply({
+            return interaction.reply({
                 embeds: [new MessageEmbed()
                     .setColor('RED')
                     .setTitle('❗ Woah wait-!')

@@ -279,7 +279,7 @@ class HuntManager extends CoreUtil {
         // return a formatted string
         return Array.from(counter.entries()).map(([preyName, preyCount]) => {
             console.log(preyName, preyCount);
-            return `↣ **(${preyCount}) ${this.ProperCapitalization(preyName)}**`
+            return `↣ \`${preyCount}\` ${CoreUtil.ProperCapitalization(CoreUtil.Plural(preyName, preyCount))}`
         }).join('\n');
     }
 

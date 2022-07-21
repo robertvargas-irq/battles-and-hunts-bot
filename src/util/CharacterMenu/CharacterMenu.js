@@ -75,10 +75,8 @@ class CharacterMenu {
         const c = character;
         const s = author;
         const embed = new MessageEmbed({
-            // title: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »',
-            color: s.displayHexColor,
+            color: s.displayColor || '#76e3ed',
             author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »' + ' | 🌟 ⟪PRE-RELEASE⟫', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
-            // thumbnail: { url: c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
             description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',
             fields: [

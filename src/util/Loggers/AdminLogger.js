@@ -32,9 +32,9 @@ class AdminLogger {
                 fields: overrides.map((changes) => {
                     const propertyName = changes.property?.toString()?.toUpperCase();
                     const old = changes.old
-                    ? (changes.old.toString().substring(0, 400) + (changes.old.toString().length >= 400 ? '⟪...⟫' : '')) : 'Unassigned';
+                    ? (changes.old.toString().substring(0, 400) + (changes.old.toString().length >= 400 ? '⟪...⟫' : '')) : 'NONE';
                     const updated = changes.new
-                    ? (changes.new.toString().substring(0, 400) + (changes.new.toString().length >= 400 ? '⟪...⟫' : '')) : 'Unassigned';
+                    ? (changes.new.toString().substring(0, 400) + (changes.new.toString().length >= 400 ? '⟪...⟫' : '')) : 'NONE';
                     const tooLong = (old && old.length > 20) || (updated && updated.length > 20);
                     console.log({old, oldLength: old.length, updated, updatedLength: updated.length})
                     return {

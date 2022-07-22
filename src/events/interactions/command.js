@@ -1,8 +1,8 @@
-const { MessageEmbed, Permissions, BaseCommandInteraction } = require('discord.js');
+const { MessageEmbed, Permissions, CommandInteraction } = require('discord.js');
 
 const restrictions = require('./restrictions.json');
 
-/** @param {BaseCommandInteraction} interaction */
+/** @param {CommandInteraction} interaction */
 module.exports = async ( interaction ) => {
 
     if ( !interaction.client.commands.has( interaction.commandName ) ) return;

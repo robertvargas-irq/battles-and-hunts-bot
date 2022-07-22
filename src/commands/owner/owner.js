@@ -6,7 +6,7 @@ const CoreUtil = require('../../util/CoreUtil');
 module.exports = {
     name: 'owner',
     description: 'Owner Only',
-    async execute( interaction ) {
+    async execute(interaction) {
 
         // filter out those who are not the bot owner
         if (interaction.user.id !== process.env.OWNER_ID) return interaction.reply({ ephemeral: true, content: '❌' });

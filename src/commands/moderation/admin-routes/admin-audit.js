@@ -1,10 +1,11 @@
-const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
 const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
 const CoreUtil = require('../../../util/CoreUtil');
+const Hunger = require('../../../util/Hunting/Hunger');
 
 
 /**
- * @param {BaseCommandInteraction} interaction 
+ * @param {CommandInteraction} interaction 
  * @param {string} subcommand 
  */
 module.exports = async (interaction, subcommand) => {
@@ -122,6 +123,9 @@ module.exports = async (interaction, subcommand) => {
         }
 
         case 'registration': {
+            return interaction.reply({
+                content: 'This command is under construction.'
+            });
             // get options and defer appropriately
             const ping = interaction.options.getString("ping-them") == 'yes';
             const ephemeral = interaction.options.getString("view-privately") == 'yes';
@@ -152,28 +156,22 @@ module.exports = async (interaction, subcommand) => {
                 
                 // if character is not registered, route to non-registered or non-submitted
                 if (!CharacterDocuments.has(id))
-                    if (member.displayName.startsWith('{+'))
-                        nonRegistered.push(member);
-                    else
-                        nonSubmitted.push(member);
+                    nonRegistered.push(member);
+                else if (!CharacterDocuments.get(id).approved)
+                    nonSubmitted.push(member);
             }
 
             // notify successful set
             return interaction.editReply({
                 content: (ping)
-                ? "**Don't forget to `/register` for the bot when you can!**\n||"
+                ? "**Don't forget to fill out your `/character` and submit when you can!**\n||"
                 + nonRegistered.map(m => "<@" + m.user.id + ">").join('')
                 + "||" : null,
                 embeds: [new MessageEmbed()
                     .setColor('GREEN')
                     .setTitle('✅ Audit complete.')
                     .setDescription(
-                        (nonRegistered.length > 0 ? (
-                            "__**Non-Registered Users:**__\n"
-                            + "*These players are eligible to sign up as their character has been approved by\n<@" + interaction.guild.ownerId + ">, this is required to hunt and battle; all is needed is your cat's stats from your OC submission! Use `/register` to get started!*\n------------\n"
-                            + nonRegistered.map(m => '> ' + m.displayName).join('\n')
-                        ) : '__**All eligble users have registered for the bot.**__')
-                        + '\n\n' + (nonSubmitted.length > 0 ? (
+                        (nonSubmitted.length > 0 ? (
                             "__**Users who haven't submitted an OC:**__\n"
                             + "*These players are unable to sign up as they still need approval from the server owner,\n<@" + interaction.guild.ownerId + ">.\n\nPick up a `template` from <#954246632550072350>\nthen `submit` over at <#954246543102337086> as soon as possible!*\n------------\n"
                             + nonSubmitted.map(m => '> ' + m.displayName + ' (<@' + m.user.id + '>)').join('\n')
@@ -192,7 +190,7 @@ module.exports = async (interaction, subcommand) => {
 
             // organize members based on hunger status
             const totalClanMembers = {};
-            for (const [userId, character] of Array.from(CharacterDocuments)) {
+            for (const [_, character] of Array.from(CharacterDocuments)) {
                 
                 // if user is not in the current server, continue
                 if (!GuildMembers.has(character.userId)) continue;
@@ -203,14 +201,11 @@ module.exports = async (interaction, subcommand) => {
                 totalClanMembers[character.clan]++;
                 
                 // if hunger is satiated, continue
-                if (character.currentHunger === 0) continue;
+                if (Hunger.isSatiated(character)) continue;
 
-                // begin fetching members based on starving or one away from starving
-                if (character.stats.cat_size <= character.currentHunger) {
-                    // initialize clan array and push the guild member
-                    if (!starving.hasOwnProperty(character.clan)) starving[character.clan] = [];
-                    starving[character.clan].push(GuildMembers.get(character.userId));
-                }
+                // initialize clan array and push the guild member
+                if (!starving.hasOwnProperty(character.clan)) starving[character.clan] = [];
+                starving[character.clan].push(GuildMembers.get(character.userId));
             }
 
             // generate embeds with the final audit

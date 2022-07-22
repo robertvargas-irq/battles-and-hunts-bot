@@ -1,5 +1,6 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const CoreUtil = require('../../util/CoreUtil');
 const DAY_CHOICES = [
     {
         name: 'Friday',
@@ -67,6 +68,64 @@ module.exports = {
                     ],
                 }
             ],
+        },
+        {
+            name: 'character',
+            description: 'Administrator tools for characters',
+            type: CommandTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'delete',
+                    description: '⚠️ Delete a Character permenantly from the database',
+                    type: CommandTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'character-author',
+                            description: 'Who\'s character to delete; ⚠️ THIS IS IRREVERSABLE! ⚠️',
+                            required: true,
+                            type: CommandTypes.User,
+                        },
+                        {
+                            name: 'are-you-absolutely-sure',
+                            description: '⚠️ THIS IS ABSOLUTELY IRREVERSABLE! ⚠️',
+                            required: true,
+                            type: CommandTypes.String,
+                            choices: [
+                                {
+                                    name: 'yes',
+                                    value: 'yes',
+                                },
+                            ],
+                        },
+                    ]
+                },
+                {
+                    name: 'approve',
+                    description: 'Set a Character\'s status to Approved',
+                    type: CommandTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'character-author',
+                            description: 'Who\'s character to approve',
+                            required: true,
+                            type: CommandTypes.User,
+                        },
+                    ]
+                },
+                {
+                    name: 'un-approve',
+                    description: 'Set a Character\'s status to Not Approved',
+                    type: CommandTypes.Subcommand,
+                    options: [
+                        {
+                            name: 'character-author',
+                            description: 'Who\'s character to remove approval',
+                            required: true,
+                            type: CommandTypes.User,
+                        },
+                    ]
+                },
+            ]
         },
         {
             name: 'audit',
@@ -217,22 +276,27 @@ module.exports = {
                     type: CommandTypes.Subcommand,
                 },
                 {
-                    name: 'unlock',
+                    name: 'unlock-one',
                     description: 'Unlock someone\'s stats to allow a quick edit.',
                     type: CommandTypes.Subcommand,
                     options: [
                         {
                             name: 'user',
-                            description: 'Who to allow to /edit their stats.',
+                            description: 'Who\'s Stats to unlock.',
                             type: CommandTypes.User,
                             required: true,
                         }
                     ]
                 },
+                {
+                    name: 'unlock-all',
+                    description: 'Unlock everyone\'s stats to allow a quick edit.',
+                    type: CommandTypes.Subcommand,
+                }
             ]
         },
         {
-            name: 'refresh',
+        name: 'refresh',
             description: 'Something not quite right?',
             type: CommandTypes.SubcommandGroup,
             options: [
@@ -244,21 +308,12 @@ module.exports = {
             ]
         }
     ],
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // filter out non-administrators
-        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-            return interaction.editReply({
-                embeds: [new MessageEmbed()
-                    .setColor('RED')
-                    .setTitle('❗ Woah wait-!')
-                    .setDescription(
-                        `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
-                    )
-                ]
-            });
-        }
+        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
+            return CoreUtil.InformNonAdministrator(interaction);
         
         // route
         const group = interaction.options.getSubcommandGroup();
@@ -266,6 +321,8 @@ module.exports = {
         switch (group) {
             case 'excuses':
                 return require('./admin-routes/admin-excuses')(interaction, subcommand);
+            case 'character':
+                return require('./admin-routes/admin-character')(interaction, subcommand);
             case 'audit':
                 return require('./admin-routes/admin-audit')(interaction, subcommand);
             case 'hunting':

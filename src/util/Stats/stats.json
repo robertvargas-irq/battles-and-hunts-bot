@@ -1,0 +1,65 @@
+{
+    "cat_size":{
+        "name": "Char. Size",
+        "description":"**This directly affects your hunger and how much you can carry during a hunt!**\n>>> `1`: Kit\n`2`: Apprentice\n`3`: Young Warrior\n`4`: Warrior\n`5`: Large Warrior",
+        "flair":"🐈",
+        "min": 1,
+        "max": 5
+    },
+    "strength":{
+        "name":"Strength",
+        "description":"**How hard you hit!**\n>>> How much you can lift, how muscular you are. Thunderclan is big and burly, so they tend to be stronger.",
+        "flair":"🦾",
+        "min": 0,
+        "max": 10
+    },
+    "dexterity":{
+        "name":"Dexterity",
+        "description":"**Skill. Finesse. Performing actions with a level of care and expertise!**\n>>> Riverclan is lithe and graceful, so they have more dexterity. Their hand-paw coordination is uniquely honed for fishing!",
+        "flair":"⚔️",
+        "min": 0,
+        "max": 10
+    },
+    "constitution":{
+        "name":"Constitution",
+        "description":"**Toughness.**\n>>> You can handle more pain, or even resist toxins or eat things most cats would struggle with. ShadowClan has a harsh territory, ShadowClan survives by eating things that would harm most cats!",
+        "flair":"❤️‍🔥",
+        "min": 0,
+        "max": 10
+    },
+    "speed":{
+        "name":"Speed",
+        "description":"**How fast you react or run.**\n>>> Windclan used to be known for this, but The Unforgiven seem to have followed their footsteps…",
+        "flair":"💨",
+        "min": 0,
+        "max": 10
+    },
+    "intelligence":{
+        "name":"Intelligence",
+        "description":"**How smart you are.**\n>>> You can make plans and think things through. The Unforgiven's hierarchy is well thought put, and their battle prowess intimidates the clans!",
+        "flair":"🧠",
+        "min": 0,
+        "max": 10
+    },
+    "charisma": {
+        "name":"Charisma",
+        "description":"**Persuasiveness, Likability, how you present yourself.**\n>>> How will you convince anyone if you can't even convince yourself? Thunderclan is full charismatic and well liked cats!",
+        "flair":"🌟",
+        "min": 0,
+        "max": 10
+    },
+    "swimming": {
+        "name":"Swimming",
+        "description":"**How well you swim.**",
+        "flair":"🌊",
+        "min": 0,
+        "max": 10
+    },
+    "stalking": {
+        "name":"Stalking",
+        "description":"**Stealth, how silent you can slink through shadows, bushes or night.**\n>>> ShadowClan is known for this!",
+        "flair":"🔇",
+        "min": 0,
+        "max": 10
+    }
+}

@@ -1,5 +1,5 @@
 const {
-    BaseCommandInteraction, 
+    CommandInteraction, 
     GuildChannel, 
     ThreadManager, 
     MessageEmbed, 
@@ -24,7 +24,7 @@ class VerificationHandler extends CoreUtil {
 
     /**
      * Get the adult guild role
-     * @param {BaseCommandInteraction} interaction Original Discord interaction
+     * @param {CommandInteraction} interaction Original Discord interaction
      * @param {serverSchema} server Server database entry
      * @returns Adult Role if found | False if not found
      */
@@ -40,8 +40,8 @@ class VerificationHandler extends CoreUtil {
      * @returns {boolean} True if pending | False if not
      */
     static isPending(server, userId, messageId = null) {
-        console.log({server, userId, messageId});
-        console.log({ver: server.verification});
+        // // console.log({server, userId, messageId});
+        // // console.log({ver: server.verification});
 
         if (!userId && !messageId) return false;
 
@@ -69,7 +69,7 @@ class VerificationHandler extends CoreUtil {
      */
     static removePending(server, userId) {
         let messageId = server.verification.pendingToMessageId.get(userId);
-        console.log({messageId});
+        // // console.log({messageId});
         server.verification.messageIdToPending.delete(messageId);
         server.verification.pendingToMessageId.delete(userId);
         server.markModified("verification");
@@ -131,7 +131,7 @@ class VerificationHandler extends CoreUtil {
 
     /**
      * Fetch the verification notification thread
-     * @param {BaseCommandInteraction} interaction Discord interaction
+     * @param {CommandInteraction} interaction Discord interaction
      * @param {serverSchema} server Server database entry
      * @returns {Promise<ThreadChannel>} Thread if found | False if no longer exists
      */

@@ -74,8 +74,8 @@ require('./database/connect.js')().then(() => {
 
     ]).then(() => console.log('✅ All data successfully cached.')).catch(e => console.error('There was an error during the caching process.\n' + e));
 
-
 });
+
 
 
 // client login

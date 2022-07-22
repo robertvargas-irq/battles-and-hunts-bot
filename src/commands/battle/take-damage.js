@@ -1,7 +1,7 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed } = require('discord.js');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
+const { CommandInteraction, MessageEmbed } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
-const { calculateMaxHealth } = require('../../util/Account/Player');
+const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
 module.exports = {
     name: 'take-damage',
@@ -10,12 +10,12 @@ module.exports = {
         {
             name: 'amount',
             description: 'The amount of damage to subtract from your health. (You will never go below 0)',
-            type: dTypes.Integer,
+            type: CommandTypes.Integer,
             required: true,
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction
+     * @param {CommandInteraction} interaction
      */
     async execute(interaction) {
 
@@ -25,19 +25,18 @@ module.exports = {
         
         // get user from cached database
         const character = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!character) return AttackManager.NotRegistered(interaction);
+        if (!character || !character.approved) return AttackManager.NotRegistered(interaction);
 
         // notify if health is already at 0
         if (character.currentHealth < 1) return interaction.reply({
-            embeds: [new MessageEmbed({
-                color: 'DARK_RED',
-                author: { name: 'The void has already consumed.' },
-                description: 'No more damage can be taken.',
-                fields: [{
-                    name: 'CURRENT HEALTH 💔',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``
-                }],
-            })]
+            embeds: [
+                new MessageEmbed({
+                    color: 'DARK_RED',
+                    author: { name: 'The void has already consumed.' },
+                    description: '> No more damage can be taken.',
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
         });
         
         // adjust for health tanking below 0
@@ -53,18 +52,17 @@ module.exports = {
         
         // notify user along with any damage adjustments made
         interaction.reply({
-            embeds: [new MessageEmbed({
-                color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
-                author: { name: character.currentHealth < 1 ? '...' : '🩸 Hrrk...!' },
-                description: AttackManager.getRandomDamageMessage(character.currentHealth),
-                fields: [{
-                    name: 'CURRENT HEALTH 💔',
-                    value: `> ↣ \`${character.currentHealth}\` / \`${calculateMaxHealth(character.stats.constitution)}\``
-                }],
-                footer: (finalDamageAmount !== originalDamageAmount ? {
-                    text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'
-                } : undefined),
-            })]
+            embeds: [
+                new MessageEmbed({
+                    color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
+                    title: '🪓 Took `' + finalDamageAmount + '` Damage',
+                    description: '> ' + HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),
+                    footer: (finalDamageAmount !== originalDamageAmount ? {
+                        text: 'Original input has been reduced by ' + (originalDamageAmount - finalDamageAmount) + '.'
+                    } : undefined),
+                }),
+                HealthVisuals.generateHealthEmbed(interaction.member, character),
+            ]
         })
     },
 };

@@ -14,7 +14,11 @@ const { Schema } = require("mongoose");
  *          seasonDC: number,
  *          locked: boolean,
  *      },
- *      seasonDC: number,
+ *      characterApprovalRequired: boolean,
+ *      logging: {
+ *          admin: string,
+ *          player: string,
+ *      },
  *      verification: {
  *          verificationThreadId: string
  *          deniedVerificationIds: Set<string>
@@ -26,6 +30,11 @@ const { Schema } = require("mongoose");
  *      excusesChannelId: string,
  *      excusesThreads: Map<string, string>,
  *      excusesPaused: Map<string, string>,
+ *      submissions: {
+ *          channelId: string,
+ *          messageIdToAuthorId: Map<messageId, submittingUserId>,
+ *          authorIdToMessageId: Map<submittingUserId, messageId>,
+ *      },
  *      roles: {
  *          adult: string
  *      }
@@ -71,6 +80,20 @@ const serverSchema = new Schema({
                 clanRoleId: null,
             }
         },
+    },
+    logging: {
+        admin: {
+            type: String,
+            default: null,
+        },
+        player: {
+            type: String,
+            default: null,
+        },
+    },
+    characterApprovalRequired: {
+        type: Boolean,
+        default: true,
     },
     hunting: {
         seasonDC: {
@@ -125,6 +148,22 @@ const serverSchema = new Schema({
         of: String,
         default: new Map(),
     },
+    submissions: {
+        channelId: {
+            type: String,
+            default: null,
+        },
+        messageIdToAuthorId: {
+            type: Map,
+            of: String,
+            default: new Map(),
+        },
+        authorIdToMessageId: {
+            type: Map,
+            of: String,
+            default: new Map(),
+        },
+    },
     roles: {
         adult: {
             type: String,
@@ -133,4 +172,5 @@ const serverSchema = new Schema({
     },
 });
 
+/**@type {ServerSchema} */
 module.exports = serverSchema;

@@ -1,5 +1,5 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, GuildMember } = require('discord.js');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
+const { CommandInteraction, GuildMember } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 
 
@@ -10,17 +10,14 @@ module.exports = {
         {
             name: 'opponent',
             description: 'The target of this attack.',
-            type: dTypes.User,
+            type: CommandTypes.User,
             required: true,
         },
     ],
     /**
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      */
     async execute(interaction) {
-
-        // defer
-        // await interaction.deferReply({ ephemeral: false });
 
         // if target is bot or user, deny
         /**@type {GuildMember}*/
@@ -30,11 +27,11 @@ module.exports = {
         
         // pull character document from the character cache
         const attacker = AttackManager.Characters.cache.get(interaction.guild.id, interaction.user.id);
-        if (!attacker) return AttackManager.NotRegistered(interaction);
+        if (!attacker || !attacker.approved) return AttackManager.NotRegistered(interaction);
         
         // if target is not registered, deny
         const target = AttackManager.Characters.cache.get(interaction.guild.id, targetSnowflake.user.id);
-        if (!target) return AttackManager.targetNotRegistered(interaction);
+        if (!target || !target.approved) return AttackManager.targetNotRegistered(interaction);
 
         // initiate rolls
         return AttackManager.rollAndGiveAttackResult(interaction, attacker, target, targetSnowflake);

@@ -1,0 +1,26 @@
+{
+    "colors": [
+        "NOT_QUITE_BLACK",
+        "RED",
+        "YELLOW",
+        "AQUA"
+    ],
+    "titles": [
+        "Starving",
+        "Ill",
+        "Peckish",
+        "Satiated"
+    ],
+    "descriptions": [
+        "I might starve soon.",
+        "I'm not really feeling well.",
+        "I could go for a bite.",
+        "My hunger seems to be satiated, for now."
+    ],
+    "flairs": [
+        "🦴",
+        "⏳",
+        "🍴",
+        "🍖"
+    ]
+}

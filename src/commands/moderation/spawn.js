@@ -1,7 +1,9 @@
-const { ApplicationCommandOptionType : dTypes } = require('discord-api-types/v10');
-const { BaseCommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
+const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
+const { CommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
+const PreyPile = require('../../util/Hunting/PreyPile');
+const CoreUtil = require('../../util/CoreUtil');
 
 module.exports = {
     name: 'spawn',
@@ -10,12 +12,12 @@ module.exports = {
         {
             name: 'excuses',
             description: 'Spawn and configure Excuses.',
-            type: dTypes.Subcommand,
+            type: CommandTypes.Subcommand,
             options: [
                 {
                     name: 'excuse-processing-channel',
                     description: 'Which channel to spawn threads for each day.',
-                    type: dTypes.Channel,
+                    type: CommandTypes.Channel,
                     required: true,
                 }
             ],
@@ -23,18 +25,18 @@ module.exports = {
         {
             name: 'adult-verification',
             description: 'Spawn in adult role request prompt.',
-            type: dTypes.Subcommand,
+            type: CommandTypes.Subcommand,
             options: [
                 {
                     name: 'request-processing-channel',
                     description: 'Where administrators can process the requests.',
-                    type: dTypes.Channel,
+                    type: CommandTypes.Channel,
                     required: true,
                 },
                 {
                     name: 'adult-role',
                     description: 'The role to give upon verification.',
-                    type: dTypes.Role,
+                    type: CommandTypes.Role,
                     required: true,
                 }
             ],
@@ -42,12 +44,12 @@ module.exports = {
         {
             name: 'prey-pile',
             description: 'Spawn in a visual prey pile.',
-            type: dTypes.Subcommand,
+            type: CommandTypes.Subcommand,
             options: [
                 {
                     name: 'clan',
                     description: 'The clan you wish to spawn the pile visual in.',
-                    type: dTypes.String,
+                    type: CommandTypes.String,
                     required: true,
                     choices: [
                         {
@@ -69,25 +71,89 @@ module.exports = {
                     ],
                 },
             ],
-        }
+        },
+        {
+            name: 'character-submissions',
+            description: 'Spawn and configure Character Submissions.',
+            type: CommandTypes.Subcommand,
+            options: [
+                {
+                    name: 'submission-processing-channel',
+                    description: 'Which channel to spawn threads for each day.',
+                    type: CommandTypes.Channel,
+                    required: true,
+                }
+            ],
+        },
+        {
+            name: 'log',
+            description: 'Spawn log channels.',
+            type: CommandTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'admin',
+                    description: 'Set Admin Action Logging channel as the current.',
+                    type: CommandTypes.Subcommand,
+                },
+                {
+                    name: 'player',
+                    description: 'Set Player Action Logging channel as the current.',
+                    type: CommandTypes.Subcommand,
+                },
+            ]
+        },
     ],
-    /**@param {BaseCommandInteraction} interaction */
+    /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // filter out non-administrators
-        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) {
-            return interaction.editReply({
-                embeds: [new MessageEmbed()
-                    .setColor('RED')
-                    .setTitle('❗ Woah wait-!')
-                    .setDescription(
-                        `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
-                    )
-                ]
-            });
-        }
+        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return CoreUtil.InformNonAdministrator(interaction);
 
-        switch (interaction.options.getSubcommand()) {
+        // get subcommand and group
+        const group = interaction.options.getSubcommandGroup(false);
+        const subcommand = interaction.options.getSubcommand();
+
+        // pull server from the database
+        const server = CoreUtil.Servers.cache.get(interaction.guild.id);
+
+        // catch groups
+        switch (group) {
+            case 'log': {
+                switch (subcommand) {
+                    case 'admin': {
+
+                        // attach channel id
+                        server.logging.admin = interaction.channel.id;
+                        server.save();
+                        break;
+                        
+                    } // end admin
+
+                    case 'player': {
+
+                        // attach channel id
+                        server.logging.player = interaction.channel.id;
+                        server.save();
+                        break;
+
+                    } // end player
+                } // end log group
+
+                // notify successful set
+                return interaction.reply({
+                    embeds: [new MessageEmbed({
+                        color: 'GREEN',
+                        title: '✅ Configuration Saved',
+                        description: '`Admin Action Logging Channel`: ' + (server.logging.admin ? `<#${server.logging.admin}>` : '`None`')
+                        + '\n`Player Action Logging Channel`: ' + (server.logging.player ? `<#${server.logging.player}>` : '`None`')
+                    })]
+                });
+
+            } // end log case
+        } // end group switch
+
+
+        switch (subcommand) {
             case 'excuses': {
                 // grab choice
                 const processingChannel = interaction.options.getChannel('excuse-processing-channel');
@@ -105,7 +171,6 @@ module.exports = {
                 }
 
                 // finally, spawn the menu and provide a loading screen
-                const server = ExcuseHandler.Servers.cache.get(interaction.guild.id);
                 const menuMessage = interaction.channel.send({
                     embeds: [new MessageEmbed()
                         .setColor('BLURPLE')
@@ -158,10 +223,7 @@ module.exports = {
                 const requestChannel = interaction.channel;
                 const processingChannel = interaction.options.getChannel('request-processing-channel');
                 const adultRole = interaction.options.getRole('adult-role');
-                
-                // pull server from the database
-                const server = VerificationHandler.Servers.cache.get(interaction.guild.id);
-                
+                                
                 // spawn verification request and processing thread
                 VerificationHandler.setAdultRole(server, adultRole.id);
                 await VerificationHandler.spawnVerificationRequest(requestChannel);
@@ -189,9 +251,6 @@ module.exports = {
                 // grab choice
                 const clan = interaction.options.getString('clan');
                 
-                // pull server from the database
-                const server = PreyPile.Servers.cache.get(interaction.guild.id);
-
                 // set current channel to the corresponding clan's preyPileChannelId
                 await PreyPile.setPreyPileChannelAndSpawn(interaction, server, clan);
                 await server.save()
@@ -209,6 +268,79 @@ module.exports = {
                     ]
                 });
             }
-        }         
+
+            case 'character-submissions': {
+                // grab choice
+                const processingChannel = interaction.options.getChannel('submission-processing-channel');
+
+                // ensure the channel is valid
+                if (processingChannel.type !== 'GUILD_TEXT') {
+                    return interaction.reply({
+                        ephemeral: true,
+                        embeds: [new MessageEmbed()
+                            .setColor('RED')
+                            .setTitle('❗ Woah wait-!')
+                            .setDescription('The channel must be a text channel, not a thread or category!')
+                        ],
+                    });
+                }
+
+                // assign to server
+                server.submissions.channelId = processingChannel.id;
+                server.save();
+
+                // spawn menu to open a submission
+                interaction.channel.send({
+                    embeds: [new MessageEmbed({
+                        color: 'FUCHSIA',
+                        title: '🗃️ Character Submission Information',
+                        description: '> Welcome to **' + CoreUtil.roleplayName + '**! We\'re incredibly happy to have you join us!'
+                        + '\n> \n> Before you can get started with roleplay sessions and all of the features provided by **' + interaction.client.user.username + '**, let\'s get you started in writing your own path in **' + CoreUtil.roleplayName
+                        + '** by getting you on your way to penning your own character! There are just a few things you need to keep in mind while writing your character and whipping up their stats:',
+                        fields: [
+                            {
+                                name: '__Stat Rules (Ages in Moons)__',
+                                value: '__Kits__ (`<6`)\n> **10 MAX** stat points.'
+                                + '\n\n__Apprentices__ (`6`-`11`)\n> **20 MAX** stat points.'
+                                + '\n\n__Warriors__ (`12`-`50`)\n> **40 MAX** stat points.'
+                                + '\n\n__Seasoned Warriors__ (`51`-`119`)\n> **45 MAX** stat points.'
+                                + '\n\n__Elders__ (`120`-`Dead`)\n> **35 MAX** stat points.'
+                                + '\n\n__Leaders__\n> **50 MAX** stat points.'
+                                + '\n\n__Medicine Cats__\n> **35 MAX** as they are not as well trained as warriors, but know more than the average apprentice.'
+                                + '\n\n**Stat points can be distributed however you wish between the 8 available stats on your character sheet:**'
+                                + '\n> Strength, Dexterity, Constitution, Charisma, Speed, Swimming, Intelligence, Stalking.'
+                                + '\n\nMake sure they add up to the total amount of stat points you have, not more, not less! Moon rules still apply even if you\'re an Unforgiven member.',
+                                inline: true,
+                            },
+                            {
+                                name: '__Submission Rules__',
+                                value: '**1.** You **CANNOT** submit a character **UNTIL 24 HOURS** after you joined the server. This is to ensure you have enough time to truly delve deep into which character you would truly like to play during the roleplay session.'
+                                + '\n\n**2.** After the previous stated 24 hours, you will be given **3 DAYS** to submit a character **before being kicked for inactivity.**'
+                                + '\n\n**3.** You must look at the #CharacterTracker before submitting a character as well to make sure you have all the information needed.',
+                                inline: true,
+                            },
+                        ]
+                    })],
+                    components: [new MessageActionRow({
+                        components: [new MessageButton({
+                            customId: 'CHARACTERSUBMISSION:OPEN',
+                            label: 'Open Character Menu',
+                            style: 'PRIMARY',
+                            emoji: '📝',
+                        })]
+                    })]
+                });
+
+                // inform success
+                return interaction.reply({
+                    ephemeral: true,
+                    embeds: [new MessageEmbed({
+                        color: 'GREEN',
+                        title: '✅ Configuration Saved',
+                        description: '`Processing Channel`: <#' + processingChannel.id + '>'
+                    })]
+                });
+            }
+        }
     },
 };

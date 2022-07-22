@@ -4,7 +4,7 @@ const {
     MessageButton,
     GuildMember,
     Message,
-    BaseCommandInteraction,
+    CommandInteraction,
     ModalSubmitInteraction,
 } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
@@ -46,7 +46,7 @@ class ExcuseHandler extends CoreUtil {
 
     /**
      * Fetch the menu message for excuse form submissions
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {import('../../database/schemas/server').ServerSchema} serverModel 
      */
     static async fetchMenuMessage(interaction, serverModel) {
@@ -263,7 +263,7 @@ class ExcuseHandler extends CoreUtil {
 
     /**
      * Delete all the excuses of a given day and delete the associated thread
-     * @param {BaseCommandInteraction} interaction 
+     * @param {CommandInteraction} interaction 
      * @param {days} day Requested day to delete
      * @returns {Promise<{deletedCount: number}>}
      */
@@ -274,7 +274,7 @@ class ExcuseHandler extends CoreUtil {
         const threadId = server.excusesThreads.get(day);
         if (!threadId) return;
         
-        console.log({threadId});
+        // // console.log({threadId});
 
         // delete the corresponding thread
         interaction.guild.channels.fetch(threadId)

@@ -1,47 +1,48 @@
-const FILE_LANG_ID = 'PLAYER';
-
 const { GuildMember, MessageEmbed } = require('discord.js');
-const userSchema = require('../../database/schemas/user');
-const Translator = require('../Translator');
-const {ranges, flairs, name_translations} = require('./stats.json');
-const STATS_BANNER = 'https://media.discordapp.net/attachments/954246414987309076/964285751657390130/IMG_8456.png?width=960&height=540';
+const CharacterModel = require('../../database/schemas/character');
+const StatCalculator = require('../Stats/StatCalculator');
+const HealthVisuals = require('../Battle/HealthVisuals');
+const HungerVisuals = require('../Hunting/HungerVisuals');
+const Hunger = require('../Hunting/Hunger');
+const stats = require('../Stats/stats.json');
+const CoreUtil = require('../CoreUtil');
+const STATS_BANNER = 'https://cdn.discordapp.com/attachments/955294038263750716/966906542609821696/IMG_8666.gif';
 
 /**
  * @typedef {string} GuildId
  * @typedef {string} AllowedUserId
  * @type {Map<GuildId, Set<AllowedUserId>>} */
 const usersAllowedToEdit = new Map();
+const guildsAllowingAllToEdit = new Set();
 
 /**
  * Format player stats.
  * @param {GuildMember} member
- * @param {userSchema} userData 
- * @param {string} originalCallerId For translation purposes
+ * @param {CharacterModel} character 
  * @returns {MessageEmbed[]}
  */
-function formatStats(member, userData, originalCallerId) {
-
-    const translator = new Translator(originalCallerId, FILE_LANG_ID);
-    
+function formatStats(member, character) {
+    const maxHealth = StatCalculator.calculateMaxHealth(character);
     const generalStats = new MessageEmbed({
         color: '680d2b',
-        title: translator.get('STATS_HEADER'),
-        thumbnail: { url: member.displayAvatarURL({ dynamic: true }) },
+        title: (character.name ?? member.displayName + '\'s Character') + ' General Stats',
+        thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
         fields: [
             {
-                name: translator.getGlobal('CURRENT_HEALTH') + ' 💘',
-                value: `> ↣ \`${userData.currentHealth}\` / \`${userData.stats.constitution * 5 + 50}\``,
+                name: 'Current Health '
+                + HealthVisuals.getFlair(character.currentHealth / maxHealth),
+                value: `> ↣ \`${character.currentHealth}\` / \`${maxHealth}\``,
                 inline: true
             },
             {
-                name: translator.getGlobal('CURRENT_HUNGER') + ' '
-                + ['🍖', '🦴'][userData.currentHunger == userData.stats.cat_size ? 1 : 0],
-                value: `> ↣ \`${userData.stats.cat_size - userData.currentHunger}\` / \`${userData.stats.cat_size}\``,
+                name: 'Current Hunger '
+                + HungerVisuals.getFlair(Hunger.getHunger(character) / Hunger.getMaxHunger(character)),
+                value: `> ↣ \`${Hunger.getHunger(character)}\` / \`${Hunger.getMaxHunger(character)}\``,
                 inline: true,
             },
             {
-                name: translator.getGlobal('BATTLE_POWER') + ' 💪',
-                value: `> ↣ \`${userData.stats.strength + userData.stats.dexterity + userData.stats.constitution + userData.stats.speed}\` / \`40\``,
+                name: 'Battle Power 💪',
+                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`${StatCalculator.max.battlePower}\``,
             }
         ]
     });
@@ -50,14 +51,15 @@ function formatStats(member, userData, originalCallerId) {
     const listedStats = new MessageEmbed({
         color: 'LUMINOUS_VIVID_PINK',
         image: { url: STATS_BANNER },
-        fields: Object.keys(userData.stats).map(stat => {
+        fields: Object.keys(character.stats).map(stat => {
             return {
-                name: translator.getFromObject(name_translations[i]).toUpperCase() + ' ' + flairs[i],
-                value: `> ↣ \`${userData.stats[stat]}\` / \`${ranges[i++][1]}\``
+                name: stats[stat].flair + ' ' + stats[stat].name,
+                value: `> ↣ \`${character.stats[stat]}\` / \`${stats[stat].max}\``,
+                inline: true,
             }
         }),
         footer: {
-            text:'⇸ ' + translator.get('CLAN_AFFILIATION') + `: ${userData.clan?.toUpperCase() || 'NONE'}`,
+            text:'⇸ Clan Affiliation: ' + character.clan?.toUpperCase() || 'NONE',
             iconURL: member.guild.iconURL(),
         },
     });
@@ -67,47 +69,48 @@ function formatStats(member, userData, originalCallerId) {
 /**
  * Format player's battle stats.
  * @param {GuildMember} member
- * @param {userSchema} userData 
- * @param {string} originalCallerId For translation purposes
+ * @param {CharacterModel} character 
  */
- function formatBattleStats(member, userData, originalCallerId) {
-
-    const translator = new Translator(originalCallerId, FILE_LANG_ID);
-    
+ function formatBattleStats(member, character) {
+    const maxHealth = StatCalculator.calculateMaxHealth(character);
     const generalStats = new MessageEmbed({
         color: '680d2b',
-        title: 'Player Battle Stats',
-        thumbnail: { url: member.displayAvatarURL({ dynamic: true }) },
+        title: (character.name ?? member.displayName + '\'s Character') + ' Battle Stats',
+        thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
         fields: [
             {
-                name: translator.getGlobal('CURRENT_HEALTH') + ' 💘',
-                value: `> ↣ \`${userData.currentHealth}\` / \`${userData.stats.constitution * 5 + 50}\``,
+                name: 'Current Health '
+                + HealthVisuals.getFlair(character.currentHealth / maxHealth),
+                value: `> ↣ \`${character.currentHealth}\` / \`${maxHealth}\``,
                 inline: true
             },
             {
-                name: translator.getGlobal('BATTLE_POWER') + ' 💪',
-                value: `> ↣ \`${userData.stats.strength + userData.stats.dexterity + userData.stats.constitution + userData.stats.speed}\` / \`30\``,
+                name: 'Battle Power 💪',
+                value: `> ↣ \`${StatCalculator.calculateBattlePower(character)}\` / \`${StatCalculator.max.battlePower}\``,
             },
             {
                 name: 'Attack',
-                value: `> ↣ \`${userData.stats.strength * 4}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateAttackMax(character)}\` / \`${StatCalculator.max.attackMax}\``,
                 inline: true,
             },
             {
                 name: 'Dodge Chance',
-                value: `> ↣ \`${userData.stats.speed * 4}\` / \`40\``,
+                value: `> ↣ \`${StatCalculator.calculateDodgeChance(character)}\` / \`${StatCalculator.max.dodgeChance}\``,
                 inline: true,
             },
             {
-                name: 'Crit Chance',
-                value: `> ↣ \`0\` - \`${userData.stats.dexterity * 3}\``,
+                name: 'Crit. Chance',
+                value: `> ↣ \`${StatCalculator.min.critChance}\` - \`${StatCalculator.calculateCritChance(character)}\``,
                 inline: true,
             },
         ]
     });
     
-    return [generalStats];//, listedStats];
+    return [generalStats];
 }
+
+const allowGuildEditing = (guildId) => guildsAllowingAllToEdit.add(guildId);
+const disallowGuildEditing = (guildId) => guildsAllowingAllToEdit.delete(guildId);
 
 const allowEditing = (guildId, userId) => {
     // create set if not already done
@@ -130,23 +133,28 @@ const clearEditing = (guildId) => {
 }
 
 /**
- * Check to see if a user is allowed to /edit in the current guild
+ * Check to see if a user is allowed to edit their character stats in the current guild
  * @param {string} guildId 
  * @param {string} userId 
  * @returns {boolean} True if allowed | False if not
  */
 const allowedToEdit = (guildId, userId) => {
+    // return if guild does not require characters to be approved or edits are overriden
+    const guildData = CoreUtil.Servers.cache.get(guildId);
+    if (guildsAllowingAllToEdit.has(guildId)
+    || (guildData && !guildData.characterApprovalRequired)) return true;
+
     const guild = usersAllowedToEdit.get(guildId);
     return guild && guild.has(userId);
 }
 
-/**
- * Calculate a user's max health from their constitution
- * @param {number} constitution 
- * @returns {number} Max health
- */
-function calculateMaxHealth(constitution) {
-    return constitution * 5 + 50;
+module.exports = {
+    usersAllowedToEdit,
+    formatStats,
+    formatBattleStats,
+    allowEditing,
+    clearEditing,
+    allowedToEdit,
+    allowGuildEditing,
+    disallowGuildEditing,
 }
-
-module.exports = { formatStats, formatBattleStats, calculateMaxHealth, allowEditing, clearEditing, allowedToEdit };

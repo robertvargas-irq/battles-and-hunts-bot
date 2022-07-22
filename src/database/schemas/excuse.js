@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
+const { Schema, Model } = require('mongoose');
 
 const ExcuseSchema = new Schema({
     guildId: {
@@ -40,9 +40,9 @@ const ExcuseSchema = new Schema({
  * day: string,
  * type: string,
  * reason: string,
- * status: {'PENDING'|'APPROVED'|'DENIED'},
+ * status: 'PENDING'|'APPROVED'|'DENIED',
  * processingMessageId: string,
  * }} Excuse
- * @type {Excuse}
+ * @type {Model & Excuse}
 */
 module.exports = mongoose.model('Excuse', ExcuseSchema);

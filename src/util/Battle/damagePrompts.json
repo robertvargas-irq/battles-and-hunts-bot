@@ -1,4 +1,8 @@
 {
+    "damageTitle": [
+        "You have taken damage.",
+        "You have received damage."
+    ],
     "damageAction": [
         "Such a heavy hand",
         "No medicine cat is nearby",

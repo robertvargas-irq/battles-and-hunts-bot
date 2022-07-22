@@ -1,15 +1,16 @@
+const { Interaction } = require('discord.js');
+
 module.exports = {
     name: 'interactionCreate',
+    /** @param {Interaction} interaction */
     async execute( interaction ) {
 
         // route interactions
         try {
             if (interaction.isCommand())
                 return require('./interactions/command')(interaction);
-            if (interaction.isButton() && interaction.customId.startsWith('GLOBAL_'))
+            if (interaction.isButton())
                 return require('./interactions/button')(interaction);
-            if (interaction.isButton() && interaction.customId.startsWith('EXCUSEBUTTON'))
-                return require('./interactions/excuses')(interaction);
             if (interaction.isModalSubmit())
                 return require('./interactions/modalSubmit')(interaction);
         }

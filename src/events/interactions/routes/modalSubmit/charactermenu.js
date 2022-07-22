@@ -18,8 +18,7 @@ module.exports = async (modal) => {
     });
     
     const [_, action, editTarget] = modal.customId.split(':');
-    if (!instance.isAdmin && !instance.registering && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id)
-    && editTarget != 'INFO')
+    if (editTarget.startsWith('SECTION') && !instance.isAdmin && !instance.registering && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id))
         return modal.reply({
             ephemeral: true,
             embeds: [new MessageEmbed({

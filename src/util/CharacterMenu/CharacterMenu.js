@@ -76,7 +76,7 @@ class CharacterMenu {
         const s = author;
         const embed = new MessageEmbed({
             color: s.displayColor || '#76e3ed',
-            author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »' + ' | 🌟 ⟪PRE-RELEASE⟫', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
+            author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
             description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',
             fields: [
@@ -289,7 +289,7 @@ function generateEditingRows(menuObject, statSections) {
     });
 
     // return single-row buttons
-    if (!menuObject.isAdmin && menuObject.editingEnabled && menuObject.statsLocked) return [
+    if (!menuObject.registering && !menuObject.isAdmin && menuObject.editingEnabled && menuObject.statsLocked) return [
         new MessageActionRow({
             components: [
                 ...generateStatEditButtons(menuObject, statSections),

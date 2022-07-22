@@ -15,7 +15,7 @@ module.exports = {
         client.user.setPresence({
             activities: [
                 {
-                    name: 'ɧɛ\'ʂ Ɩıŋɠɛཞıŋɠ|v2.666|⽍',
+                    name: 'v4|Character Menus',
                     type: 'PLAYING',
                 },
             ],

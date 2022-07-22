@@ -513,7 +513,7 @@ function getEditModal(instance, toEdit) {
             new MessageActionRow({ components: [
                 new TextInputComponent({
                     customId: 'possessive',
-                    label: 'Possessive (Ex. his/hers/theirs/xeirs etc.)',
+                    label: 'Possessive (Ex. his/hers/theirs/xyrs etc.)',
                     placeholder: 'No Possessive Pronoun provided',
                     value: instance.character.pronouns.possessive || '',
                     style: 'SHORT',

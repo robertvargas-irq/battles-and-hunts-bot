@@ -70,7 +70,7 @@ module.exports = async (button) => {
                 embeds: [EmbedBuilder.from({
                     color: Colors.Green,
                     title: '📝 Update on Recent Character Submission',
-                    description: '> **Psst-! Your character in ' + button.guild.name + ' has been approved!\n\nGo check it out over at <#' + button.channel.id + '>!**'
+                    description: '> **Psst-! Your character in ' + button.guild.name + ' has been approved!**\n\nGo check it out over at <#' + button.channel.id + '>!'
                 })]
             }).then(console.log).catch(console.error);
             return;

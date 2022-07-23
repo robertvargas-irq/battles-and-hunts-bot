@@ -381,7 +381,7 @@ function generateSectionEditButtons(admin, isAuthor, statSections) {
     return statSections.map(sectionEmoji => new ButtonBuilder({
         customId: 'CHARACTERMENU:EDIT:SECTION' + sectionNumber++,
         label: (!isAuthor && admin ? 'Override' : 'Edit') + ' Section',
-        style: (!isAuthor && admin ? ButtonStyle.Danger : ButtonStyle.Success),
+        style: (!isAuthor && admin ? ButtonStyle.Danger : ButtonStyle.Primary),
         emoji: sectionEmoji,
     }));
 }

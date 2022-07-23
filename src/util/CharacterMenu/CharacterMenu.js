@@ -2,8 +2,9 @@ const {
     CommandInteraction,
     MessageEmbed,
     GuildMember,
-    Permissions,
     MessageButton,
+    ButtonStyle,
+    TextInputStyle,
     MessageActionRow,
     TextInputComponent,
     ButtonInteraction,
@@ -158,7 +159,7 @@ class CharacterMenu {
                 customId: 'CHARACTERMENU:SUBMIT',
                 label: 'Submit for review',
                 emoji: '📋',
-                style: 'SECONDARY',
+                style: ButtonStyle.Secondary,
             })]
         }));
         const payload = {
@@ -293,7 +294,7 @@ function generateEditingRows(menuObject, statSections) {
         components: [new MessageButton({
             customId: 'CHARACTERMENU:HELP',
             label: 'What do these stats mean?',
-            style: 'SECONDARY',
+            style: ButtonStyle.Secondary,
             emoji: '💡',
         })]
     });
@@ -333,7 +334,7 @@ function generateStatEditButtons(menuObject, statSections) {
         ? [new MessageButton({
             customId: 'dummy',
             label: 'Stat editing is locked',
-            style: 'SECONDARY',
+            style: ButtonStyle.Secondary,
             emoji: '🔒',
             disabled: true,
         })]
@@ -351,17 +352,17 @@ function generateMiscEditButtons(menuObject) {
         new MessageButton({
             customId: 'CHARACTERMENU:EDIT:INFO',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Basic Info',
-            style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
+            style: (!menuObject.isAuthor && menuObject.isAdmin ? ButtonStyle.Danger : ButtonStyle.Success),
         }),
         new MessageButton({
             customId: 'CHARACTERMENU:EDIT:IMAGES',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Icon/Reference',
-            style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
+            style: (!menuObject.isAuthor && menuObject.isAdmin ? ButtonStyle.Danger : ButtonStyle.Success),
         }),
         new MessageButton({
             customId: 'CHARACTERMENU:EDIT:PRONOUNS',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Pronouns',
-            style: (!menuObject.isAuthor && menuObject.isAdmin ? 'DANGER' : 'SUCCESS'),
+            style: (!menuObject.isAuthor && menuObject.isAdmin ? ButtonStyle.Danger : ButtonStyle.Success),
         }),
     ]
 }
@@ -378,7 +379,7 @@ function generateSectionEditButtons(admin, isAuthor, statSections) {
     return statSections.map(sectionEmoji => new MessageButton({
         customId: 'CHARACTERMENU:EDIT:SECTION' + sectionNumber++,
         label: (!isAuthor && admin ? 'Override' : 'Edit') + ' Section',
-        style: (!isAuthor && admin ? 'DANGER' : 'PRIMARY'),
+        style: (!isAuthor && admin ? ButtonStyle.Danger : ButtonStyle.Success),
         emoji: sectionEmoji,
     }));
 }
@@ -405,14 +406,14 @@ function getEditModal(instance, toEdit) {
                     label: 'Character Name',
                     placeholder: 'No name provided',
                     value: instance.character.name || '',
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                     maxLength: 50,
                 }),
             ]}),
             new MessageActionRow({ components: [
                 new TextInputComponent({
                     customId: 'clan',
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                     label: (
                         !instance.isAdmin && instance.registering
                         ? 'Clan Request'
@@ -445,7 +446,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Character Age (Moons)',
                     placeholder: 'No character age provided',
                     value: instance.character.moons ?? 0,
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                     minLength: 1,
                     maxLength: 3,
                 }),
@@ -456,7 +457,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Basic Background',
                     placeholder: 'No name provided',
                     value: instance.character.background || '',
-                    style: 'PARAGRAPH',
+                    style: TextInputStyle.Paragraph,
                     maxLength: 3000,
                 }),
             ]}),
@@ -466,7 +467,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Character Personality',
                     placeholder: 'No personality provided',
                     value: instance.character.personality || '',
-                    style: 'PARAGRAPH',
+                    style: TextInputStyle.Paragraph,
                     maxLength: 700,
                 }),
             ]}),
@@ -482,7 +483,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Character Icon (Image Link)',
                     placeholder: 'Provide a link to an image',
                     value: instance.character.icon || '',
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                 }),
             ]}),
             new MessageActionRow({ components: [
@@ -491,7 +492,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Character Appearance (Image Link)',
                     placeholder: 'Provide a link to an image',
                     value: instance.character.image || '',
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                 }),
             ]}),
         ],
@@ -506,7 +507,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Subjective (Ex. he/she/they/xe etc.)',
                     placeholder: 'No Subjective Pronoun provided',
                     value: instance.character.pronouns.subjective || '',
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                     maxLength: 10,
                 }),
             ]}),
@@ -516,7 +517,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Objective (Ex. him/her/them/xem etc.)',
                     placeholder: 'No Objective Pronoun provided',
                     value: instance.character.pronouns.objective || '',
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                     maxLength: 10,
                 }),
             ]}),
@@ -526,7 +527,7 @@ function getEditModal(instance, toEdit) {
                     label: 'Possessive (Ex. his/hers/theirs/xyrs etc.)',
                     placeholder: 'No Possessive Pronoun provided',
                     value: instance.character.pronouns.possessive || '',
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                     maxLength: 12,
                 }),
             ]}),
@@ -553,7 +554,7 @@ function getEditModal(instance, toEdit) {
                     + ' (' + statData.min + '-' + statData.max + ')',
                     placeholder: 'No value yet',
                     value: instance.character.stats[stat] ?? statData.min,
-                    style: 'SHORT',
+                    style: TextInputStyle.Short,
                 })
             ]})
         );

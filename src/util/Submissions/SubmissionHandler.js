@@ -4,6 +4,7 @@ const {
     MessageEmbed,
     MessageActionRow,
     MessageButton,
+    ButtonStyle,
 } = require('discord.js');
 const ServerSchema = require('../../database/schemas/server');
 const CharacterMenu = require('../CharacterMenu/CharacterMenu');
@@ -39,13 +40,13 @@ class SubmissionHandler {
                                 customId: 'CHARACTERSUBMISSION:APPROVE',
                                 label: 'Approve Submission',
                                 emoji: '✅',
-                                style: 'SUCCESS',
+                                style: ButtonStyle.Success,
                             }),
                             new MessageButton({
                                 customId: 'CHARACTERSUBMISSION:REFRESH',
                                 label: 'Refresh Submission',
                                 emoji: '🔃',
-                                style: 'SECONDARY',
+                                style: ButtonStyle.Secondary,
                             }),
                         ]
                     }),
@@ -55,7 +56,7 @@ class SubmissionHandler {
                                 customId:'CHARACTERSUBMISSION:DELETE',
                                 label: 'Delete',
                                 emoji: '🗑️',
-                                style: 'SECONDARY',
+                                style: ButtonStyle.Secondary,
                             }),
                         ]
                     }),
@@ -88,13 +89,13 @@ class SubmissionHandler {
                                     customId: 'CHARACTERSUBMISSION:APPROVE',
                                     label: 'Approve Submission',
                                     emoji: '✅',
-                                    style: 'SUCCESS',
+                                    style: ButtonStyle.Success,
                                 }),
                                 new MessageButton({
                                     customId: 'CHARACTERSUBMISSION:REFRESH',
                                     label: 'Refresh Submission',
                                     emoji: '🔃',
-                                    style: 'SECONDARY',
+                                    style: ButtonStyle.Secondary,
                                 }),
                             ]
                         }),
@@ -104,7 +105,7 @@ class SubmissionHandler {
                                     customId:'CHARACTERSUBMISSION:DELETE',
                                     label: 'Delete',
                                     emoji: '🗑️',
-                                    style: 'SECONDARY',
+                                    style: ButtonStyle.Secondary,
                                 }),
                             ]
                         }),

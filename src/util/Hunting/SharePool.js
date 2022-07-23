@@ -1,4 +1,4 @@
-const { MessageEmbed, Message, MessageActionRow, MessageButton, ButtonInteraction } = require('discord.js');
+const { MessageEmbed, Message, MessageActionRow, MessageButton, ButtonInteraction, ButtonStyle } = require('discord.js');
 const HuntManager = require('./HuntManager');
 
 class SharePool {
@@ -99,7 +99,7 @@ class SharePool {
                     customId: 'PREY:COLLECT',
                     label: 'Collect',
                     emoji: '🎒',
-                    style: 'SUCCESS',
+                    style: ButtonStyle.Success,
                 })],
             })],
         });

@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton, ButtonStyle } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 const PreyPile = require('../../util/Hunting/PreyPile');
@@ -191,7 +191,7 @@ module.exports = {
                         new MessageActionRow({
                             components: [new MessageButton({
                                 customId: 'EXCUSEBUTTON_VIEW',
-                                style: 'PRIMARY',
+                                style: ButtonStyle.Primary,
                                 label: 'View the status of your excuses',
                                 emoji: '📝'
                             })],
@@ -325,7 +325,7 @@ module.exports = {
                         components: [new MessageButton({
                             customId: 'CHARACTERSUBMISSION:OPEN',
                             label: 'Open Character Menu',
-                            style: 'PRIMARY',
+                            style: ButtonStyle.Primary,
                             emoji: '📝',
                         })]
                     })]

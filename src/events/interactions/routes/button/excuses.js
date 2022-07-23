@@ -4,6 +4,8 @@ const {
     MessageEmbed,
     MessageActionRow,
     MessageButton,
+    ButtonStyle,
+    TextInputStyle,
     Modal,
     TextInputComponent
 } = require('discord.js');
@@ -51,7 +53,7 @@ module.exports = async (button) => {
                 components: [new MessageActionRow({
                     components: ExcuseHandler.days.map(day => new MessageButton({
                         customId: 'EXCUSEBUTTON_VIEW:' + day.toUpperCase(),
-                        style: userExcuseCount[day] < 1 ? 'SECONDARY' : 'PRIMARY',
+                        style: userExcuseCount[day] < 1 ? ButtonStyle.Secondary : ButtonStyle.Primary,
                         label: day  + ' : ' + (userExcuseCount[day] < 1 ? 'None' : userExcuseCount[day] + ' submitted'),
                         disabled: userExcuseCount[day] < 1
                     })),
@@ -96,7 +98,7 @@ module.exports = async (button) => {
                     ].indexOf(alreadySubmitted[i]?.status) || 0;
                     buttons.push(new MessageButton({
                         customId: 'EXCUSEBUTTON:' + day + ':' + types[i].toUpperCase(),
-                        style: alreadySubmitted[i] ? ['SUCCESS', 'PRIMARY', 'DANGER'][statusIndex] : 'SECONDARY',
+                        style: alreadySubmitted[i] ? ButtonStyle['Success', 'Primary', 'Danger'][statusIndex] : ButtonStyle.Secondary,
                         emoji: alreadySubmitted[i] ? ['✅', '⏱', '❌'][statusIndex] : undefined,
                         label: types[i] + (
                             alreadySubmitted[i]
@@ -178,7 +180,7 @@ module.exports = async (button) => {
                         new TextInputComponent({
                             customId: 'excused_reason',
                             label: 'Reason',
-                            style: 'PARAGRAPH',
+                            style: TextInputStyle.Paragraph,
                             minLength: EXCUSE_MIN_LENGTH,
                             maxLength: EXCUSE_MAX_LENGTH,
                             required: true,
@@ -230,7 +232,7 @@ const generateButtons = (day, button, dayPaused = false) => {
         ].indexOf(alreadySubmitted[i]?.status) || 0;
         buttons.push(new MessageButton({
             customId: 'EXCUSEBUTTON:' + day + ':' + types[i].toUpperCase(),
-            style: alreadySubmitted[i] ? ['SUCCESS', 'SECONDARY', 'DANGER'][statusIndex] : dayPaused ? 'SECONDARY' : 'PRIMARY',
+            style: alreadySubmitted[i] ? ButtonStyle['Success', 'Secondary', 'Danger'][statusIndex] : dayPaused ? ButtonStyle.Secondary : ButtonStyle.Primary,
             emoji: alreadySubmitted[i] ? ['✅', '⏱', '❌'][statusIndex] : {
                 name: 'pine_spin',
                 id: '962887069976379402',

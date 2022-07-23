@@ -2,6 +2,7 @@ const {
     MessageEmbed,
     MessageActionRow,
     MessageButton,
+    ButtonStyle,
     GuildMember,
     Message,
     CommandInteraction,
@@ -80,7 +81,7 @@ class ExcuseHandler extends CoreUtil {
                 new MessageActionRow({
                     components: [new MessageButton({
                         customId: 'EXCUSEBUTTON_VIEW',
-                        style: 'PRIMARY',
+                        style: ButtonStyle.Primary,
                         label: 'View the status of your excuses',
                         emoji: '📝'
                     })],
@@ -404,19 +405,19 @@ class ExcuseHandler extends CoreUtil {
                 new MessageActionRow({
                     components: [
                         new MessageButton({
-                            style: 'SUCCESS',
+                            style: ButtonStyle.Success,
                             emoji: '✅',
                             label: 'Acceptable Excuse',
                             customId: 'GLOBAL_ACCEPT_EXCUSE'
                         }),
                         new MessageButton({
-                            style: 'DANGER',
+                            style: ButtonStyle.Danger,
                             emoji: '⛔',
                             label: 'Insufficient Excuse',
                             customId: 'GLOBAL_DENY_EXCUSE'
                         }),
                         new MessageButton({
-                            style: 'SECONDARY',
+                            style: ButtonStyle.Secondary,
                             emoji: '🗑',
                             label: 'Delete',
                             customId: 'GLOBAL_DELETE_EXCUSE',
@@ -439,7 +440,7 @@ class ExcuseHandler extends CoreUtil {
             const p = paused.has(day.toUpperCase());
             return new MessageButton({
                 customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
-                style: p ? 'SECONDARY' : 'SUCCESS',
+                style: p ? ButtonStyle.Secondary : ButtonStyle.Success,
                 emoji: p ? '⏸️' : undefined,
                 label: p ? day + ' : Under review since ' + paused.get(day.toUpperCase()) : day,
                 disabled: p

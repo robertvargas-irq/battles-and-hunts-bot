@@ -1,10 +1,10 @@
 const {
     CommandInteraction, 
     GuildChannel, 
-    ThreadManager, 
     MessageEmbed, 
     MessageActionRow, 
-    MessageButton, 
+    MessageButton,
+    ButtonStyle,
     Message, 
     ThreadChannel, 
     MessagePayload
@@ -159,7 +159,7 @@ class VerificationHandler extends CoreUtil {
             components: [new MessageActionRow({
                 components: [
                     new MessageButton({
-                        style: "PRIMARY",
+                        style: ButtonStyle.Primary,
                         emoji: "🆔",
                         label: "Request Adult Role",
                         customId: "GLOBAL_VERIFY_AGE"

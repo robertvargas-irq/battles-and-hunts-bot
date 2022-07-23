@@ -1,4 +1,4 @@
-const { ButtonInteraction, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { ButtonInteraction, MessageEmbed, MessageActionRow, MessageButton, ButtonStyle } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 const ExcuseModel = require('../../database/schemas/excuse');
@@ -63,7 +63,7 @@ module.exports = async (button) => {
                     components: [new MessageButton({
                         customId: 'GLOBAL_VERIFY_AGE_CONTINUE',
                         label: 'Yes, I have read and wish to submit proof',
-                        style: 'DANGER',
+                        style: ButtonStyle.Danger,
                     })]
                 })],
             })
@@ -114,13 +114,13 @@ module.exports = async (button) => {
                     new MessageActionRow({
                         components: [
                             new MessageButton({
-                                style: 'SUCCESS',
+                                style: ButtonStyle.Success,
                                 emoji: '✅',
                                 label: 'Verify Request',
                                 customId: 'GLOBAL_ACCEPT_VERIFICATION'
                             }),
                             new MessageButton({
-                                style: 'DANGER',
+                                style: ButtonStyle.Danger,
                                 emoji: '⛔',
                                 label: 'Deny',
                                 customId: 'GLOBAL_DENY_VERIFICATION'

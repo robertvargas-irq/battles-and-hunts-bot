@@ -3,7 +3,7 @@ const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
-const { MessageEmbed, CommandInteraction, GuildMember, MessageActionRow, MessageButton, Message } = require('discord.js');
+const { MessageEmbed, CommandInteraction, GuildMember, MessageActionRow, MessageButton, ButtonStyle, Message } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 /**
@@ -147,17 +147,17 @@ class HuntManager extends CoreUtil {
                     customId: 'PREY:COLLECT',
                     label: 'Collect',
                     emoji: '🎒',
-                    style: 'SUCCESS',
+                    style: ButtonStyle.Success,
                 }),
                 new MessageButton({
                     customId: 'PREY:SHARE',
                     label: 'Share',
-                    style: 'SECONDARY',
+                    style: ButtonStyle.Secondary,
                 }),
                 new MessageButton({
                     customId: 'PREY:EAT',
                     label: 'Eat Secretly',
-                    style: 'DANGER',
+                    style: ButtonStyle.Danger,
                 }),
             ]
         }));

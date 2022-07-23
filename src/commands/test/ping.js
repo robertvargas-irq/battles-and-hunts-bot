@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, Colors } = require('discord.js');
 const os = require('os');
 
 module.exports = {
@@ -18,8 +18,8 @@ module.exports = {
 
         // pong
         return await interaction.reply({
-            embeds: [new MessageEmbed({
-                color: 'AQUA',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Aqua,
                 title: '🏓 Pong!',
                 description: '**Bot Uptime**'
                 + '\n'

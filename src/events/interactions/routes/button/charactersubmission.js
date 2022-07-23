@@ -1,4 +1,4 @@
-const { GuildMember, ButtonInteraction, MessageEmbed, Permissions, Message, MessageButton } = require('discord.js');
+const { GuildMember, ButtonInteraction, EmbedBuilder, PermissionsBitField, Message, ButtonBuilder, Colors } = require('discord.js');
 const CoreUtil = require('../../../../util/CoreUtil');
 const ServerSchema = require('../../../../database/schemas/server');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
@@ -17,8 +17,8 @@ module.exports = async (button) => {
             await menu.render();
             if (character.approved) button.followUp({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'GREEN',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Green,
                     title: '❗ Your character is already approved!',
                     description: '> However, here\'s the edit menu for you ❣️',
                 })]
@@ -28,10 +28,10 @@ module.exports = async (button) => {
 
         case 'APPROVE': {
             // filter out non-admins
-            if (!button.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) return button.reply({
+            if (!button.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'RED',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Red,
                     title: '⚠️ Only members with the `MANAGE_ROLES` permission can approve submissions.',
                 })],
             });
@@ -58,19 +58,19 @@ module.exports = async (button) => {
             // mark message as approved and inform the author if possible
             SubmissionHandler.removeSubmission(server, authorId, button.message.id);
             button.message.edit({
-                embeds: [new MessageEmbed(button.message.embeds[0])
-                    .setColor('GREEN')
-                    .setTitle(button.message.embeds[0].title + ' | ✅ APPROVED')
+                embeds: [EmbedBuilder.from(button.message.embeds[0])
+                    .setColor(Colors.Green)
+                    .setTitle('✅ APPROVED')
                     .setFooter({ text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')' })
                     .setTimestamp(),
                 ],
                 components: [],
             });
             authorMember.user.send({
-                embeds: [new MessageEmbed({
-                    color: 'GREEN',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Green,
                     title: '📝 Update on Recent Character Submission',
-                    description: '> **Psst-! Your character in ' + button.guild.name + ' has been approved!\n\nGo check it out over at <#' + button.channel.id + '>!**'
+                    description: '> **Psst-! Your character in ' + button.guild.name + ' has been approved!**\n\nGo check it out over at <#' + button.channel.id + '>!'
                 })]
             }).then(console.log).catch(console.error);
             return;
@@ -87,11 +87,11 @@ module.exports = async (button) => {
             if (!authorId) return submissionNoLongerAvailable(button);
 
             // filter out non-admins or non-original
-            if (!button.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)
+            if (!button.member.permissions.has(PermissionsBitField.Flags.ManageRoles)
             && button.user.id != authorId) return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'RED',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Red,
                     title: '⚠️ Only members with the `MANAGE_ROLES` permission or the original submitter can refresh submissions.',
                 })],
             });            
@@ -110,10 +110,10 @@ module.exports = async (button) => {
         
         case 'DELETE': {
             // filter out non-admins
-            if (!button.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) return button.reply({
+            if (!button.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'RED',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Red,
                     title: '⚠️ Only members with the `MANAGE_ROLES` permission can delete submissions.',
                 })],
             });
@@ -134,7 +134,7 @@ module.exports = async (button) => {
             // delete submission and inform author if possible
             SubmissionHandler.removeSubmission(server, authorId, button.message.id);
             button.message.edit({
-                embeds: [new MessageEmbed({
+                embeds: [EmbedBuilder.from({
                     description: '🗑️ Successfully deleted.',
                     footer: { text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')' },
                     timestamp: Date.now(),
@@ -167,8 +167,8 @@ async function safelyDeleteThread(message, reason = 'No reason provided,') {
  */
 async function submissionNoLongerAvailable(button) {
     return button.message.edit({
-        embeds: [new MessageEmbed({
-            color: 'RED',
+        embeds: [EmbedBuilder.from({
+            color: Colors.Red,
             title: '⚠️ This character no longer exists.'
         })],
         components: [],
@@ -185,8 +185,8 @@ async function characterNoLongerExists(button, server, authorId) {
     SubmissionHandler.removeSubmission(server, authorId, button.message.id);
     safelyDeleteThread(button.message, 'Submission is no longer available; this character no longer exists.');
     return button.message.edit({
-        embeds: [new MessageEmbed({
-            color: 'RED',
+        embeds: [EmbedBuilder.from({
+            color: Colors.Red,
             title: '⚠️ This character no longer exists.'
         })],
         components: [],
@@ -203,8 +203,8 @@ async function authorNoLongerInServer(button, server, authorId) {
     SubmissionHandler.removeSubmission(server, authorId, button.message.id);
     safelyDeleteThread(button.message, 'Submission is no longer available; member no longer in the server.');
     return button.message.edit({
-        embeds: [new MessageEmbed({
-            color: 'RED',
+        embeds: [EmbedBuilder.from({
+            color: Colors.Red,
             title: '⚠️ This submission is no longer available as the member is no longer in the server.',
         })],
         components: [],

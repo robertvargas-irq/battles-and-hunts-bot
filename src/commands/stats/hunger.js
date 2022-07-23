@@ -1,4 +1,4 @@
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const HungerVisuals = require('../../util/Hunting/HungerVisuals');
 

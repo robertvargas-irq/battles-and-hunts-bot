@@ -83,7 +83,7 @@
             "de":"Sekunden selbst"
         }
     },
-    "PREFERRED_LANGUAGE":{
+    "PREFERRed_LANGUAGE":{
         "LANGUAGE_UPDATE_TITLE":{
             "en":":flag_us:|:flag_gb:\nYour preferred language has been successfully updated!",
             "es":":flag_mx:|:flag_sn:\nTu idioma preferido se actualizo!",
@@ -118,14 +118,14 @@
         }
     },
     "REGISTER":{
-        "ALREADY_REGISTERED_TITLE":{
+        "ALREADY_REGISTERed_TITLE":{
             "en":"You are already registered!",
             "es":"Ya estás registrado!",
             "pr":"Você já está registrado!",
             "pol":"Jesteś już zarejestrowany!",
             "de":"Du bist bereits registriert!"
         },
-        "ALREADY_REGISTERED_DESCRIPTION":{
+        "ALREADY_REGISTERed_DESCRIPTION":{
             "en":"If you want to attack another user during RP, use `/attack`!\nIf you wish to edit your stats, use `/edit`!",
             "es":"Si quieres atacar otro miembro durante RP, usa `/attack`!\nSi quieres modificar sus estadísticas, usa `/edit`!",
             "pr":"Se você quiser atacar outro usuário durante o RP, use `/attack`!\nSe você deseja editar suas estatísticas, use `/edit`!",
@@ -184,14 +184,14 @@
             "de":"Bitte senden Sie Ihren vorherigen Befehl erneut"
 
         },
-        "NOT_REGISTERED":{
+        "NOT_REGISTERed":{
             "en":"You have not submitted a character yet.",
             "es":"Aún no ha enviado un formulario de carácter.",
             "pr":"Você ainda não enviou um formulário de personagem.",
             "pol":"Nie przesłałeś jeszcze formularza postaci.",
             "de":"Sie haben noch kein Zeichenformular eingereicht."
         },
-        "NOT_REGISTERED_MESSAGE":{
+        "NOT_REGISTERed_MESSAGE":{
             "en":"You do not have a clan role yet. If this is a mistake, please let an administrator know",
             "es":"Todavía no se le ha asignado un rol de clan. Si esto es un error, informe a un administrador",
             "pr":"Você ainda não recebeu uma função de clã. Se isso for um erro, informe um administrador",

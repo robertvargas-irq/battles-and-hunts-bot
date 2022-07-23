@@ -1,11 +1,13 @@
 const {
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
     GuildMember,
     Message,
     CommandInteraction,
     ModalSubmitInteraction,
+    Colors,
 } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 const Excuse = require('../../database/schemas/excuse');
@@ -74,13 +76,13 @@ class ExcuseHandler extends CoreUtil {
         return message.edit({
             embeds,
             components: [
-                new MessageActionRow({
+                new ActionRowBuilder({
                     components: this.generateDayButtons(serverSchema)
                 }),
-                new MessageActionRow({
-                    components: [new MessageButton({
+                new ActionRowBuilder({
+                    components: [new ButtonBuilder({
                         customId: 'EXCUSEBUTTON_VIEW',
-                        style: 'PRIMARY',
+                        style: ButtonStyle.Primary,
                         label: 'View the status of your excuses',
                         emoji: '📝'
                     })],
@@ -100,8 +102,8 @@ class ExcuseHandler extends CoreUtil {
     static async approveAndDM(excuse, message, admin, member) {
         let errorSending = false;
         await member.user.send({
-            embeds: [new MessageEmbed({
-                color: 'GREEN',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Green,
                 author: {
                     name: message.guild.name,
                     iconURL: message.guild.iconURL()
@@ -145,8 +147,8 @@ class ExcuseHandler extends CoreUtil {
         }
 
         return message.edit({
-            embeds: [new MessageEmbed(message.embeds[0])
-                .setColor('GREEN')
+            embeds: [EmbedBuilder.from(message.embeds[0])
+                .setColor(Colors.Green)
                 .setAuthor({
                     name: '✅ Approved'
                     + (errorSending ? ' | ⚠️ Failed to DM' : '')
@@ -170,8 +172,8 @@ class ExcuseHandler extends CoreUtil {
      static async denyAndDM(excuse, message, admin, member) {
         let errorSending = false;
         await member.user.send({
-            embeds: [new MessageEmbed({
-                color: 'RED',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Red,
                 author: {
                     name: message.guild.name,
                     iconURL: message.guild.iconURL()
@@ -216,8 +218,8 @@ class ExcuseHandler extends CoreUtil {
 
         // return the excuse form
         return message.edit({
-            embeds: [new MessageEmbed(message.embeds[0])
-                .setColor('RED')
+            embeds: [EmbedBuilder.from(message.embeds[0])
+                .setColor(Colors.Red)
                 .setAuthor({
                     name: '⛔️ Insufficient Excuse'
                     + (errorSending ? ' | ⚠️ Failed to DM' : '')
@@ -381,10 +383,10 @@ class ExcuseHandler extends CoreUtil {
         // post the excuse for administrative review
         const typeIndex = ['ABSENCE', 'LEFT EARLY', 'LATE'].indexOf(excuse.type);
         const emoji = ['❌', '🏃', '⏰'][typeIndex];
-        const color = ['ORANGE', 'BLURPLE', 'YELLOW'][typeIndex];
+        const color = [Colors.Orange, Colors.Blurple, Colors.Yellow][typeIndex];
 
         return excuseThread.send({
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor(color)
                 .setTitle(emoji + ' ' + excuse.type + ' FORM')
                 .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
@@ -401,22 +403,22 @@ class ExcuseHandler extends CoreUtil {
                 .setTimestamp()
             ],
             components: [
-                new MessageActionRow({
+                new ActionRowBuilder({
                     components: [
-                        new MessageButton({
-                            style: 'SUCCESS',
+                        new ButtonBuilder({
+                            style: ButtonStyle.Success,
                             emoji: '✅',
                             label: 'Acceptable Excuse',
                             customId: 'GLOBAL_ACCEPT_EXCUSE'
                         }),
-                        new MessageButton({
-                            style: 'DANGER',
+                        new ButtonBuilder({
+                            style: ButtonStyle.Danger,
                             emoji: '⛔',
                             label: 'Insufficient Excuse',
                             customId: 'GLOBAL_DENY_EXCUSE'
                         }),
-                        new MessageButton({
-                            style: 'SECONDARY',
+                        new ButtonBuilder({
+                            style: ButtonStyle.Secondary,
                             emoji: '🗑',
                             label: 'Delete',
                             customId: 'GLOBAL_DELETE_EXCUSE',
@@ -437,9 +439,9 @@ class ExcuseHandler extends CoreUtil {
 
         return this.days.map(day => {
             const p = paused.has(day.toUpperCase());
-            return new MessageButton({
+            return new ButtonBuilder({
                 customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
-                style: p ? 'SECONDARY' : 'SUCCESS',
+                style: p ? ButtonStyle.Secondary : ButtonStyle.Success,
                 emoji: p ? '⏸️' : undefined,
                 label: p ? day + ' : Under review since ' + paused.get(day.toUpperCase()) : day,
                 disabled: p

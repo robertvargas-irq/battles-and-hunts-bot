@@ -1,11 +1,11 @@
-const { MessageEmbed, Message, MessageActionRow, MessageButton, ButtonInteraction } = require('discord.js');
+const { EmbedBuilder, Message, ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, Colors } = require('discord.js');
 const HuntManager = require('./HuntManager');
 
 class SharePool {
     
     /**
      * Maximum amount of active shared prey embeds */
-    static #MAX_SHARED_PREY = 100;
+    static #MAX_SHARed_PREY = 100;
 
     /**
      * @type {Map<guildId, Map<messageId, prey: prey>>}
@@ -14,8 +14,8 @@ class SharePool {
 
     static witherPrey = (message) => {
         return message.edit({
-            embeds: [new MessageEmbed({
-                color: 'DARK_AQUA',
+            embeds: [EmbedBuilder.from({
+                color: Colors.DarkAqua,
                 footer: { text: 'This catch has withered away...' },
             })],
             components: [],
@@ -30,7 +30,7 @@ class SharePool {
 
         // make room in the share pool if necessary
         const server = this.#sharePool.get(originalMessage.guild.id);
-        if (server.size >= this.#MAX_SHARED_PREY) {
+        if (server.size >= this.#MAX_SHARed_PREY) {
             const [messageId] = server.keys();
             server.delete(messageId);
         }
@@ -78,8 +78,8 @@ class SharePool {
 
         // ensure original member is the one clicking
         if (originalMember.user.id != button.user.id) return button.reply({
-            embeds: [new MessageEmbed({
-                color: 'RED',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Red,
                 title: '⚠️ You can only share your own catches!',
             })]
         });
@@ -94,19 +94,19 @@ class SharePool {
         button.deferUpdate();
         return message.edit({
             embeds: [this.generateShareEmbed(prey, character, originalMember)],
-            components: [new MessageActionRow({
-                components: [new MessageButton({
+            components: [new ActionRowBuilder({
+                components: [new ButtonBuilder({
                     customId: 'PREY:COLLECT',
                     label: 'Collect',
                     emoji: '🎒',
-                    style: 'SUCCESS',
+                    style: ButtonStyle.Success,
                 })],
             })],
         });
     }
 
-    static generateShareEmbed = (prey, character, member) => new MessageEmbed({
-        color: 'GOLD',
+    static generateShareEmbed = (prey, character, member) => EmbedBuilder.from({
+        color: Colors.Gold,
         title: '💖🥬 Shared Prey',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
         image: prey.visual ? { url: prey.visual } : undefined,

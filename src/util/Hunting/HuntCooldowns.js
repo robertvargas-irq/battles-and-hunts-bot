@@ -1,4 +1,4 @@
-const { MessageEmbed, CommandInteraction } = require('discord.js');
+const { EmbedBuilder, CommandInteraction, Colors } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 class HuntCooldowns {
@@ -184,8 +184,8 @@ class HuntCooldowns {
         let minutes = ((HuntCooldowns.HUNT_COOLDOWN - (Date.now() - this.getCooldownHunt(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
-            embeds: [new MessageEmbed({
-                color: 'FUCHSIA',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Fuchsia,
                 title: '💫 Feeling a little winded',
                 description: '**You\'re feeling a bit tired...**'
                 + '\nMaybe take a brief rest after trying `'
@@ -206,8 +206,8 @@ class HuntCooldowns {
         let minutes = ((HuntCooldowns.DEPOSIT_COOLDOWN - (Date.now() - this.getCooldownDeposit(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
-            embeds: [new MessageEmbed({
-                color: 'FUCHSIA',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Fuchsia,
                 title: '💤 W...Wait...',
                 description: '**You\'re feeling a bit tired...**'
                 + '\nYou can feel everything ache.'

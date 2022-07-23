@@ -1,5 +1,5 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
 const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
 
@@ -28,7 +28,7 @@ module.exports = {
             return interaction.reply({
                 ephemeral: true,
                 embeds: [
-                    new MessageEmbed({
+                    new EmbedBuilder({
                         color: 'RED',
                         title: '⚠️ Woah wait! You haven\'t caught anything!',
                         description: '> Go back and use \`/hunt\` first and then use this command to pick up and carry whatever you caught!',
@@ -48,13 +48,13 @@ module.exports = {
         
         // add to carry
         const [overEncumbered, weightCarrying, preyCarrying] = HuntInventory.addToCarry(interaction.guild.id, interaction.user.id, recentlyCaught, originalMessage);
-        const resultEmbed = new MessageEmbed();
+        const resultEmbed = new EmbedBuilder();
 
         // if successfully carried, notify
         if (!overEncumbered) {
             // if weight being carried is at a respectable limit
             if (weightCarrying <= HuntInventory.INVENTORY_MAX_WEIGHT) resultEmbed
-                .setColor('GREEN')
+                .setColor('Green')
                 .setTitle(`🎒 __Successfully picked up: \`${recentlyCaught.name}\`__`)
                 .setDescription(
                 `> You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, ready to carry it as you venture forward.`
@@ -64,7 +64,7 @@ module.exports = {
                 .setFooter({ text: '🍃 This carry is canon.' });
             // else, the weight being carried is NOT at a respectable limit; the character is now over-encumbered
             else resultEmbed
-                .setColor('ORANGE')
+                .setColor('Orange')
                 .setAuthor({ name: '❗ STATUS CHANGE: YOU ARE NOW OVER-ENCUMBERED!' })
                 .setTitle(`⚠️ __Hhh... this \`${recentlyCaught.name}\` is so heavy...__`)
                 .setDescription(

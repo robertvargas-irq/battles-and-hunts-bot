@@ -1,4 +1,4 @@
-const { Interaction } = require('discord.js');
+const { Interaction, InteractionType } = require('discord.js');
 
 module.exports = {
     name: 'interactionCreate',
@@ -7,12 +7,12 @@ module.exports = {
 
         // route interactions
         try {
-            if (interaction.isCommand())
+            if (interaction.type === InteractionType.ApplicationCommand)
                 return require('./interactions/command')(interaction);
+            if (interaction.type === InteractionType.ModalSubmit)
+                return require('./interactions/modalSubmit')(interaction);
             if (interaction.isButton())
                 return require('./interactions/button')(interaction);
-            if (interaction.isModalSubmit())
-                return require('./interactions/modalSubmit')(interaction);
         }
         catch (e) {
             console.error(e);

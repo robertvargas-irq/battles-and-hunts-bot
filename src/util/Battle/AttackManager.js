@@ -1,4 +1,4 @@
-const { MessageEmbed, CommandInteraction, GuildMember } = require('discord.js');
+const { EmbedBuilder, CommandInteraction, GuildMember, Colors } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
 const StatCalculator = require('../Stats/StatCalculator');
@@ -54,7 +54,7 @@ class AttackManager extends CoreUtil {
         const embeds = [];
 
         // create attack header with attacker
-        embeds.push(new MessageEmbed({
+        embeds.push(EmbedBuilder.from({
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#abfa7a' : '#fa877a',
             image: { url: attacker.icon ?? interaction.member.displayAvatarURL({ dynamic: true }) },
             author: {
@@ -65,7 +65,7 @@ class AttackManager extends CoreUtil {
         }));
 
         // break down attack roll
-        embeds.push(new MessageEmbed({ 
+        embeds.push(EmbedBuilder.from({ 
             color: (hit && crit) ? '#fa7acb' : (hit) ? '#7afabc' : '#faad7a',
             author: {
                 name: hit
@@ -80,7 +80,7 @@ class AttackManager extends CoreUtil {
         }));
 
         // if the user hit, then display crit results
-        if (hit) embeds.push(new MessageEmbed({
+        if (hit) embeds.push(EmbedBuilder.from({
             color: (hit && crit) ? '#fa7acb' : (crit) ? '#7afabc' : '#faad7a',
             author: {
                 name: crit
@@ -94,7 +94,7 @@ class AttackManager extends CoreUtil {
         }));
 
         // provide a brief summary
-        embeds.push(new MessageEmbed({
+        embeds.push(EmbedBuilder.from({
             color: hit ? '#fa877a' : '#abfa7a',
             thumbnail: { url: target.icon ?? targetMember.displayAvatarURL({ dynamic: true }) },
             title: (hit && crit ? '💥 CRITICAL HIT\n' : hit ? '⚔️ ' : '🍃 ')
@@ -129,8 +129,8 @@ class AttackManager extends CoreUtil {
      */
     static denyBotAttack(interaction) {
         this.SafeReply(interaction, {
-            embeds : [new MessageEmbed()
-                .setColor('BLURPLE')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription('You can\'t attack a bot! 🤖')
             ]
@@ -144,8 +144,8 @@ class AttackManager extends CoreUtil {
      */
     static denySelfAttack(interaction) {
         this.SafeReply(interaction, {
-            embeds : [new MessageEmbed()
-                .setColor('BLURPLE')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('❤️‍🩹 Hey now')
                 .setDescription('You can\'t attack yourself! Take care! 🌟')
             ]
@@ -159,8 +159,8 @@ class AttackManager extends CoreUtil {
      */
     static targetNotRegistered(interaction) {
         this.SafeReply(interaction, {
-            embeds : [new MessageEmbed()
-                .setColor('BLURPLE')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription('You can\'t attack a cat that doesn\'t exist yet!\nLet them know to create and submit their character for review!\n\nThey can get started with `/character`!')
             ]

@@ -1,6 +1,6 @@
 const FILE_LANG_ID = 'CORE_UTIL';
 
-const { CommandInteraction, MessageEmbed, MessagePayload, Util: DiscordUtil } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, MessagePayload, Util: DiscordUtil, Colors } = require('discord.js');
 const Pluralize = require('pluralize');
 const ColorUtil = require('color2k');
 const mongoose = require('mongoose');
@@ -86,8 +86,8 @@ class CoreUtil {
      */
     static InformNonAdministrator = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
-            embeds: [new MessageEmbed({
-                color: 'RED',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Red,
                 title: '❗ Woah wait-!',
                 description: customMessage ?? `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
             })]
@@ -102,8 +102,8 @@ class CoreUtil {
     static denyBotInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
             ephemeral: true,
-            embeds : [new MessageEmbed()
-                .setColor('BLURPLE')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription(customMessage ?? 'You cannot perform this action on a bot! 🤖')
             ]
@@ -117,8 +117,8 @@ class CoreUtil {
      */
     static denySelfInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
-            embeds : [new MessageEmbed()
-                .setColor('BLURPLE')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription(customMessage ?? 'You cannot perform this action on yourself! 🥬')
             ]
@@ -132,8 +132,8 @@ class CoreUtil {
      */
     static async NotRegistered(interaction) {
         const reply = {
-            embeds: [new MessageEmbed({
-                color: 'RED',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Red,
                 title: '⚠️ Woah there!',
                 description: '**You\'re not quite ready yet!**'
                 + '\n> Before you can start using any of these nifty features, **you must first create and submit your character, and have it approved!**'
@@ -323,8 +323,8 @@ class CoreUtil {
     static InformTimeout(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new MessageEmbed()
-                .setColor('AQUA')
+            embeds: [ new EmbedBuilder()
+                .setColor(Colors.Aqua)
                 .setTitle("⏰ " + translator.getGlobal('TIMEOUT'))
                 .setDescription(translator.getGlobal('TIMEOUT_MESSAGE') + " ❣️"),
             ]
@@ -340,8 +340,8 @@ class CoreUtil {
     static InformInvalid(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new MessageEmbed()
-                .setColor('AQUA')
+            embeds: [ new EmbedBuilder()
+                .setColor(Colors.Aqua)
                 .setTitle("⚠️ " + translator.get('TOO_MANY_INVALID'))
                 .setDescription(translator.get('TOO_MANY_INVALID_MESSAGE') + " ❣️"),
             ]
@@ -357,10 +357,10 @@ class CoreUtil {
     static InformNotRegistered(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new MessageEmbed()
-                .setColor('RED')
-                .setTitle("⚠️ " + translator.get('NOT_REGISTERED'))
-                .setDescription(translator.get('NOT_REGISTERED_MESSAGE') + " ❣️"),
+            embeds: [ new EmbedBuilder()
+                .setColor(Colors.Red)
+                .setTitle("⚠️ " + translator.get('NOT_REGISTERed'))
+                .setDescription(translator.get('NOT_REGISTERed_MESSAGE') + " ❣️"),
             ]
         });
         return false;
@@ -374,8 +374,8 @@ class CoreUtil {
     static InformSuccessfulCancel(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new MessageEmbed()
-                .setColor('AQUA')
+            embeds: [ new EmbedBuilder()
+                .setColor(Colors.Aqua)
                 .setTitle("✅ " + translator.getGlobal('SUCCESSFUL_CANCEL'))
                 .setDescription(translator.getGlobal('MENU_DISMISS') + " ❣️"),
             ]

@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, PermissionsBitField } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const DAY_CHOICES = [
     {
@@ -312,7 +312,7 @@ module.exports = {
     async execute(interaction) {
 
         // filter out non-administrators
-        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
+        if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels))
             return CoreUtil.InformNonAdministrator(interaction);
         
         // route

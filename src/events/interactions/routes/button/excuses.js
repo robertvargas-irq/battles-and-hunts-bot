@@ -1,11 +1,14 @@
 const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
 const {
     ButtonInteraction,
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
-    Modal,
-    TextInputComponent
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    TextInputStyle,
+    ModalBuilder,
+    TextInputBuilder,
+    Colors,
 } = require('discord.js');
 
 const EXCUSE_MIN_LENGTH = 10;
@@ -43,15 +46,15 @@ module.exports = async (button) => {
 
             return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed()
-                    .setColor('BLURPLE')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Blurple)
                     .setTitle('📝 Status View')
                     .setDescription('Quickly view the status of any of your excuses, whether they\'ve been approved, still pending, or denied!')
                 ],
-                components: [new MessageActionRow({
-                    components: ExcuseHandler.days.map(day => new MessageButton({
+                components: [new ActionRowBuilder({
+                    components: ExcuseHandler.days.map(day => new ButtonBuilder({
                         customId: 'EXCUSEBUTTON_VIEW:' + day.toUpperCase(),
-                        style: userExcuseCount[day] < 1 ? 'SECONDARY' : 'PRIMARY',
+                        style: userExcuseCount[day] < 1 ? ButtonStyle.Secondary : ButtonStyle.Primary,
                         label: day  + ' : ' + (userExcuseCount[day] < 1 ? 'None' : userExcuseCount[day] + ' submitted'),
                         disabled: userExcuseCount[day] < 1
                     })),
@@ -64,13 +67,13 @@ module.exports = async (button) => {
             // generate quick viewer with expandable view
             return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'FUCHSIA',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Fuchsia,
                     title: 'Check all of your submitted excuses for `' + EXCUSE_DAY + '`!',
                     description: '> Press any of the available buttons to pull up the original request submitted!',
                 })],
                 components: [
-                    new MessageActionRow({ components: generateViewButtons(EXCUSE_DAY, button) })
+                    new ActionRowBuilder({ components: generateViewButtons(EXCUSE_DAY, button) })
                 ],
             });
 
@@ -94,9 +97,9 @@ module.exports = async (button) => {
                         ExcuseHandler.EXCUSE_STATUSES.PENDING,
                         ExcuseHandler.EXCUSE_STATUSES.DENIED,
                     ].indexOf(alreadySubmitted[i]?.status) || 0;
-                    buttons.push(new MessageButton({
+                    buttons.push(new ButtonBuilder({
                         customId: 'EXCUSEBUTTON:' + day + ':' + types[i].toUpperCase(),
-                        style: alreadySubmitted[i] ? ['SUCCESS', 'PRIMARY', 'DANGER'][statusIndex] : 'SECONDARY',
+                        style: alreadySubmitted[i] ? ButtonStyle['Success', 'Primary', 'Danger'][statusIndex] : ButtonStyle.Secondary,
                         emoji: alreadySubmitted[i] ? ['✅', '⏱', '❌'][statusIndex] : undefined,
                         label: types[i] + (
                             alreadySubmitted[i]
@@ -123,8 +126,8 @@ module.exports = async (button) => {
             ].indexOf(submittedExcuse.status);
             return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: ['GREEN', 'YELLOW', 'RED'][statusIndex],
+                embeds: [EmbedBuilder.from({
+                    color: [Colors.Green, Colors.Yellow, Colors.Red][statusIndex],
                     author: {
                         name: EXCUSE_TYPE + ' Form Status: ' + [
                             '✅ Approved',
@@ -156,29 +159,29 @@ module.exports = async (button) => {
         // if the request is unique, display form if the day is not paused
         if (ExcuseHandler.dayIsPaused(button.guild.id, EXCUSE_DAY)) return button.reply({
             ephemeral: true,
-            embeds: [new MessageEmbed({
-                color: 'YELLOW',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Yellow,
                 title: '⚠️ Woah wait a minute-!',
                 description: 'Looks like all excuse forms for **`' + EXCUSE_DAY + '`** are currently ⏸ **`PAUSED`**!'
                 + '\n> The only action allowed is viewing the status of any submission you have already made.'
                 + '\n\nIf you believe this is a mistake, please contact an administrator!',
                 timestamp: Date.now()
             })],
-            components: [new MessageActionRow({
+            components: [new ActionRowBuilder({
                 components: generateButtons(EXCUSE_DAY, button, true),
             })]
         });
 
-        return button.showModal(new Modal({
+        return button.showModal(ModalBuilder.from({
             customId: 'EXCUSE:' + EXCUSE_DAY + ':' + EXCUSE_TYPE,
             title: EXCUSE_TYPE + ' Excuse Form for ' + EXCUSE_DAY,
             components: [
-                new MessageActionRow({
+                new ActionRowBuilder({
                     components: [
-                        new TextInputComponent({
+                        new TextInputBuilder({
                             customId: 'excused_reason',
                             label: 'Reason',
-                            style: 'PARAGRAPH',
+                            style: TextInputStyle.Paragraph,
                             minLength: EXCUSE_MIN_LENGTH,
                             maxLength: EXCUSE_MAX_LENGTH,
                             required: true,
@@ -192,8 +195,8 @@ module.exports = async (button) => {
     // if no type, prompt user for one
     return button.reply({
         ephemeral: true,
-        embeds: [new MessageEmbed({
-            color: 'FUCHSIA',
+        embeds: [EmbedBuilder.from({
+            color: Colors.Fuchsia,
             title: 'Need an excuse for `' + EXCUSE_DAY + '`? Just one more thing...',
             description: '> What kind of excuse do you wish to submit?'
             + '\n\n**PLEASE NOTE YOU MAY ONLY SUBMIT ONE OF EACH PER DAY**'
@@ -202,7 +205,7 @@ module.exports = async (button) => {
             + '\n> Any button -not- in blue is a submitted form, press it to pull up its status!',
         })],
         components: [
-            new MessageActionRow({ components: generateButtons(EXCUSE_DAY, button) })
+            new ActionRowBuilder({ components: generateButtons(EXCUSE_DAY, button) })
         ],
     });
 }
@@ -228,9 +231,9 @@ const generateButtons = (day, button, dayPaused = false) => {
             ExcuseHandler.EXCUSE_STATUSES.PENDING,
             ExcuseHandler.EXCUSE_STATUSES.DENIED,
         ].indexOf(alreadySubmitted[i]?.status) || 0;
-        buttons.push(new MessageButton({
+        buttons.push(new ButtonBuilder({
             customId: 'EXCUSEBUTTON:' + day + ':' + types[i].toUpperCase(),
-            style: alreadySubmitted[i] ? ['SUCCESS', 'SECONDARY', 'DANGER'][statusIndex] : dayPaused ? 'SECONDARY' : 'PRIMARY',
+            style: alreadySubmitted[i] ? ButtonStyle['Success', 'Secondary', 'Danger'][statusIndex] : dayPaused ? ButtonStyle.Secondary : ButtonStyle.Primary,
             emoji: alreadySubmitted[i] ? ['✅', '⏱', '❌'][statusIndex] : {
                 name: 'pine_spin',
                 id: '962887069976379402',

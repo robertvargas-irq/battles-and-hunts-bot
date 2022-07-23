@@ -3,7 +3,7 @@ const { Query } = require('mongoose');
 
 /**
  * @deprecated
- * Will be used as a basis for other Cache managers; DO NOT DELETE UNTIL OTHER CACHE MANAGERS ARE REFACTORED INTO THIS FORMAT
+ * Will be used as a basis for other Cache managers; DO NOT DELETE UNTIL OTHER CACHE MANAGERS ARE REFACTORed INTO THIS FORMAT
  */
 
 const cached = new Map();

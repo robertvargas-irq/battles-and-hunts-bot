@@ -54,7 +54,7 @@ class CharacterMenu {
     }
 
     static statHelpEmbed = new EmbedBuilder({
-        color: 'AQUA',
+        color: 'Aqua',
         title: '💡 Stats & What They Mean',
         fields: statArray.map(([_, statData]) => {return {
             name: statData.flair + ' ' + statData.name,
@@ -256,7 +256,7 @@ function generateAuxilaryEmbeds(menuObject) {
 
     // if registering and the author is calling the menu
     if (!menuObject.forceNotEditing && menuObject.registering && menuObject.isAuthor) embeds.push(new EmbedBuilder({
-        color: 'YELLOW',
+        color: 'Yellow',
         title: '📋 Welcome to ' + menuObject.authorSnowflake.guild.name + '!',
         description: 'It looks like your character is yet to be approved!'
         + '\nBefore you can start roleplaying or use any of the nifty features provided by this bot, you must first fully create your character and submit it for review with the button below!'
@@ -266,7 +266,7 @@ function generateAuxilaryEmbeds(menuObject) {
 
     // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
     if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new EmbedBuilder({
-        color: 'BLURPLE',
+        color: 'Blurple',
         title: '💡 Why am I unable to edit stats?',
         description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
         footer: { text: 'This is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.' },
@@ -274,7 +274,7 @@ function generateAuxilaryEmbeds(menuObject) {
 
     // if administrator providing overrides, inform about their permissions
     if (!menuObject.forceNotEditing && menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new EmbedBuilder({
-        color: 'RED',
+        color: 'Red',
         title: '📌 Administrator Overrides',
         description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',
         footer: { text: 'Please ensure that the user is informed of any changes. Additionally, ensure that these changes are reasonable and are only used to enforce a standard set in place by the server.' }

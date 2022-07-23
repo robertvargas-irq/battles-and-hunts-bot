@@ -1,9 +1,9 @@
 {
     "colors": [
-        "NOT_QUITE_BLACK",
-        "RED",
-        "YELLOW",
-        "AQUA"
+        "NotQuiteBlack",
+        "Red",
+        "Yellow",
+        "Aqua"
     ],
     "titles": [
         "Starving",

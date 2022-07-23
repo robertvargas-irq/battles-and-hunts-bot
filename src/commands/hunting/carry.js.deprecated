@@ -54,7 +54,7 @@ module.exports = {
         if (!overEncumbered) {
             // if weight being carried is at a respectable limit
             if (weightCarrying <= HuntInventory.INVENTORY_MAX_WEIGHT) resultEmbed
-                .setColor('GREEN')
+                .setColor('Green')
                 .setTitle(`🎒 __Successfully picked up: \`${recentlyCaught.name}\`__`)
                 .setDescription(
                 `> You take the \`${recentlyCaught.name}\` between your teeth and chuck it onto your back, ready to carry it as you venture forward.`
@@ -64,7 +64,7 @@ module.exports = {
                 .setFooter({ text: '🍃 This carry is canon.' });
             // else, the weight being carried is NOT at a respectable limit; the character is now over-encumbered
             else resultEmbed
-                .setColor('ORANGE')
+                .setColor('Orange')
                 .setAuthor({ name: '❗ STATUS CHANGE: YOU ARE NOW OVER-ENCUMBERED!' })
                 .setTitle(`⚠️ __Hhh... this \`${recentlyCaught.name}\` is so heavy...__`)
                 .setDescription(

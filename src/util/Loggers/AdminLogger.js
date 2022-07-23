@@ -25,7 +25,7 @@ class AdminLogger {
         console.log(overrides);
         return loggingChannel.send({
             embeds: [new EmbedBuilder({
-                color: 'BLURPLE',
+                color: 'Blurple',
                 thumbnail: { url: administrator.user.avatarURL() },
                 title: '📝 Character Administrator Override',
                 description: `<@${administrator.user.id}>(${administrator.user.tag}) has overriden items from <@${target.user.id}>(${target.user.tag}) Character.`,

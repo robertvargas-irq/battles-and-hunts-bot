@@ -61,7 +61,7 @@ module.exports = {
             return interaction.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder()
-                    .setColor('YELLOW')
+                    .setColor('Yellow')
                     .setTitle('⚠️ Woah wait! You aren\'t carrying anything!')
                     .setDescription(`\
                     > Go back and use \`/hunt\` first, collect anything you caught, and then use this command to go and deposit your prey to your clan\'s prey pile!
@@ -107,7 +107,7 @@ module.exports = {
         const notifyEmbed = new EmbedBuilder();
         if (character.clan == clan) {
             notifyEmbed
-                .setColor('GREEN')
+                .setColor('Green')
                 .setTitle('📦 Some food has arrived.')
                 .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
@@ -124,7 +124,7 @@ module.exports = {
         }
         else {
             notifyEmbed
-                .setColor('AQUA')
+                .setColor('Aqua')
                 .setTitle('🎁 Some prey has been graciously gifted to us!')
                 .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
@@ -147,7 +147,7 @@ module.exports = {
         return interaction.reply({
             ephemeral: true,
             embeds: [new EmbedBuilder({
-                color: 'GREEN',
+                color: 'Green',
                 title: `📦 __Successfully deposited in: \`${clan.toUpperCase()}\`__`,
                 description: `You take all the prey that you have collected and dump it into the \`${clan.toUpperCase()}\` prey pile.`
                 + '\n\nYou can finally take a breath after finally dropping off all that weight.'

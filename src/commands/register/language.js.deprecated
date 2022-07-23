@@ -75,7 +75,7 @@ module.exports = {
         interaction.editReply({
             embeds: [
                 new EmbedBuilder()
-                    .setColor('AQUA')
+                    .setColor('Aqua')
                     .setTitle('🌟 ' + translator.get('LANGUAGE_UPDATE_TITLE'))
                     .setDescription(translator.getGlobal('MENU_DISMISS')),
             ]

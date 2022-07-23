@@ -18,7 +18,7 @@ module.exports = async (button) => {
             if (character.approved) button.followUp({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '❗ Your character is already approved!',
                     description: '> However, here\'s the edit menu for you ❣️',
                 })]
@@ -31,7 +31,7 @@ module.exports = async (button) => {
             if (!button.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'RED',
+                    color: 'Red',
                     title: '⚠️ Only members with the `MANAGE_ROLES` permission can approve submissions.',
                 })],
             });
@@ -59,7 +59,7 @@ module.exports = async (button) => {
             SubmissionHandler.removeSubmission(server, authorId, button.message.id);
             button.message.edit({
                 embeds: [new EmbedBuilder(button.message.embeds[0])
-                    .setColor('GREEN')
+                    .setColor('Green')
                     .setTitle(button.message.embeds[0].title + ' | ✅ APPROVED')
                     .setFooter({ text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')' })
                     .setTimestamp(),
@@ -68,7 +68,7 @@ module.exports = async (button) => {
             });
             authorMember.user.send({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '📝 Update on Recent Character Submission',
                     description: '> **Psst-! Your character in ' + button.guild.name + ' has been approved!\n\nGo check it out over at <#' + button.channel.id + '>!**'
                 })]
@@ -91,7 +91,7 @@ module.exports = async (button) => {
             && button.user.id != authorId) return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'RED',
+                    color: 'Red',
                     title: '⚠️ Only members with the `MANAGE_ROLES` permission or the original submitter can refresh submissions.',
                 })],
             });            
@@ -113,7 +113,7 @@ module.exports = async (button) => {
             if (!button.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'RED',
+                    color: 'Red',
                     title: '⚠️ Only members with the `MANAGE_ROLES` permission can delete submissions.',
                 })],
             });
@@ -168,7 +168,7 @@ async function safelyDeleteThread(message, reason = 'No reason provided,') {
 async function submissionNoLongerAvailable(button) {
     return button.message.edit({
         embeds: [new EmbedBuilder({
-            color: 'RED',
+            color: 'Red',
             title: '⚠️ This character no longer exists.'
         })],
         components: [],
@@ -186,7 +186,7 @@ async function characterNoLongerExists(button, server, authorId) {
     safelyDeleteThread(button.message, 'Submission is no longer available; this character no longer exists.');
     return button.message.edit({
         embeds: [new EmbedBuilder({
-            color: 'RED',
+            color: 'Red',
             title: '⚠️ This character no longer exists.'
         })],
         components: [],
@@ -204,7 +204,7 @@ async function authorNoLongerInServer(button, server, authorId) {
     safelyDeleteThread(button.message, 'Submission is no longer available; member no longer in the server.');
     return button.message.edit({
         embeds: [new EmbedBuilder({
-            color: 'RED',
+            color: 'Red',
             title: '⚠️ This submission is no longer available as the member is no longer in the server.',
         })],
         components: [],

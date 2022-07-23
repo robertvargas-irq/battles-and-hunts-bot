@@ -102,7 +102,7 @@ class ExcuseHandler extends CoreUtil {
         let errorSending = false;
         await member.user.send({
             embeds: [new EmbedBuilder({
-                color: 'GREEN',
+                color: 'Green',
                 author: {
                     name: message.guild.name,
                     iconURL: message.guild.iconURL()
@@ -147,7 +147,7 @@ class ExcuseHandler extends CoreUtil {
 
         return message.edit({
             embeds: [EmbedBuilder.from(message.embeds[0])
-                .setColor('GREEN')
+                .setColor('Green')
                 .setAuthor({
                     name: '✅ Approved'
                     + (errorSending ? ' | ⚠️ Failed to DM' : '')
@@ -172,7 +172,7 @@ class ExcuseHandler extends CoreUtil {
         let errorSending = false;
         await member.user.send({
             embeds: [new EmbedBuilder({
-                color: 'RED',
+                color: 'Red',
                 author: {
                     name: message.guild.name,
                     iconURL: message.guild.iconURL()
@@ -218,7 +218,7 @@ class ExcuseHandler extends CoreUtil {
         // return the excuse form
         return message.edit({
             embeds: [EmbedBuilder.from(message.embeds[0])
-                .setColor('RED')
+                .setColor('Red')
                 .setAuthor({
                     name: '⛔️ Insufficient Excuse'
                     + (errorSending ? ' | ⚠️ Failed to DM' : '')
@@ -382,7 +382,7 @@ class ExcuseHandler extends CoreUtil {
         // post the excuse for administrative review
         const typeIndex = ['ABSENCE', 'LEFT EARLY', 'LATE'].indexOf(excuse.type);
         const emoji = ['❌', '🏃', '⏰'][typeIndex];
-        const color = ['ORANGE', 'BLURPLE', 'YELLOW'][typeIndex];
+        const color = ['Orange', 'Blurple', 'Yellow'][typeIndex];
 
         return excuseThread.send({
             embeds: [new EmbedBuilder()

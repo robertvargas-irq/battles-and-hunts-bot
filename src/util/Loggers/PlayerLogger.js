@@ -23,7 +23,7 @@ class PlayerLogger {
         if (!loggingChannel || !overrides || !overrides.length) return false;
         return loggingChannel.send({
             embeds: [new EmbedBuilder({
-                color: 'YELLOW',
+                color: 'Yellow',
                 thumbnail: { url: player.user.avatarURL() },
                 title: '📝 Character Changes',
                 description: `<@${player.user.id}>(${player.user.tag}) has changed items from their Character.`,

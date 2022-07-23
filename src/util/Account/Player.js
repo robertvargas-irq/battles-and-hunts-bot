@@ -49,7 +49,7 @@ function formatStats(member, character) {
 
     let i = 0;
     const listedStats = new EmbedBuilder({
-        color: 'LUMINOUS_VIVID_PINK',
+        color: 'LuminousVividPink',
         image: { url: STATS_BANNER },
         fields: Object.keys(character.stats).map(stat => {
             return {

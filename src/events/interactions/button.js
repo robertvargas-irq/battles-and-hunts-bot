@@ -52,7 +52,7 @@ module.exports = async (button) => {
             return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'RED',
+                    color: 'Red',
                     title: '‼️⚠️ Please Read',
                     description: '> To ensure you did not press on this verification by accident, the administrative team wishes to inform you of the following:'
                     + '\n\n**ALL VERIFICATION REQUESTS WILL RECEIVE AN INDEPENDENT REVIEW/SCREENING BY A MEMBER OF OUR ADMINISTRATIVE TEAM**'
@@ -99,7 +99,7 @@ module.exports = async (button) => {
             // push message to administrators regarding the incoming request
             const verificationThreadMessage = await VerificationHandler.pushToVerificationThread(verificationThread, {
                 embeds: [new EmbedBuilder()
-                    .setColor('AQUA')
+                    .setColor('Aqua')
                     .setTitle('Adult Verification Request')
                     .setThumbnail(button.member.displayAvatarURL({ dynamic: true }))
                     .setDescription('Incoming request from:'
@@ -155,7 +155,7 @@ module.exports = async (button) => {
             if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
-                        .setColor('YELLOW')
+                        .setColor('Yellow')
                         .setTitle('⚠️ Huh...')
                         .setDescription(
                         button.message.embeds[0].description
@@ -184,7 +184,7 @@ module.exports = async (button) => {
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
                 embeds: [new EmbedBuilder()
-                    .setColor('GREEN')
+                    .setColor('Green')
                     .setTitle('🌟 Update on your role request')
                     .setDescription(
                     'Hey there, **' + pendingUser.displayName + '**!'
@@ -202,7 +202,7 @@ module.exports = async (button) => {
             await button.message.edit({
                 embeds: [button.message.embeds[0]
                     .setTitle('✅ User has been verified')
-                    .setColor('GREEN')
+                    .setColor('Green')
                     .setFooter({
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
                     })
@@ -235,7 +235,7 @@ module.exports = async (button) => {
             if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
                     embeds: [button.message.embeds[0]
-                        .setColor('YELLOW')
+                        .setColor('Yellow')
                         .setTitle('⚠️ Huh...')
                         .setDescription(
                         button.message.embeds[0].description
@@ -257,7 +257,7 @@ module.exports = async (button) => {
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
                 embeds: [new EmbedBuilder()
-                    .setColor('YELLOW')
+                    .setColor('Yellow')
                     .setTitle('❗ Update on your role request')
                     .setDescription(
                     'Hey there, **' + pendingUser.displayName + '**!'
@@ -274,7 +274,7 @@ module.exports = async (button) => {
 
             await button.message.edit({
                 embeds: [button.message.embeds[0]
-                    .setColor('RED')
+                    .setColor('Red')
                     .setTitle('⛔ User has been marked as not verified')
                     .setFooter({
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
@@ -352,7 +352,7 @@ module.exports = async (button) => {
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.edit({
                 embeds: [new EmbedBuilder({
-                    color: 'ORANGE',
+                    color: 'Orange',
                     author: { name: 'Unable to delete; excuse no longer exists' },
                     footer: {
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
@@ -362,7 +362,7 @@ module.exports = async (button) => {
                 components: [],
             }).catch(() => button.message.edit({
                 embeds: [new EmbedBuilder({
-                    color: 'ORANGE',
+                    color: 'Orange',
                     author: { name: 'Unable to delete' },
                     footer: {
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
@@ -377,7 +377,7 @@ module.exports = async (button) => {
             ExcuseModel.deleteOne({ guildId: excuse.guildId, userId: excuse.userId }).then(console.log).catch(console.error);
             return button.message.edit({
                 embeds: [new EmbedBuilder({
-                    color: 'GREYPLE',
+                    color: 'Greyple',
                     author: { name: 'Excuse successfully deleted.' },
                     footer: {
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'

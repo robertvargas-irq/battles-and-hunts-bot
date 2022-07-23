@@ -31,7 +31,7 @@ module.exports = {
         if (character.currentHealth < 1) return interaction.reply({
             embeds: [
                 new EmbedBuilder({
-                    color: 'DARK_RED',
+                    color: 'DarkRed',
                     author: { name: 'The void has already consumed.' },
                     description: '> No more damage can be taken.',
                 }),
@@ -54,7 +54,7 @@ module.exports = {
         interaction.reply({
             embeds: [
                 new EmbedBuilder({
-                    color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
+                    color: character.currentHealth < 1 ? 'NotQuiteBlack' : 'DarkRed',
                     title: '🪓 Took `' + finalDamageAmount + '` Damage',
                     description: '> ' + HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),
                     footer: (finalDamageAmount !== originalDamageAmount ? {

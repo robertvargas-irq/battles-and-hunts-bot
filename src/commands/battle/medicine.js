@@ -42,7 +42,7 @@ module.exports = {
         if (character.currentHealth > maxHealth) return interaction.reply({
             embeds: [
                 new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: '💖 You are over-healed!',
                     description: 'You feel at ease.',
                 }),
@@ -52,7 +52,7 @@ module.exports = {
         if (character.currentHealth === maxHealth) return interaction.reply({
             embeds: [
                 new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: '✨ You are already at Max Health!',
                     description: 'You feel at ease.',
                 }),
@@ -74,7 +74,7 @@ module.exports = {
         interaction.reply({
             embeds: [
                 new EmbedBuilder({
-                    color: 'AQUA',
+                    color: 'Aqua',
                     title: '🥬 Healed up `' + finalHealAmount + '` HP',
                     description: '> ' + HealthVisuals.Healing.getRandomHealingMessage(),
                     footer: (finalHealAmount !== originalHealAmount ? {

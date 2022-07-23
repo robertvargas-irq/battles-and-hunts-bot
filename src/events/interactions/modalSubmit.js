@@ -38,7 +38,7 @@ module.exports = async (/**@type {ModalSubmitInteraction}*/ interaction) => {
             interaction.editReply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '✅ Form Submitted',
                     description: '> The administration team has been notified. Please be patient as multiple requests are processed daily ❣️',
                     fields: [

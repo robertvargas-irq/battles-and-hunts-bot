@@ -36,7 +36,7 @@ module.exports = async (interaction, subcommand) => {
             // inform administrator that the character was deleted
             return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'RED',
+                    color: 'Red',
                     title: '🗑️ ' + (character.name || (author.displayName + '\'s unnamed character')) + ' was permanently deleted.',
                 })]
             });
@@ -48,7 +48,7 @@ module.exports = async (interaction, subcommand) => {
             if (character.approved) return interaction.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: '💡 This character is already approved!',
                 })]
             });
@@ -58,7 +58,7 @@ module.exports = async (interaction, subcommand) => {
             character.save();
             return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '✅ This character is now marked as approved!',
                 })]
             });
@@ -70,7 +70,7 @@ module.exports = async (interaction, subcommand) => {
             if (!character.approved) return interaction.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: '💡 This character is not approved yet!',
                 })]
             });
@@ -80,7 +80,7 @@ module.exports = async (interaction, subcommand) => {
             character.save();
             return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '✅ This character is no longer marked as approved!',
                 })]
             });

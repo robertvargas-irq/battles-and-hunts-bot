@@ -167,7 +167,7 @@ class HuntInventory {
      */
     static generateCarryingEmbed(character, preyCarrying, weightCarrying) {
         return new EmbedBuilder({
-            color: 'BLURPLE',
+            color: 'Blurple',
             title: '🎒 Hunting Carrying Inventory',
             description: preyCarrying.length > 0
             ? '**Currently Carrying**\n' + HuntManager.formatPrey(preyCarrying)

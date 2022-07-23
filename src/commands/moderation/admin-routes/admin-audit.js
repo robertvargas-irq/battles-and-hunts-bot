@@ -16,7 +16,7 @@ module.exports = async (interaction, subcommand) => {
             await interaction.deferReply({ ephemeral: true });
             const day = interaction.options.getString('day');
             const headerEmbed = new EmbedBuilder({
-                color: 'FUCHSIA',
+                color: 'Fuchsia',
                 title: '📋 AUDIT FOR: ' + day,
                 description: '> This is the most up-to-date summary audit of **`' + day + '`** excuses and their status!'
                 + '\n\n__**Legend**__'
@@ -27,15 +27,15 @@ module.exports = async (interaction, subcommand) => {
                 timestamp: Date.now(),
             });
             const lateEmbed = new EmbedBuilder({
-                color: 'YELLOW',
+                color: 'Yellow',
                 title: '⏰ __LATE__',
             });
             const leftEarlyEmbed = new EmbedBuilder({
-                color: 'BLURPLE',
+                color: 'Blurple',
                 title: '🏃 __LEFT EARLY__',
             });
             const absentEmbed = new EmbedBuilder({
-                color: 'ORANGE',
+                color: 'Orange',
                 title: '❌ __ABSENT__',
             });
 
@@ -168,7 +168,7 @@ module.exports = async (interaction, subcommand) => {
                 + nonRegistered.map(m => "<@" + m.user.id + ">").join('')
                 + "||" : null,
                 embeds: [new EmbedBuilder()
-                    .setColor('GREEN')
+                    .setColor('Green')
                     .setTitle('✅ Audit complete.')
                     .setDescription(
                         (nonSubmitted.length > 0 ? (
@@ -218,7 +218,7 @@ module.exports = async (interaction, subcommand) => {
                 console.log({starvingMembers});
                 console.log({starvSorted: starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, ''))})
                 embeds.push(new EmbedBuilder({
-                    color: 'DARK_RED',
+                    color: 'DarkRed',
                     title: 'STARVING MEMBERS IN: ' + clan.toUpperCase(),
                     description: starvingMembers.length > 0 ? starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, '')).map(member =>
                         '> ⊗ **' + member.displayName + '** (<@' + member.user.id + '>)'
@@ -229,7 +229,7 @@ module.exports = async (interaction, subcommand) => {
 
             // generate header
             embeds.push(new EmbedBuilder({
-                color: 'DARK_GREY',
+                color: 'DarkGrey',
                 title: '🦴 Starvation lingers...',
                 description: '> This audit contains the most up-to-date information available upon request.',
                 footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
@@ -278,7 +278,7 @@ module.exports = async (interaction, subcommand) => {
             const registeredList = Array.from(registered);
             for (let i = 0; i < registeredList.length && i < 9; i++) {
                 embeds.push(new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: registeredList[i][0].toUpperCase(),
                     description: registeredList[i][1].map(member => '> ↣ **' + member.displayName + '** (<@' + member.user.id + '>)').join('\n'),
                 }));
@@ -286,7 +286,7 @@ module.exports = async (interaction, subcommand) => {
 
             // generate summary
             embeds.push(new EmbedBuilder({
-                color: 'AQUA',
+                color: 'Aqua',
                 title: '📝 All members registered to the bot',
                 description: '> This audit contains the most up-to-date information available upon request.',
                 footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },

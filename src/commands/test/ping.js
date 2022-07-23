@@ -19,7 +19,7 @@ module.exports = {
         // pong
         return await interaction.reply({
             embeds: [new EmbedBuilder({
-                color: 'AQUA',
+                color: 'Aqua',
                 title: '🏓 Pong!',
                 description: '**Bot Uptime**'
                 + '\n'

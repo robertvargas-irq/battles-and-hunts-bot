@@ -147,7 +147,7 @@ class VerificationHandler extends CoreUtil {
     static async spawnVerificationRequest(guildChannel) {
         return await guildChannel.send({
             embeds: [new EmbedBuilder({
-                color: 'BLUE',
+                color: 'Blue',
                 title: '🌺 Adult Role and Verification',
                 description: '⚠️\n> **THIS IS NOT A PASS TO FLIRT OR SEND INAPPROPRIATE MESSAGES TO OTHER USERS, REGARDLESS OF WHETHER OR NOT THEY HAVE THE \'`ADULT`\' ROLE ON THEIR ACCOUNT.**'
                 + '\n\n**PLEASE REPORT ANY EXPLICIT BEHAVIOR FROM ANY PLATFORM.**'
@@ -179,7 +179,7 @@ class VerificationHandler extends CoreUtil {
         /**@type {ThreadChannel} Spawned thread */
         const spawnedThread = await parentChannel.send({
             embeds: [new EmbedBuilder()
-                .setColor('AQUA')
+                .setColor('Aqua')
                 .setTitle('Age Verification Thread')
                 .setFooter({ text: 'Started ➡️' })
                 .setTimestamp()
@@ -206,7 +206,7 @@ class VerificationHandler extends CoreUtil {
         IS_DENIED: {
             ephemeral: true,
             embeds: [new EmbedBuilder()
-                .setColor('RED')
+                .setColor('Red')
                 .setTitle('⚠️ Hang on.')
                 .setDescription(
                 '**Your request has already been denied in the past, unfortunately you cannot request again.' + '**\nIf you believe that this is a mistake, please contact an administrator.')
@@ -215,7 +215,7 @@ class VerificationHandler extends CoreUtil {
         IS_PENDING: {
             ephemeral: true,
             embeds: [new EmbedBuilder()
-                .setColor('YELLOW')
+                .setColor('Yellow')
                 .setTitle('🌟 Woah-!')
                 .setDescription(
                 '**Your request is currently being processed, and an admin will be with you shortly.**'
@@ -226,7 +226,7 @@ class VerificationHandler extends CoreUtil {
         REQUEST_SENT: {
             ephemeral: true,
             embeds: [new EmbedBuilder()
-                .setColor('GREEN')
+                .setColor('Green')
                 .setTitle('✅ Request submitted')
                 .setDescription(
                 '**An administrator will contact you within 48 hours regarding verification.**'
@@ -237,14 +237,14 @@ class VerificationHandler extends CoreUtil {
         ALREADY_VERIFIED: {
             ephemeral: true,
             embeds: [new EmbedBuilder()
-                .setColor('AQUA')
+                .setColor('Aqua')
                 .setTitle('🎉 You\'re already verified!')
             ]
         },
         NO_CHANNEL: {
             ephemeral: true,
             embeds: [new EmbedBuilder()
-                .setColor('YELLOW')
+                .setColor('Yellow')
                 .setTitle('⚠️ Sorry, something went wrong')
                 .setDescription(
                 'It seems that the channel that administrators use to process verification requests is missing or destroyed.'
@@ -254,7 +254,7 @@ class VerificationHandler extends CoreUtil {
         NO_ROLE: {
             ephemeral: true,
             embeds: [new EmbedBuilder()
-                .setColor('RED')
+                .setColor('Red')
                 .setTitle('❗ Missing Roles')
                 .setDescription(
                 '**The "Adult" role is missing or destroyed.**'

@@ -46,7 +46,7 @@ module.exports = async (button) => {
             return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder()
-                    .setColor('BLURPLE')
+                    .setColor('Blurple')
                     .setTitle('📝 Status View')
                     .setDescription('Quickly view the status of any of your excuses, whether they\'ve been approved, still pending, or denied!')
                 ],
@@ -67,7 +67,7 @@ module.exports = async (button) => {
             return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: 'Check all of your submitted excuses for `' + EXCUSE_DAY + '`!',
                     description: '> Press any of the available buttons to pull up the original request submitted!',
                 })],
@@ -126,7 +126,7 @@ module.exports = async (button) => {
             return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: ['GREEN', 'YELLOW', 'RED'][statusIndex],
+                    color: ['Green', 'Yellow', 'Red'][statusIndex],
                     author: {
                         name: EXCUSE_TYPE + ' Form Status: ' + [
                             '✅ Approved',
@@ -159,7 +159,7 @@ module.exports = async (button) => {
         if (ExcuseHandler.dayIsPaused(button.guild.id, EXCUSE_DAY)) return button.reply({
             ephemeral: true,
             embeds: [new EmbedBuilder({
-                color: 'YELLOW',
+                color: 'Yellow',
                 title: '⚠️ Woah wait a minute-!',
                 description: 'Looks like all excuse forms for **`' + EXCUSE_DAY + '`** are currently ⏸ **`PAUSED`**!'
                 + '\n> The only action allowed is viewing the status of any submission you have already made.'
@@ -195,7 +195,7 @@ module.exports = async (button) => {
     return button.reply({
         ephemeral: true,
         embeds: [new EmbedBuilder({
-            color: 'FUCHSIA',
+            color: 'Fuchsia',
             title: 'Need an excuse for `' + EXCUSE_DAY + '`? Just one more thing...',
             description: '> What kind of excuse do you wish to submit?'
             + '\n\n**PLEASE NOTE YOU MAY ONLY SUBMIT ONE OF EACH PER DAY**'

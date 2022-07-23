@@ -212,11 +212,11 @@ module.exports = async (modal) => {
     // save and re-render
     const embeds = [new EmbedBuilder({
         title: '✅ Edits successful!',
-        color: 'GREEN',
+        color: 'Green',
     })];
     if (errors.length) embeds.push(new EmbedBuilder({
         title: '⚠️ Whoops-! Something\'s a bit off...',
-        color: 'RED',
+        color: 'Red',
         description: 'There were a few values that were\'t quite right! They have been reset to their original values.\n\n'
         + errors.map(([customId, errorMessage]) =>
         (stats[customId]?.flair ?? '') + ' **' +

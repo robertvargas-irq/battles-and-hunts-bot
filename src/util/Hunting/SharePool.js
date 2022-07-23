@@ -5,7 +5,7 @@ class SharePool {
     
     /**
      * Maximum amount of active shared prey embeds */
-    static #MAX_SHARED_PREY = 100;
+    static #MAX_SHARed_PREY = 100;
 
     /**
      * @type {Map<guildId, Map<messageId, prey: prey>>}
@@ -15,7 +15,7 @@ class SharePool {
     static witherPrey = (message) => {
         return message.edit({
             embeds: [new EmbedBuilder({
-                color: 'DARK_AQUA',
+                color: 'DarkAqua',
                 footer: { text: 'This catch has withered away...' },
             })],
             components: [],
@@ -30,7 +30,7 @@ class SharePool {
 
         // make room in the share pool if necessary
         const server = this.#sharePool.get(originalMessage.guild.id);
-        if (server.size >= this.#MAX_SHARED_PREY) {
+        if (server.size >= this.#MAX_SHARed_PREY) {
             const [messageId] = server.keys();
             server.delete(messageId);
         }
@@ -79,7 +79,7 @@ class SharePool {
         // ensure original member is the one clicking
         if (originalMember.user.id != button.user.id) return button.reply({
             embeds: [new EmbedBuilder({
-                color: 'RED',
+                color: 'Red',
                 title: '⚠️ You can only share your own catches!',
             })]
         });
@@ -106,7 +106,7 @@ class SharePool {
     }
 
     static generateShareEmbed = (prey, character, member) => new EmbedBuilder({
-        color: 'GOLD',
+        color: 'Gold',
         title: '💖🥬 Shared Prey',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
         image: prey.visual ? { url: prey.visual } : undefined,

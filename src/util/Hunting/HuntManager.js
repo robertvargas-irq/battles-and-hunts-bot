@@ -106,7 +106,7 @@ class HuntManager extends CoreUtil {
 
         // display tracked result only if a track roll was required
         if (!prey.overrides?.hasOwnProperty('requiresTracking') || prey.overrides?.requiresTracking) embeds.push(new EmbedBuilder({
-            color: tracked ? 'GREEN' : 'RED',
+            color: tracked ? 'Green' : 'Red',
             title: '🧭 ' + (tracked ? 'Tracked and spotted prey' : 'No prey has made itself known'),
             description: '**Territory Bonus**: +`' + trackProfName.toUpperCase() + '`/`2`'
             + '\n**Hunting DC**: `' + server.hunting.seasonDC + '`'
@@ -115,7 +115,7 @@ class HuntManager extends CoreUtil {
 
         // if tracked, display catch result only if a catch roll was required
         if ((!prey.overrides?.hasOwnProperty('requiresCatching') || prey.overrides?.requiresCatching) && tracked) embeds.push(new EmbedBuilder({
-            color: caught ? 'GREEN' : 'RED',
+            color: caught ? 'Green' : 'Red',
             title: '🪝 ' + (caught ? 'Caught and collected prey' : 'Unfortunately, the prey ran off'),
             description: '**Territory Bonus**: +`' + catchProfName.toUpperCase() + '`/`2`'
             + '\n**Hunting DC**: `' + server.hunting.seasonDC + '`'
@@ -124,7 +124,7 @@ class HuntManager extends CoreUtil {
 
         // attach final summary of the hunt
         embeds.push(new EmbedBuilder({
-            color: tracked && caught ? 'GREEN' : 'FUCHSIA',
+            color: tracked && caught ? 'Green' : 'Fuchsia',
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
                 text: 'Hunt Results for ' + (character.name ?? interaction.member.displayName + '\'s character'),
@@ -290,7 +290,7 @@ class HuntManager extends CoreUtil {
     static async displayRestrictedHunting(interaction) {
         return await this.SendAndDelete(interaction, {
             embeds: [new EmbedBuilder()
-                .setColor('YELLOW')
+                .setColor('Yellow')
                 .setTitle('🔒 Hunting is currently limited.')
                 .setDescription(
                     'It is possible that canon roleplay sessions are not in progress, so `certain` Hunt `features` are `restricted`.'
@@ -308,7 +308,7 @@ class HuntManager extends CoreUtil {
      */
     static formatStats(character, memberSnowflake) {
         return new EmbedBuilder({
-            color: 'DARK_VIVID_PINK',
+            color: 'DarkVividPink',
             thumbnail: { url: character.icon ?? memberSnowflake.displayAvatarURL({ dynamic: true }) },
             title: '🥩 Hunting Stats and Contributions',
             description: '**These are 🍃 canon contributions!**'
@@ -337,7 +337,7 @@ class HuntManager extends CoreUtil {
     }
 
     static editToDisplayCarried = (embed) => EmbedBuilder.from(embed)
-        .setColor('GREYPLE')
+        .setColor('Greyple')
         .setTitle('')
         .setThumbnail(embed.image?.url || '')
         .setDescription('')

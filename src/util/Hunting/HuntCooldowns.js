@@ -185,7 +185,7 @@ class HuntCooldowns {
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new EmbedBuilder({
-                color: 'FUCHSIA',
+                color: 'Fuchsia',
                 title: '💫 Feeling a little winded',
                 description: '**You\'re feeling a bit tired...**'
                 + '\nMaybe take a brief rest after trying `'
@@ -207,7 +207,7 @@ class HuntCooldowns {
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
             embeds: [new EmbedBuilder({
-                color: 'FUCHSIA',
+                color: 'Fuchsia',
                 title: '💤 W...Wait...',
                 description: '**You\'re feeling a bit tired...**'
                 + '\nYou can feel everything ache.'

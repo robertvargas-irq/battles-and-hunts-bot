@@ -26,7 +26,7 @@ module.exports = async (interaction, subcommand) => {
 
             return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '✅ Hunting DC successfully modified',
                     description: '> ' + (
                     newValue >= 1000
@@ -64,7 +64,7 @@ module.exports = async (interaction, subcommand) => {
             // notify successful set
             return interaction.editReply({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '✅ Successfully set all character\'s hungers to max.',
                     description: '> **Hunger begins to bear down upon warriors great and small, leaders and young, and everyone in-between.**'
                     + '\n\n > It is inescapable, as time ticks by, finding something suitable to `/eat` grows prevalent to satiate this growing `/hunger`...'
@@ -83,7 +83,7 @@ module.exports = async (interaction, subcommand) => {
                 PreyPile.updatePreyPile(interaction, server, clanName);
                 PreyPile.pushPreyUpdateMessage(interaction, server, clanName, {
                     embeds: [new EmbedBuilder()
-                        .setColor('RED')
+                        .setColor('Red')
                         .setTitle('🪰🦴 All of your food has gone to waste.')
                         .setDescription(`The entirety of the prey pile has rotted away, leaving behind a foul odor that absolutely engulfs your sense of smell.` +
                         `\n\n__**All of the following prey has spoiled**__:\n${PreyPile.formatPrey(spoiledFood)}\n\n||**${interaction.member.displayName} (${interaction.user.tag}(${interaction.user.id}))** called the \`/spoil\` command.||`)
@@ -97,7 +97,7 @@ module.exports = async (interaction, subcommand) => {
             // notify successful set
             return interaction.reply({
                 embeds: [new EmbedBuilder()
-                    .setColor('GREEN')
+                    .setColor('Green')
                     .setTitle('✅ Successfully spoiled all prey piles.')
                     .setDescription('As the moons pass, disease and rot takes away what little you have left.')
                 ]
@@ -112,7 +112,7 @@ module.exports = async (interaction, subcommand) => {
             // inform if already locked
             if (server.hunting.locked) return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: '🔐 Hunting is already locked!',
                 })]
             });
@@ -124,7 +124,7 @@ module.exports = async (interaction, subcommand) => {
             // notify successful set
             return interaction.reply({
                 embeds: [new EmbedBuilder()
-                    .setColor('DARK_VIVID_PINK')
+                    .setColor('DarkVividPink')
                     .setTitle('🔒 Hunting has been heavily restricted.')
                     .setDescription(
                         '> We hope you had a wonderful roleplay session, hunting is now restricted.'
@@ -142,7 +142,7 @@ module.exports = async (interaction, subcommand) => {
             // inform if already unlocked
             if (!server.hunting.locked) return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'FUCHSIA',
+                    color: 'Fuchsia',
                     title: '🔓 Hunting is already unlocked!',
                 })]
             });
@@ -154,7 +154,7 @@ module.exports = async (interaction, subcommand) => {
             // notify successful set
             return interaction.reply({
                 embeds: [new EmbedBuilder()
-                    .setColor('GREEN')
+                    .setColor('Green')
                     .setTitle('🔓 Hunting is now fully available.')
                     .setDescription(
                         '> This probably means that a session is about to start, **happy roleplaying!**'

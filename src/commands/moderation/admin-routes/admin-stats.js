@@ -16,7 +16,7 @@ module.exports = async (interaction, subcommand) => {
             Player.clearEditing(interaction.guild.id);
             return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '🔐 Editing Stats in /character re-locked.',
                     description: 'To unlock individual or server-wide editing, use the `unlock-one` or `unlock-all` subcommand respectively.'
                     + '\n/admin stats unlock'
@@ -30,7 +30,7 @@ module.exports = async (interaction, subcommand) => {
             Player.allowEditing(interaction.guild.id, member.user.id);
             return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '🔓 Editing Stats in /character temporarily granted to ' + member.displayName + '(' + member.user.tag + ').',
                     description: 'To lock everyone\'s ability to edit /character Stats, use the `lock` subcommand.'
                     + '\n/admin stats lock'
@@ -43,7 +43,7 @@ module.exports = async (interaction, subcommand) => {
             Player.allowGuildEditing(interaction.guild.id);
             return interaction.reply({
                 embeds: [new EmbedBuilder({
-                    color: 'GREEN',
+                    color: 'Green',
                     title: '🔓 Editing Stats in /character granted to everyone within the server.',
                     description: 'To lock everyone\'s ability to edit /character Stats, use the `lock` subcommand.'
                     + '\n/admin stats lock'

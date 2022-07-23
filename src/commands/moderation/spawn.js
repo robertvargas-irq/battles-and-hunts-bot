@@ -142,7 +142,7 @@ module.exports = {
                 // notify successful set
                 return interaction.reply({
                     embeds: [new EmbedBuilder({
-                        color: 'GREEN',
+                        color: 'Green',
                         title: '✅ Configuration Saved',
                         description: '`Admin Action Logging Channel`: ' + (server.logging.admin ? `<#${server.logging.admin}>` : '`None`')
                         + '\n`Player Action Logging Channel`: ' + (server.logging.player ? `<#${server.logging.player}>` : '`None`')
@@ -163,7 +163,7 @@ module.exports = {
                     return interaction.reply({
                         ephemeral: true,
                         embeds: [new EmbedBuilder()
-                            .setColor('RED')
+                            .setColor('Red')
                             .setTitle('❗ Woah wait-!')
                             .setDescription('The channel must be a text channel, not a thread or category!')
                         ],
@@ -173,7 +173,7 @@ module.exports = {
                 // finally, spawn the menu and provide a loading screen
                 const menuMessage = interaction.channel.send({
                     embeds: [new EmbedBuilder()
-                        .setColor('BLURPLE')
+                        .setColor('Blurple')
                         .setTitle('📝 Excuse Form Requests')
                         .setDescription(
                             'Need to excuse yourself from a session? Running late or a little behind; need to leave early, perhaps?'
@@ -208,7 +208,7 @@ module.exports = {
                 await server.save();
                 return interaction.editReply({
                     embeds: [new EmbedBuilder()
-                        .setColor('GREEN')
+                        .setColor('Green')
                         .setTitle('✅ Configuration Saved')
                         .setDescription('`Processing Channel`: <#' + processingChannel.id + '>')
                     ]
@@ -232,7 +232,7 @@ module.exports = {
 
                 await interaction.editReply({
                     embeds: [new EmbedBuilder()
-                        .setColor('GREEN')
+                        .setColor('Green')
                         .setTitle('✅ Configuration Saved')
                         .setDescription(
                         '`Request Channel`: <#' + requestChannel.id + '>'
@@ -260,7 +260,7 @@ module.exports = {
                 // notify successful set
                 return interaction.editReply({
                     embeds: [new EmbedBuilder()
-                        .setColor('GREEN')
+                        .setColor('Green')
                         .setTitle('✅ Successfully spawned the prey pile')
                         .setDescription(`The prey pile for \`${clan.toUpperCase()}\` has been successfully spawned.\
                         \nBoth the channel and message have been saved, and any updates to it will be recorded within this channel and the existing message.\
@@ -278,7 +278,7 @@ module.exports = {
                     return interaction.reply({
                         ephemeral: true,
                         embeds: [new EmbedBuilder()
-                            .setColor('RED')
+                            .setColor('Red')
                             .setTitle('❗ Woah wait-!')
                             .setDescription('The channel must be a text channel, not a thread or category!')
                         ],
@@ -292,7 +292,7 @@ module.exports = {
                 // spawn menu to open a submission
                 interaction.channel.send({
                     embeds: [new EmbedBuilder({
-                        color: 'FUCHSIA',
+                        color: 'Fuchsia',
                         title: '🗃️ Character Submission Information',
                         description: '> Welcome to **' + CoreUtil.roleplayName + '**! We\'re incredibly happy to have you join us!'
                         + '\n> \n> Before you can get started with roleplay sessions and all of the features provided by **' + interaction.client.user.username + '**, let\'s get you started in writing your own path in **' + CoreUtil.roleplayName
@@ -335,7 +335,7 @@ module.exports = {
                 return interaction.reply({
                     ephemeral: true,
                     embeds: [new EmbedBuilder({
-                        color: 'GREEN',
+                        color: 'Green',
                         title: '✅ Configuration Saved',
                         description: '`Processing Channel`: <#' + processingChannel.id + '>'
                     })]

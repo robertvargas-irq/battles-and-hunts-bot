@@ -26,7 +26,7 @@ module.exports = async (button) => {
             if (active.character.approved) return button.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder({
-                    color: 'YELLOW',
+                    color: 'Yellow',
                     title: '⚠️ Woah wait-!',
                     description: '> It looks like this character has already been approved!'
                 })]

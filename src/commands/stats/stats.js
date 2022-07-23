@@ -73,7 +73,7 @@ module.exports = {
             else interaction.reply({
                 ephemeral: true,
                 embeds: [new EmbedBuilder()
-                    .setColor('AQUA')
+                    .setColor('Aqua')
                     .setTitle('⚠️ Woah!')
                     .setDescription('**That user has not set up their stats yet!**\nCome back later or bug them to do so! 🌟')
                 ]

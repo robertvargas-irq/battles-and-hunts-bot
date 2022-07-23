@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, EmbedBuilder, GuildMember } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, GuildMember, Colors } = require('discord.js');
 const Player = require('../../util/Account/Player');
 const HuntManager = require('../../util/Hunting/HuntManager');
 const CoreUtil = require('../../util/CoreUtil');
@@ -72,8 +72,8 @@ module.exports = {
             if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
             else interaction.reply({
                 ephemeral: true,
-                embeds: [EmbedBuilder.from()
-                    .setColor('Aqua')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Aqua)
                     .setTitle('⚠️ Woah!')
                     .setDescription('**That user has not set up their stats yet!**\nCome back later or bug them to do so! 🌟')
                 ]

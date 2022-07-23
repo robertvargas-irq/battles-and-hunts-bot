@@ -78,12 +78,12 @@ class CharacterMenu {
         const c = character;
         const s = author;
         const embed = EmbedBuilder.from({
-            color: s.displayColor || '#76e3ed',
+            color: s.displayColor || 0x76e3ed,
             author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
             description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',
             fields: [
-                statArray.map(([stat, data]) => { return {
+                ...statArray.map(([stat, data]) => { return {
                     name: (editingEnabled && (!statsLocked || isAdmin)
                         ? statSections[Math.floor(statSection++ / statSections.length)] + ' | '
                         : ''

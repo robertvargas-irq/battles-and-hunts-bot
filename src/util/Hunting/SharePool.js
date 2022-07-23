@@ -1,4 +1,4 @@
-const { EmbedBuilder, Message, ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, Message, ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, Colors } = require('discord.js');
 const HuntManager = require('./HuntManager');
 
 class SharePool {
@@ -15,7 +15,7 @@ class SharePool {
     static witherPrey = (message) => {
         return message.edit({
             embeds: [EmbedBuilder.from({
-                color: 'DarkAqua',
+                color: Colors.DarkAqua,
                 footer: { text: 'This catch has withered away...' },
             })],
             components: [],
@@ -79,7 +79,7 @@ class SharePool {
         // ensure original member is the one clicking
         if (originalMember.user.id != button.user.id) return button.reply({
             embeds: [EmbedBuilder.from({
-                color: 'Red',
+                color: Colors.Red,
                 title: '⚠️ You can only share your own catches!',
             })]
         });
@@ -106,7 +106,7 @@ class SharePool {
     }
 
     static generateShareEmbed = (prey, character, member) => EmbedBuilder.from({
-        color: 'Gold',
+        color: Colors.Gold,
         title: '💖🥬 Shared Prey',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
         image: prey.visual ? { url: prey.visual } : undefined,

@@ -1,4 +1,4 @@
-const { CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, Colors } = require('discord.js');
 const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
 
 
@@ -27,7 +27,7 @@ module.exports = async (interaction, subcommand) => {
             // if nothing was deleted, inform and do not resume
             if (deletedCount === 0) return interaction.editReply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Aqua',
+                    color: Colors.Aqua,
                     title: '✨ All clean already-!',
                     description: '> Nothin\' needed to be deleted, and all remains as it was.'
                 })]
@@ -37,7 +37,7 @@ module.exports = async (interaction, subcommand) => {
             ExcuseHandler.resume(interaction.guild.id, day);
             return interaction.editReply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Green',
+                    color: Colors.Green,
                     title: '✅ Successfully cleared ' + deletedCount + ' excuse' + (deletedCount != 1 ? 's' : '') + ' for ' + day,
                     description: '> Additionally, if excuses for this day were paused, they have been resumed.'
                 })]
@@ -57,7 +57,7 @@ module.exports = async (interaction, subcommand) => {
             // paused successfully
             if (successfullyPaused) interaction.reply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Green',
+                    color: Colors.Green,
                     title: '⏸ Successfully paused requests for ' + day,
                     description: 'To un-pause, use the `unpause` subcommand.\n/admin excuses unpause'
                 })]
@@ -66,7 +66,7 @@ module.exports = async (interaction, subcommand) => {
             // already paused
             else interaction.reply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Aqua',
+                    color: Colors.Aqua,
                     title: '⏸ Requests were already paused for ' + day,
                     description: 'To un-pause, use the `unpause` subcommand.\n/admin excuses unpause'
                 })]
@@ -87,7 +87,7 @@ module.exports = async (interaction, subcommand) => {
             // resumed successfully
             if (successfullyResumed) interaction.reply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Green',
+                    color: Colors.Green,
                     title: '▶️ Successfully un-paused requests for ' + day,
                     description: 'To pause, use the `pause` subcommand.\n/admin excuses pause'
                 })]
@@ -96,7 +96,7 @@ module.exports = async (interaction, subcommand) => {
             // already resumed
             else interaction.reply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Aqua',
+                    color: Colors.Aqua,
                     title: '▶️ Requests were already un-paused for ' + day,
                     description: 'To pause, use the `pause` subcommand.\n/admin excuses pause'
                 })]

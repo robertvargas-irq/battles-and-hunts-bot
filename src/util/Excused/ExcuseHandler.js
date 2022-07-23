@@ -7,6 +7,7 @@ const {
     Message,
     CommandInteraction,
     ModalSubmitInteraction,
+    Colors,
 } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 const Excuse = require('../../database/schemas/excuse');
@@ -102,7 +103,7 @@ class ExcuseHandler extends CoreUtil {
         let errorSending = false;
         await member.user.send({
             embeds: [EmbedBuilder.from({
-                color: 'Green',
+                color: Colors.Green,
                 author: {
                     name: message.guild.name,
                     iconURL: message.guild.iconURL()
@@ -147,7 +148,7 @@ class ExcuseHandler extends CoreUtil {
 
         return message.edit({
             embeds: [EmbedBuilder.from(message.embeds[0])
-                .setColor('Green')
+                .setColor(Colors.Green)
                 .setAuthor({
                     name: '✅ Approved'
                     + (errorSending ? ' | ⚠️ Failed to DM' : '')
@@ -172,7 +173,7 @@ class ExcuseHandler extends CoreUtil {
         let errorSending = false;
         await member.user.send({
             embeds: [EmbedBuilder.from({
-                color: 'Red',
+                color: Colors.Red,
                 author: {
                     name: message.guild.name,
                     iconURL: message.guild.iconURL()
@@ -218,7 +219,7 @@ class ExcuseHandler extends CoreUtil {
         // return the excuse form
         return message.edit({
             embeds: [EmbedBuilder.from(message.embeds[0])
-                .setColor('Red')
+                .setColor(Colors.Red)
                 .setAuthor({
                     name: '⛔️ Insufficient Excuse'
                     + (errorSending ? ' | ⚠️ Failed to DM' : '')
@@ -382,10 +383,10 @@ class ExcuseHandler extends CoreUtil {
         // post the excuse for administrative review
         const typeIndex = ['ABSENCE', 'LEFT EARLY', 'LATE'].indexOf(excuse.type);
         const emoji = ['❌', '🏃', '⏰'][typeIndex];
-        const color = ['Orange', 'Blurple', 'Yellow'][typeIndex];
+        const color = [Colors.Orange, Colors.Blurple, Colors.Yellow][typeIndex];
 
         return excuseThread.send({
-            embeds: [EmbedBuilder.from()
+            embeds: [new EmbedBuilder()
                 .setColor(color)
                 .setTitle(emoji + ' ' + excuse.type + ' FORM')
                 .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))

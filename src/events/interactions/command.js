@@ -1,4 +1,4 @@
-const { EmbedBuilder, PermissionsBitField, CommandInteraction } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField, CommandInteraction, Colors } = require('discord.js');
 
 const restrictions = require('./restrictions.json');
 
@@ -100,8 +100,8 @@ async function wrongChannelMessage(interaction, [code, list]) {
 
     const messagePayload = {
         ephemeral: true,
-        embeds: [EmbedBuilder.from()
-            .setColor('Blue')
+        embeds: [new EmbedBuilder()
+            .setColor(Colors.Blue)
             .setTitle('❗ __Woah There!__')
             .setDescription(description)]
     };

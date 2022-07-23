@@ -1,6 +1,6 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, Colors } = require('discord.js');
 const PreyPile = require('../../util/Hunting/PreyPile');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
 const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
@@ -60,8 +60,8 @@ module.exports = {
         if (carrying.length < 1) {
             return interaction.reply({
                 ephemeral: true,
-                embeds: [EmbedBuilder.from()
-                    .setColor('Yellow')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Yellow)
                     .setTitle('⚠️ Woah wait! You aren\'t carrying anything!')
                     .setDescription(`\
                     > Go back and use \`/hunt\` first, collect anything you caught, and then use this command to go and deposit your prey to your clan\'s prey pile!
@@ -104,10 +104,10 @@ module.exports = {
         HuntCooldowns.addCooldownDeposit(interaction.guild.id, interaction.user.id);
 
         // notify the clan
-        const notifyEmbed = EmbedBuilder.from();
+        const notifyEmbed = new EmbedBuilder();
         if (character.clan == clan) {
             notifyEmbed
-                .setColor('Green')
+                .setColor(Colors.Green)
                 .setTitle('📦 Some food has arrived.')
                 .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
@@ -124,7 +124,7 @@ module.exports = {
         }
         else {
             notifyEmbed
-                .setColor('Aqua')
+                .setColor(Colors.Aqua)
                 .setTitle('🎁 Some prey has been graciously gifted to us!')
                 .setThumbnail(character.icon ?? interaction.member.displayAvatarURL({ dynamic: true }))
                 .setDescription(`\
@@ -147,7 +147,7 @@ module.exports = {
         return interaction.reply({
             ephemeral: true,
             embeds: [EmbedBuilder.from({
-                color: 'Green',
+                color: Colors.Green,
                 title: `📦 __Successfully deposited in: \`${clan.toUpperCase()}\`__`,
                 description: `You take all the prey that you have collected and dump it into the \`${clan.toUpperCase()}\` prey pile.`
                 + '\n\nYou can finally take a breath after finally dropping off all that weight.'

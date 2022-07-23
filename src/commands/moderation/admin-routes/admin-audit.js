@@ -1,4 +1,4 @@
-const { CommandInteraction, EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, PermissionsBitField, Colors } = require('discord.js');
 const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
 const CoreUtil = require('../../../util/CoreUtil');
 const Hunger = require('../../../util/Hunting/Hunger');
@@ -16,7 +16,7 @@ module.exports = async (interaction, subcommand) => {
             await interaction.deferReply({ ephemeral: true });
             const day = interaction.options.getString('day');
             const headerEmbed = EmbedBuilder.from({
-                color: 'Fuchsia',
+                color: Colors.Fuchsia,
                 title: '📋 AUDIT FOR: ' + day,
                 description: '> This is the most up-to-date summary audit of **`' + day + '`** excuses and their status!'
                 + '\n\n__**Legend**__'
@@ -27,15 +27,15 @@ module.exports = async (interaction, subcommand) => {
                 timestamp: Date.now(),
             });
             const lateEmbed = EmbedBuilder.from({
-                color: 'Yellow',
+                color: Colors.Yellow,
                 title: '⏰ __LATE__',
             });
             const leftEarlyEmbed = EmbedBuilder.from({
-                color: 'Blurple',
+                color: Colors.Blurple,
                 title: '🏃 __LEFT EARLY__',
             });
             const absentEmbed = EmbedBuilder.from({
-                color: 'Orange',
+                color: Colors.Orange,
                 title: '❌ __ABSENT__',
             });
 
@@ -167,8 +167,8 @@ module.exports = async (interaction, subcommand) => {
                 ? "**Don't forget to fill out your `/character` and submit when you can!**\n||"
                 + nonRegistered.map(m => "<@" + m.user.id + ">").join('')
                 + "||" : null,
-                embeds: [EmbedBuilder.from()
-                    .setColor('Green')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Green)
                     .setTitle('✅ Audit complete.')
                     .setDescription(
                         (nonSubmitted.length > 0 ? (
@@ -218,7 +218,7 @@ module.exports = async (interaction, subcommand) => {
                 console.log({starvingMembers});
                 console.log({starvSorted: starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, ''))})
                 embeds.push(EmbedBuilder.from({
-                    color: 'DarkRed',
+                    color: Colors.DarkRed,
                     title: 'STARVING MEMBERS IN: ' + clan.toUpperCase(),
                     description: starvingMembers.length > 0 ? starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, '')).map(member =>
                         '> ⊗ **' + member.displayName + '** (<@' + member.user.id + '>)'
@@ -229,7 +229,7 @@ module.exports = async (interaction, subcommand) => {
 
             // generate header
             embeds.push(EmbedBuilder.from({
-                color: 'DarkGrey',
+                color: Colors.DarkGrey,
                 title: '🦴 Starvation lingers...',
                 description: '> This audit contains the most up-to-date information available upon request.',
                 footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
@@ -278,7 +278,7 @@ module.exports = async (interaction, subcommand) => {
             const registeredList = Array.from(registered);
             for (let i = 0; i < registeredList.length && i < 9; i++) {
                 embeds.push(EmbedBuilder.from({
-                    color: 'Fuchsia',
+                    color: Colors.Fuchsia,
                     title: registeredList[i][0].toUpperCase(),
                     description: registeredList[i][1].map(member => '> ↣ **' + member.displayName + '** (<@' + member.user.id + '>)').join('\n'),
                 }));
@@ -286,7 +286,7 @@ module.exports = async (interaction, subcommand) => {
 
             // generate summary
             embeds.push(EmbedBuilder.from({
-                color: 'Aqua',
+                color: Colors.Aqua,
                 title: '📝 All members registered to the bot',
                 description: '> This audit contains the most up-to-date information available upon request.',
                 footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },

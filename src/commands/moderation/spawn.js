@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, EmbedBuilder, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, Colors } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 const PreyPile = require('../../util/Hunting/PreyPile');
@@ -142,7 +142,7 @@ module.exports = {
                 // notify successful set
                 return interaction.reply({
                     embeds: [EmbedBuilder.from({
-                        color: 'Green',
+                        color: Colors.Green,
                         title: '✅ Configuration Saved',
                         description: '`Admin Action Logging Channel`: ' + (server.logging.admin ? `<#${server.logging.admin}>` : '`None`')
                         + '\n`Player Action Logging Channel`: ' + (server.logging.player ? `<#${server.logging.player}>` : '`None`')
@@ -162,8 +162,8 @@ module.exports = {
                 if (processingChannel.type !== ChannelType.GuildText) {
                     return interaction.reply({
                         ephemeral: true,
-                        embeds: [EmbedBuilder.from()
-                            .setColor('Red')
+                        embeds: [new EmbedBuilder()
+                            .setColor(Colors.Red)
                             .setTitle('❗ Woah wait-!')
                             .setDescription('The channel must be a text channel, not a thread or category!')
                         ],
@@ -172,8 +172,8 @@ module.exports = {
 
                 // finally, spawn the menu and provide a loading screen
                 const menuMessage = interaction.channel.send({
-                    embeds: [EmbedBuilder.from()
-                        .setColor('Blurple')
+                    embeds: [new EmbedBuilder()
+                        .setColor(Colors.Blurple)
                         .setTitle('📝 Excuse Form Requests')
                         .setDescription(
                             'Need to excuse yourself from a session? Running late or a little behind; need to leave early, perhaps?'
@@ -207,8 +207,8 @@ module.exports = {
                 ExcuseHandler.setProcessingChannel(server, processingChannel.id);
                 await server.save();
                 return interaction.editReply({
-                    embeds: [EmbedBuilder.from()
-                        .setColor('Green')
+                    embeds: [new EmbedBuilder()
+                        .setColor(Colors.Green)
                         .setTitle('✅ Configuration Saved')
                         .setDescription('`Processing Channel`: <#' + processingChannel.id + '>')
                     ]
@@ -231,8 +231,8 @@ module.exports = {
                 await server.save();
 
                 await interaction.editReply({
-                    embeds: [EmbedBuilder.from()
-                        .setColor('Green')
+                    embeds: [new EmbedBuilder()
+                        .setColor(Colors.Green)
                         .setTitle('✅ Configuration Saved')
                         .setDescription(
                         '`Request Channel`: <#' + requestChannel.id + '>'
@@ -259,8 +259,8 @@ module.exports = {
 
                 // notify successful set
                 return interaction.editReply({
-                    embeds: [EmbedBuilder.from()
-                        .setColor('Green')
+                    embeds: [new EmbedBuilder()
+                        .setColor(Colors.Green)
                         .setTitle('✅ Successfully spawned the prey pile')
                         .setDescription(`The prey pile for \`${clan.toUpperCase()}\` has been successfully spawned.\
                         \nBoth the channel and message have been saved, and any updates to it will be recorded within this channel and the existing message.\
@@ -277,8 +277,8 @@ module.exports = {
                 if (processingChannel.type !== ChannelType.GuildText) {
                     return interaction.reply({
                         ephemeral: true,
-                        embeds: [EmbedBuilder.from()
-                            .setColor('Red')
+                        embeds: [new EmbedBuilder()
+                            .setColor(Colors.Red)
                             .setTitle('❗ Woah wait-!')
                             .setDescription('The channel must be a text channel, not a thread or category!')
                         ],
@@ -292,7 +292,7 @@ module.exports = {
                 // spawn menu to open a submission
                 interaction.channel.send({
                     embeds: [EmbedBuilder.from({
-                        color: 'Fuchsia',
+                        color: Colors.Fuchsia,
                         title: '🗃️ Character Submission Information',
                         description: '> Welcome to **' + CoreUtil.roleplayName + '**! We\'re incredibly happy to have you join us!'
                         + '\n> \n> Before you can get started with roleplay sessions and all of the features provided by **' + interaction.client.user.username + '**, let\'s get you started in writing your own path in **' + CoreUtil.roleplayName
@@ -335,7 +335,7 @@ module.exports = {
                 return interaction.reply({
                     ephemeral: true,
                     embeds: [EmbedBuilder.from({
-                        color: 'Green',
+                        color: Colors.Green,
                         title: '✅ Configuration Saved',
                         description: '`Processing Channel`: <#' + processingChannel.id + '>'
                     })]

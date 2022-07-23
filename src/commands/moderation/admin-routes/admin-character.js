@@ -1,4 +1,4 @@
-const { CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, Colors } = require('discord.js');
 const CharacterModel = require('../../../database/schemas/character');
 const SubmissionHandler = require('../../../util/Submissions/SubmissionHandler');
 const CoreUtil= require('../../../util/CoreUtil');
@@ -36,7 +36,7 @@ module.exports = async (interaction, subcommand) => {
             // inform administrator that the character was deleted
             return interaction.reply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Red',
+                    color: Colors.Red,
                     title: '🗑️ ' + (character.name || (author.displayName + '\'s unnamed character')) + ' was permanently deleted.',
                 })]
             });
@@ -48,7 +48,7 @@ module.exports = async (interaction, subcommand) => {
             if (character.approved) return interaction.reply({
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
-                    color: 'Fuchsia',
+                    color: Colors.Fuchsia,
                     title: '💡 This character is already approved!',
                 })]
             });
@@ -58,7 +58,7 @@ module.exports = async (interaction, subcommand) => {
             character.save();
             return interaction.reply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Green',
+                    color: Colors.Green,
                     title: '✅ This character is now marked as approved!',
                 })]
             });
@@ -70,7 +70,7 @@ module.exports = async (interaction, subcommand) => {
             if (!character.approved) return interaction.reply({
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
-                    color: 'Fuchsia',
+                    color: Colors.Fuchsia,
                     title: '💡 This character is not approved yet!',
                 })]
             });
@@ -80,7 +80,7 @@ module.exports = async (interaction, subcommand) => {
             character.save();
             return interaction.reply({
                 embeds: [EmbedBuilder.from({
-                    color: 'Green',
+                    color: Colors.Green,
                     title: '✅ This character is no longer marked as approved!',
                 })]
             });

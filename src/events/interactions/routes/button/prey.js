@@ -1,4 +1,4 @@
-const { ButtonInteraction, EmbedBuilder } = require('discord.js');
+const { ButtonInteraction, EmbedBuilder, Colors } = require('discord.js');
 const HuntManager = require('../../../../util/Hunting/HuntManager');
 const SharePool = require('../../../../util/Hunting/SharePool');
 const HuntInventory = require('../../../../util/Hunting/HuntInventory');
@@ -37,13 +37,13 @@ module.exports = async (button) => {
             // if in share pool, carry
             if (sharePoolPrey) {
                 const [overEncumbered, weightCarrying, currentlyCarrying] = HuntInventory.addToCarry(button.guild.id, button.user.id, sharePoolPrey, button.message);
-                const resultEmbed = EmbedBuilder.from();
+                const resultEmbed = new EmbedBuilder();
 
                 // if successfully carried, notify
                 if (!overEncumbered) {
                     // if weight being carried is at a respectable limit
                     if (weightCarrying <= HuntInventory.calculateCarryWeight(hunter)) resultEmbed
-                        .setColor('Green')
+                        .setColor(Colors.Green)
                         .setTitle(`🎒 __Successfully picked up: \`${sharePoolPrey.name}\`__`)
                         .setDescription(
                         `> You take the \`${sharePoolPrey.name}\` between your teeth and chuck it onto your back, ready to carry it as you venture forward.`
@@ -53,7 +53,7 @@ module.exports = async (button) => {
                         .setFooter({ text: '🍃 This carry is canon.' });
                     // else, the weight being carried is NOT at a respectable limit; the character is now over-encumbered
                     else resultEmbed
-                        .setColor('Orange')
+                        .setColor(Colors.Orange)
                         .setAuthor({ name: '❗ STATUS CHANGE: YOU ARE NOW OVER-ENCUMBERed!' })
                         .setTitle(`⚠️ __Hhh... this \`${sharePoolPrey.name}\` is so heavy...__`)
                         .setDescription(
@@ -66,7 +66,7 @@ module.exports = async (button) => {
                 }
                 // else, the carry was not successful and the player was already over-encumbered
                 else resultEmbed
-                    .setColor('Red')
+                    .setColor(Colors.Red)
                     .setAuthor({ name: '❌ YOU ARE OVER-ENCUMBERed!' })
                     .setTitle(`⚠️ __Hhh... this \`${sharePoolPrey.name}\` is too heavy...__`)
                     .setDescription(
@@ -91,19 +91,19 @@ module.exports = async (button) => {
             if (recentlyCaught.originalMember.user.id != button.user.id) return button.reply({
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
-                    color: 'Red',
+                    color: Colors.Red,
                     title: '⚠️ You can only collect hunts you caught, or those that are shared.'
                 })]
             });
 
             const [overEncumbered, weightCarrying, currentlyCarrying] = HuntInventory.addToCarry(button.guild.id, button.user.id, recentlyCaught.prey, button.message);
-            const resultEmbed = EmbedBuilder.from();
+            const resultEmbed = new EmbedBuilder();
 
             // if successfully carried, notify
             if (!overEncumbered) {
                 // if weight being carried is at a respectable limit
                 if (weightCarrying <= HuntInventory.calculateCarryWeight(hunter)) resultEmbed
-                    .setColor('Green')
+                    .setColor(Colors.Green)
                     .setTitle(`🎒 __Successfully picked up: \`${recentlyCaught.prey.name}\`__`)
                     .setDescription(
                     `> You take the \`${recentlyCaught.prey.name}\` between your teeth and chuck it onto your back, ready to carry it as you venture forward.`
@@ -113,7 +113,7 @@ module.exports = async (button) => {
                     .setFooter({ text: '🍃 This carry is canon.' });
                 // else, the weight being carried is NOT at a respectable limit; the character is now over-encumbered
                 else resultEmbed
-                    .setColor('Orange')
+                    .setColor(Colors.Orange)
                     .setAuthor({ name: '❗ STATUS CHANGE: YOU ARE NOW OVER-ENCUMBERed!' })
                     .setTitle(`⚠️ __Hhh... this \`${recentlyCaught.prey.name}\` is so heavy...__`)
                     .setDescription(
@@ -126,7 +126,7 @@ module.exports = async (button) => {
             }
             // else, the carry was not successful and the player was already over-encumbered
             else resultEmbed
-                .setColor('Red')
+                .setColor(Colors.Red)
                 .setAuthor({ name: '❌ YOU ARE OVER-ENCUMBERed!' })
                 .setTitle(`⚠️ __Hhh... this \`${recentlyCaught.prey.name}\` is too heavy...__`)
                 .setDescription(
@@ -160,7 +160,7 @@ module.exports = async (button) => {
             if (preyInformation.originalMember.user.id != button.user.id) return button.reply({
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
-                    color: 'Red',
+                    color: Colors.Red,
                     title: '⚠️ You can only eat from your own catches!',
                 })]
             });            
@@ -185,7 +185,7 @@ module.exports = async (button) => {
             if (originalMember.user.id != button.user.id) return button.reply({
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
-                    color: 'Red',
+                    color: Colors.Red,
                     title: '⚠️ You can only eat from your own catches!',
                 })]
             });

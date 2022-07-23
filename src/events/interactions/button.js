@@ -1,4 +1,4 @@
-const { ButtonInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { ButtonInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 const ExcuseModel = require('../../database/schemas/excuse');
@@ -52,7 +52,7 @@ module.exports = async (button) => {
             return button.reply({
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
-                    color: 'Red',
+                    color: Colors.Red,
                     title: '‼️⚠️ Please Read',
                     description: '> To ensure you did not press on this verification by accident, the administrative team wishes to inform you of the following:'
                     + '\n\n**ALL VERIFICATION REQUESTS WILL RECEIVE AN INDEPENDENT REVIEW/SCREENING BY A MEMBER OF OUR ADMINISTRATIVE TEAM**'
@@ -98,8 +98,8 @@ module.exports = async (button) => {
 
             // push message to administrators regarding the incoming request
             const verificationThreadMessage = await VerificationHandler.pushToVerificationThread(verificationThread, {
-                embeds: [EmbedBuilder.from()
-                    .setColor('Aqua')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Aqua)
                     .setTitle('Adult Verification Request')
                     .setThumbnail(button.member.displayAvatarURL({ dynamic: true }))
                     .setDescription('Incoming request from:'
@@ -154,8 +154,8 @@ module.exports = async (button) => {
             // check to see if the request is already pending
             if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
-                    embeds: [button.message.embeds[0]
-                        .setColor('Yellow')
+                    embeds: [EmbedBuilder.from(button.message.embeds[0])
+                        .setColor(Colors.Yellow)
                         .setTitle('⚠️ Huh...')
                         .setDescription(
                         button.message.embeds[0].description
@@ -183,8 +183,8 @@ module.exports = async (button) => {
 
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
-                embeds: [EmbedBuilder.from()
-                    .setColor('Green')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Green)
                     .setTitle('🌟 Update on your role request')
                     .setDescription(
                     'Hey there, **' + pendingUser.displayName + '**!'
@@ -200,9 +200,9 @@ module.exports = async (button) => {
 
             // notify admin
             await button.message.edit({
-                embeds: [button.message.embeds[0]
+                embeds: [EmbedBuilder.from(button.message.embeds[0])
                     .setTitle('✅ User has been verified')
-                    .setColor('Green')
+                    .setColor(Colors.Green)
                     .setFooter({
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
                     })
@@ -234,8 +234,8 @@ module.exports = async (button) => {
             // check to see if the request is already pending
             if (!VerificationHandler.isPending(server, null, button.message.id))
                 return button.message.edit({
-                    embeds: [button.message.embeds[0]
-                        .setColor('Yellow')
+                    embeds: [EmbedBuilder.from(button.message.embeds[0])
+                        .setColor(Colors.Yellow)
                         .setTitle('⚠️ Huh...')
                         .setDescription(
                         button.message.embeds[0].description
@@ -256,8 +256,8 @@ module.exports = async (button) => {
 
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
-                embeds: [EmbedBuilder.from()
-                    .setColor('Yellow')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Yellow)
                     .setTitle('❗ Update on your role request')
                     .setDescription(
                     'Hey there, **' + pendingUser.displayName + '**!'
@@ -273,8 +273,8 @@ module.exports = async (button) => {
             }).catch(() => console.log('User has DMs privated.'));
 
             await button.message.edit({
-                embeds: [button.message.embeds[0]
-                    .setColor('Red')
+                embeds: [EmbedBuilder.from(button.message.embeds[0])
+                    .setColor(Colors.Red)
                     .setTitle('⛔ User has been marked as not verified')
                     .setFooter({
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
@@ -352,7 +352,7 @@ module.exports = async (button) => {
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.edit({
                 embeds: [EmbedBuilder.from({
-                    color: 'Orange',
+                    color: Colors.Orange,
                     author: { name: 'Unable to delete; excuse no longer exists' },
                     footer: {
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
@@ -362,7 +362,7 @@ module.exports = async (button) => {
                 components: [],
             }).catch(() => button.message.edit({
                 embeds: [EmbedBuilder.from({
-                    color: 'Orange',
+                    color: Colors.Orange,
                     author: { name: 'Unable to delete' },
                     footer: {
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'
@@ -377,7 +377,7 @@ module.exports = async (button) => {
             ExcuseModel.deleteOne({ guildId: excuse.guildId, userId: excuse.userId }).then(console.log).catch(console.error);
             return button.message.edit({
                 embeds: [EmbedBuilder.from({
-                    color: 'Greyple',
+                    color: Colors.Greyple,
                     author: { name: 'Excuse successfully deleted.' },
                     footer: {
                         text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')'

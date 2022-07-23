@@ -1,4 +1,4 @@
-const { EmbedBuilder, CommandInteraction, GuildMember } = require('discord.js');
+const { EmbedBuilder, CommandInteraction, GuildMember, Colors } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
 const StatCalculator = require('../Stats/StatCalculator');
@@ -129,8 +129,8 @@ class AttackManager extends CoreUtil {
      */
     static denyBotAttack(interaction) {
         this.SafeReply(interaction, {
-            embeds : [EmbedBuilder.from()
-                .setColor('Blurple')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription('You can\'t attack a bot! 🤖')
             ]
@@ -144,8 +144,8 @@ class AttackManager extends CoreUtil {
      */
     static denySelfAttack(interaction) {
         this.SafeReply(interaction, {
-            embeds : [EmbedBuilder.from()
-                .setColor('Blurple')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('❤️‍🩹 Hey now')
                 .setDescription('You can\'t attack yourself! Take care! 🌟')
             ]
@@ -159,8 +159,8 @@ class AttackManager extends CoreUtil {
      */
     static targetNotRegistered(interaction) {
         this.SafeReply(interaction, {
-            embeds : [EmbedBuilder.from()
-                .setColor('Blurple')
+            embeds : [new EmbedBuilder()
+                .setColor(Colors.Blurple)
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription('You can\'t attack a cat that doesn\'t exist yet!\nLet them know to create and submit their character for review!\n\nThey can get started with `/character`!')
             ]

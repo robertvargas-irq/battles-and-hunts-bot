@@ -1,4 +1,4 @@
-const { ButtonInteraction, EmbedBuilder } = require('discord.js');
+const { ButtonInteraction, EmbedBuilder, Colors } = require('discord.js');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const SubmissionHandler = require('../../../../util/Submissions/SubmissionHandler');
 const CoreUtil = require('../../../../util/CoreUtil');
@@ -26,7 +26,7 @@ module.exports = async (button) => {
             if (active.character.approved) return button.reply({
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
-                    color: 'Yellow',
+                    color: Colors.Yellow,
                     title: '⚠️ Woah wait-!',
                     description: '> It looks like this character has already been approved!'
                 })]

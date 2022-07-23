@@ -1,4 +1,4 @@
-const { CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, Colors } = require('discord.js');
 const CoreUtil = require('../../../util/CoreUtil');
 const CharacterModel = require('../../../database/schemas/character');
 
@@ -59,8 +59,8 @@ module.exports = async (interaction, subcommand) => {
 
             // notify successful set
             return interaction.editReply({
-                embeds: [EmbedBuilder.from()
-                    .setColor('Green')
+                embeds: [new EmbedBuilder()
+                    .setColor(Colors.Green)
                     .setTitle('✅ Refreshed everyone\'s clan affiliations.')
                     .setDescription('Everyone\'s affiliations should now be properly accounted for.')
                 ]

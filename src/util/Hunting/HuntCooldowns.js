@@ -1,4 +1,4 @@
-const { EmbedBuilder, CommandInteraction } = require('discord.js');
+const { EmbedBuilder, CommandInteraction, Colors } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 class HuntCooldowns {
@@ -185,7 +185,7 @@ class HuntCooldowns {
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
             embeds: [EmbedBuilder.from({
-                color: 'Fuchsia',
+                color: Colors.Fuchsia,
                 title: '💫 Feeling a little winded',
                 description: '**You\'re feeling a bit tired...**'
                 + '\nMaybe take a brief rest after trying `'
@@ -207,7 +207,7 @@ class HuntCooldowns {
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
             embeds: [EmbedBuilder.from({
-                color: 'Fuchsia',
+                color: Colors.Fuchsia,
                 title: '💤 W...Wait...',
                 description: '**You\'re feeling a bit tired...**'
                 + '\nYou can feel everything ache.'

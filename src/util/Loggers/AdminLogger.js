@@ -1,4 +1,4 @@
-const { GuildMember, TextChannel, EmbedBuilder } = require('discord.js');
+const { GuildMember, TextChannel, EmbedBuilder, Colors } = require('discord.js');
 
 class AdminLogger {
 
@@ -25,7 +25,7 @@ class AdminLogger {
         console.log(overrides);
         return loggingChannel.send({
             embeds: [EmbedBuilder.from({
-                color: 'Blurple',
+                color: Colors.Blurple,
                 thumbnail: { url: administrator.user.avatarURL() },
                 title: '📝 Character Administrator Override',
                 description: `<@${administrator.user.id}>(${administrator.user.tag}) has overriden items from <@${target.user.id}>(${target.user.tag}) Character.`,

@@ -1,4 +1,4 @@
-const { ModalSubmitInteraction, EmbedBuilder } = require('discord.js');
+const { ModalSubmitInteraction, EmbedBuilder, Colors } = require('discord.js');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const CoreUtil = require('../../../../util/CoreUtil');
 const Player = require('../../../../util/Account/Player');
@@ -212,11 +212,11 @@ module.exports = async (modal) => {
     // save and re-render
     const embeds = [EmbedBuilder.from({
         title: '✅ Edits successful!',
-        color: 'Green',
+        color: Colors.Green,
     })];
     if (errors.length) embeds.push(EmbedBuilder.from({
         title: '⚠️ Whoops-! Something\'s a bit off...',
-        color: 'Red',
+        color: Colors.Red,
         description: 'There were a few values that were\'t quite right! They have been reset to their original values.\n\n'
         + errors.map(([customId, errorMessage]) =>
         (stats[customId]?.flair ?? '') + ' **' +

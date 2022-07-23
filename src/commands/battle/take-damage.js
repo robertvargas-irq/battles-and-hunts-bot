@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, Colors } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
@@ -31,7 +31,7 @@ module.exports = {
         if (character.currentHealth < 1) return interaction.reply({
             embeds: [
                 EmbedBuilder.from({
-                    color: 'DarkRed',
+                    color: Colors.DarkRed,
                     author: { name: 'The void has already consumed.' },
                     description: '> No more damage can be taken.',
                 }),
@@ -54,7 +54,7 @@ module.exports = {
         interaction.reply({
             embeds: [
                 EmbedBuilder.from({
-                    color: character.currentHealth < 1 ? 'NotQuiteBlack' : 'DarkRed',
+                    color: character.currentHealth < 1 ? Colors.NotQuiteBlack : Colors.DarkRed,
                     title: '🪓 Took `' + finalDamageAmount + '` Damage',
                     description: '> ' + HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),
                     footer: (finalDamageAmount !== originalDamageAmount ? {

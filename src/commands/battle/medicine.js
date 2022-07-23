@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes, Locale } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const StatCalculator = require('../../util/Stats/StatCalculator');
 const HealthVisuals = require('../../util/Battle/HealthVisuals');
@@ -41,7 +41,7 @@ module.exports = {
         const maxHealth = StatCalculator.calculateMaxHealth(character);
         if (character.currentHealth > maxHealth) return interaction.reply({
             embeds: [
-                new MessageEmbed({
+                new EmbedBuilder({
                     color: 'FUCHSIA',
                     title: '💖 You are over-healed!',
                     description: 'You feel at ease.',
@@ -51,7 +51,7 @@ module.exports = {
         });
         if (character.currentHealth === maxHealth) return interaction.reply({
             embeds: [
-                new MessageEmbed({
+                new EmbedBuilder({
                     color: 'FUCHSIA',
                     title: '✨ You are already at Max Health!',
                     description: 'You feel at ease.',
@@ -73,7 +73,7 @@ module.exports = {
         // notify user
         interaction.reply({
             embeds: [
-                new MessageEmbed({
+                new EmbedBuilder({
                     color: 'AQUA',
                     title: '🥬 Healed up `' + finalHealAmount + '` HP',
                     description: '> ' + HealthVisuals.Healing.getRandomHealingMessage(),

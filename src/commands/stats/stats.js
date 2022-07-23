@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed, GuildMember } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, GuildMember } = require('discord.js');
 const Player = require('../../util/Account/Player');
 const HuntManager = require('../../util/Hunting/HuntManager');
 const CoreUtil = require('../../util/CoreUtil');
@@ -62,7 +62,7 @@ module.exports = {
 
         // if the target is a bot, inform that bots do not have stats
         if (playerMember.user.bot) return interaction.reply({ ephemeral: true,
-            embeds: [new MessageEmbed({ title: '🤖 These stats are too powerful!' })] });
+            embeds: [new EmbedBuilder({ title: '🤖 These stats are too powerful!' })] });
         
         // fetch user from the cache
         const found = CoreUtil.Characters.cache.get(interaction.guild.id, playerMember.user.id);
@@ -72,7 +72,7 @@ module.exports = {
             if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
             else interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setColor('AQUA')
                     .setTitle('⚠️ Woah!')
                     .setDescription('**That user has not set up their stats yet!**\nCome back later or bug them to do so! 🌟')

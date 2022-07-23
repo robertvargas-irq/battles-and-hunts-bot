@@ -1,4 +1,4 @@
-const { MessageEmbed, GuildMember } = require('discord.js');
+const { EmbedBuilder, GuildMember } = require('discord.js');
 const CoreUtil = require("../CoreUtil");
 const Hunger = require('./Hunger');
 const HungerVisualsData = require('./hungerVisuals.json');
@@ -16,7 +16,7 @@ class HungerVisuals {
      */
     static generateHungerEmbed = (member, character) => {
         const hungerRatio = Hunger.getHunger(character) / Hunger.getMaxHunger(character);
-        return new MessageEmbed({
+        return new EmbedBuilder({
             color: HungerVisuals.getColor(hungerRatio),
             title: '⟪' + HungerVisuals.getFlair(hungerRatio) + '⟫ ' + HungerVisuals.getTitle(hungerRatio),
             description: '*' + HungerVisuals.getDescription(hungerRatio) + '*',

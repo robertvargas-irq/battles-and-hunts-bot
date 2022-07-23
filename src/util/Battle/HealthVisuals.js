@@ -1,4 +1,4 @@
-const { MessageEmbed, GuildMember } = require('discord.js');
+const { EmbedBuilder, GuildMember } = require('discord.js');
 const StatCalculator = require('../Stats/StatCalculator');
 const CoreUtil = require('../CoreUtil');
 const HealthVisualsData = require('./healthVisuals.json');
@@ -41,7 +41,7 @@ class HealthVisuals {
         const maxHealth = StatCalculator.calculateMaxHealth(character);
         const healthRatio = character.currentHealth / maxHealth;
         const description = HealthVisuals.getDescription(healthRatio);
-        return new MessageEmbed({
+        return new EmbedBuilder({
             color: HealthVisuals.getColor(healthRatio),
             title: '⟪' + HealthVisuals.getFlair(healthRatio) + '⟫ ' + HealthVisuals.getTitle(healthRatio),
             description: description ? '*' + description + '*' : '',

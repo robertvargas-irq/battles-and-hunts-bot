@@ -1,4 +1,4 @@
-const { MessageEmbed, GuildMember, Message } = require("discord.js");
+const { EmbedBuilder, GuildMember, Message } = require("discord.js");
 const CoreUtil = require("../CoreUtil");
 const HuntManager = require("./HuntManager");
 
@@ -166,7 +166,7 @@ class HuntInventory {
      * @param {number} weightCarrying
      */
     static generateCarryingEmbed(character, preyCarrying, weightCarrying) {
-        return new MessageEmbed({
+        return new EmbedBuilder({
             color: 'BLURPLE',
             title: '🎒 Hunting Carrying Inventory',
             description: preyCarrying.length > 0

@@ -1,4 +1,4 @@
-const { ButtonInteraction, MessageEmbed, MessageActionRow, MessageButton, ButtonStyle } = require('discord.js');
+const { ButtonInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 const ExcuseModel = require('../../database/schemas/excuse');
@@ -51,7 +51,7 @@ module.exports = async (button) => {
             // check with the user if they wish to continue
             return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'RED',
                     title: '‼️⚠️ Please Read',
                     description: '> To ensure you did not press on this verification by accident, the administrative team wishes to inform you of the following:'
@@ -59,8 +59,8 @@ module.exports = async (button) => {
                     + '\n\nIf you wish to verify your age as an adult and get the \'`ADULT`\' role, please be ready to submit **proof**, while also **censoring or removing** any and all **sensitive information** such as an address or license number.'
                     + '\n\n`By pressing the "Yes, I have read and wish to submit proof" button below, you have read the disclaimer and this brief reminder of proof being required.` **An admin will follow up with you within 48 hours.**'
                 })],
-                components: [new MessageActionRow({
-                    components: [new MessageButton({
+                components: [new ActionRowBuilder({
+                    components: [new ButtonBuilder({
                         customId: 'GLOBAL_VERIFY_AGE_CONTINUE',
                         label: 'Yes, I have read and wish to submit proof',
                         style: ButtonStyle.Danger,
@@ -98,7 +98,7 @@ module.exports = async (button) => {
 
             // push message to administrators regarding the incoming request
             const verificationThreadMessage = await VerificationHandler.pushToVerificationThread(verificationThread, {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setColor('AQUA')
                     .setTitle('Adult Verification Request')
                     .setThumbnail(button.member.displayAvatarURL({ dynamic: true }))
@@ -111,15 +111,15 @@ module.exports = async (button) => {
                     .setTimestamp()
                 ],
                 components: [
-                    new MessageActionRow({
+                    new ActionRowBuilder({
                         components: [
-                            new MessageButton({
+                            new ButtonBuilder({
                                 style: ButtonStyle.Success,
                                 emoji: '✅',
                                 label: 'Verify Request',
                                 customId: 'GLOBAL_ACCEPT_VERIFICATION'
                             }),
-                            new MessageButton({
+                            new ButtonBuilder({
                                 style: ButtonStyle.Danger,
                                 emoji: '⛔',
                                 label: 'Deny',
@@ -183,7 +183,7 @@ module.exports = async (button) => {
 
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setColor('GREEN')
                     .setTitle('🌟 Update on your role request')
                     .setDescription(
@@ -256,7 +256,7 @@ module.exports = async (button) => {
 
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setColor('YELLOW')
                     .setTitle('❗ Update on your role request')
                     .setDescription(
@@ -351,7 +351,7 @@ module.exports = async (button) => {
             await button.deferUpdate();
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.edit({
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'ORANGE',
                     author: { name: 'Unable to delete; excuse no longer exists' },
                     footer: {
@@ -361,7 +361,7 @@ module.exports = async (button) => {
                 })],
                 components: [],
             }).catch(() => button.message.edit({
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'ORANGE',
                     author: { name: 'Unable to delete' },
                     footer: {
@@ -376,7 +376,7 @@ module.exports = async (button) => {
             ExcuseHandler.Excuses.cache.remove({ guildId: excuse.guildId, userId: excuse.userId, day: excuse.day, type: excuse.type });
             ExcuseModel.deleteOne({ guildId: excuse.guildId, userId: excuse.userId }).then(console.log).catch(console.error);
             return button.message.edit({
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'GREYPLE',
                     author: { name: 'Excuse successfully deleted.' },
                     footer: {

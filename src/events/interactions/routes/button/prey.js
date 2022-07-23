@@ -1,4 +1,4 @@
-const { ButtonInteraction, MessageEmbed } = require('discord.js');
+const { ButtonInteraction, EmbedBuilder } = require('discord.js');
 const HuntManager = require('../../../../util/Hunting/HuntManager');
 const SharePool = require('../../../../util/Hunting/SharePool');
 const HuntInventory = require('../../../../util/Hunting/HuntInventory');
@@ -37,7 +37,7 @@ module.exports = async (button) => {
             // if in share pool, carry
             if (sharePoolPrey) {
                 const [overEncumbered, weightCarrying, currentlyCarrying] = HuntInventory.addToCarry(button.guild.id, button.user.id, sharePoolPrey, button.message);
-                const resultEmbed = new MessageEmbed();
+                const resultEmbed = new EmbedBuilder();
 
                 // if successfully carried, notify
                 if (!overEncumbered) {
@@ -90,14 +90,14 @@ module.exports = async (button) => {
             // else, if recently caught, ensure it is the original author trying to collect
             if (recentlyCaught.originalMember.user.id != button.user.id) return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'RED',
                     title: '⚠️ You can only collect hunts you caught, or those that are shared.'
                 })]
             });
 
             const [overEncumbered, weightCarrying, currentlyCarrying] = HuntInventory.addToCarry(button.guild.id, button.user.id, recentlyCaught.prey, button.message);
-            const resultEmbed = new MessageEmbed();
+            const resultEmbed = new EmbedBuilder();
 
             // if successfully carried, notify
             if (!overEncumbered) {
@@ -159,7 +159,7 @@ module.exports = async (button) => {
             // ensure original member is the one clicking
             if (preyInformation.originalMember.user.id != button.user.id) return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'RED',
                     title: '⚠️ You can only eat from your own catches!',
                 })]
@@ -184,7 +184,7 @@ module.exports = async (button) => {
             // ensure original member is the one clicking
             if (originalMember.user.id != button.user.id) return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'RED',
                     title: '⚠️ You can only eat from your own catches!',
                 })]

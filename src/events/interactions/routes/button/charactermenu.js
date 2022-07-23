@@ -1,4 +1,4 @@
-const { ButtonInteraction, MessageEmbed } = require('discord.js');
+const { ButtonInteraction, EmbedBuilder } = require('discord.js');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const SubmissionHandler = require('../../../../util/Submissions/SubmissionHandler');
 const CoreUtil = require('../../../../util/CoreUtil');
@@ -25,7 +25,7 @@ module.exports = async (button) => {
             const server = CoreUtil.Servers.cache.get(button.guild.id);
             if (active.character.approved) return button.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     color: 'YELLOW',
                     title: '⚠️ Woah wait-!',
                     description: '> It looks like this character has already been approved!'
@@ -39,7 +39,7 @@ module.exports = async (button) => {
             if (editTarget.startsWith('SECTION') && !active.isAdmin && !active.registering && !Player.allowedToEdit(active.interaction.guild.id, active.interaction.user.id))
                 return button.reply({
                     ephemeral: true,
-                    embeds: [new MessageEmbed({
+                    embeds: [new EmbedBuilder({
                         title: '🔒 Your editing is currently locked.'
                     })]
                 });

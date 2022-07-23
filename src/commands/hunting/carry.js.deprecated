@@ -1,5 +1,5 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
 const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
 
@@ -28,7 +28,7 @@ module.exports = {
             return interaction.reply({
                 ephemeral: true,
                 embeds: [
-                    new MessageEmbed({
+                    new EmbedBuilder({
                         color: 'RED',
                         title: '⚠️ Woah wait! You haven\'t caught anything!',
                         description: '> Go back and use \`/hunt\` first and then use this command to pick up and carry whatever you caught!',
@@ -48,7 +48,7 @@ module.exports = {
         
         // add to carry
         const [overEncumbered, weightCarrying, preyCarrying] = HuntInventory.addToCarry(interaction.guild.id, interaction.user.id, recentlyCaught, originalMessage);
-        const resultEmbed = new MessageEmbed();
+        const resultEmbed = new EmbedBuilder();
 
         // if successfully carried, notify
         if (!overEncumbered) {

@@ -1,4 +1,4 @@
-const { MessageEmbed, Message, MessageActionRow, MessageButton, ButtonInteraction, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, Message, ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } = require('discord.js');
 const HuntManager = require('./HuntManager');
 
 class SharePool {
@@ -14,7 +14,7 @@ class SharePool {
 
     static witherPrey = (message) => {
         return message.edit({
-            embeds: [new MessageEmbed({
+            embeds: [new EmbedBuilder({
                 color: 'DARK_AQUA',
                 footer: { text: 'This catch has withered away...' },
             })],
@@ -78,7 +78,7 @@ class SharePool {
 
         // ensure original member is the one clicking
         if (originalMember.user.id != button.user.id) return button.reply({
-            embeds: [new MessageEmbed({
+            embeds: [new EmbedBuilder({
                 color: 'RED',
                 title: '⚠️ You can only share your own catches!',
             })]
@@ -94,8 +94,8 @@ class SharePool {
         button.deferUpdate();
         return message.edit({
             embeds: [this.generateShareEmbed(prey, character, originalMember)],
-            components: [new MessageActionRow({
-                components: [new MessageButton({
+            components: [new ActionRowBuilder({
+                components: [new ButtonBuilder({
                     customId: 'PREY:COLLECT',
                     label: 'Collect',
                     emoji: '🎒',
@@ -105,7 +105,7 @@ class SharePool {
         });
     }
 
-    static generateShareEmbed = (prey, character, member) => new MessageEmbed({
+    static generateShareEmbed = (prey, character, member) => new EmbedBuilder({
         color: 'GOLD',
         title: '💖🥬 Shared Prey',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },

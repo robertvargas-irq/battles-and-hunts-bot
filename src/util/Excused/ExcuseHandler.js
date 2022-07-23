@@ -1,7 +1,7 @@
 const {
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
     ButtonStyle,
     GuildMember,
     Message,
@@ -75,11 +75,11 @@ class ExcuseHandler extends CoreUtil {
         return message.edit({
             embeds,
             components: [
-                new MessageActionRow({
+                new ActionRowBuilder({
                     components: this.generateDayButtons(serverSchema)
                 }),
-                new MessageActionRow({
-                    components: [new MessageButton({
+                new ActionRowBuilder({
+                    components: [new ButtonBuilder({
                         customId: 'EXCUSEBUTTON_VIEW',
                         style: ButtonStyle.Primary,
                         label: 'View the status of your excuses',
@@ -101,7 +101,7 @@ class ExcuseHandler extends CoreUtil {
     static async approveAndDM(excuse, message, admin, member) {
         let errorSending = false;
         await member.user.send({
-            embeds: [new MessageEmbed({
+            embeds: [new EmbedBuilder({
                 color: 'GREEN',
                 author: {
                     name: message.guild.name,
@@ -146,7 +146,7 @@ class ExcuseHandler extends CoreUtil {
         }
 
         return message.edit({
-            embeds: [new MessageEmbed(message.embeds[0])
+            embeds: [EmbedBuilder.from(message.embeds[0])
                 .setColor('GREEN')
                 .setAuthor({
                     name: '✅ Approved'
@@ -171,7 +171,7 @@ class ExcuseHandler extends CoreUtil {
      static async denyAndDM(excuse, message, admin, member) {
         let errorSending = false;
         await member.user.send({
-            embeds: [new MessageEmbed({
+            embeds: [new EmbedBuilder({
                 color: 'RED',
                 author: {
                     name: message.guild.name,
@@ -217,7 +217,7 @@ class ExcuseHandler extends CoreUtil {
 
         // return the excuse form
         return message.edit({
-            embeds: [new MessageEmbed(message.embeds[0])
+            embeds: [EmbedBuilder.from(message.embeds[0])
                 .setColor('RED')
                 .setAuthor({
                     name: '⛔️ Insufficient Excuse'
@@ -385,7 +385,7 @@ class ExcuseHandler extends CoreUtil {
         const color = ['ORANGE', 'BLURPLE', 'YELLOW'][typeIndex];
 
         return excuseThread.send({
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor(color)
                 .setTitle(emoji + ' ' + excuse.type + ' FORM')
                 .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
@@ -402,21 +402,21 @@ class ExcuseHandler extends CoreUtil {
                 .setTimestamp()
             ],
             components: [
-                new MessageActionRow({
+                new ActionRowBuilder({
                     components: [
-                        new MessageButton({
+                        new ButtonBuilder({
                             style: ButtonStyle.Success,
                             emoji: '✅',
                             label: 'Acceptable Excuse',
                             customId: 'GLOBAL_ACCEPT_EXCUSE'
                         }),
-                        new MessageButton({
+                        new ButtonBuilder({
                             style: ButtonStyle.Danger,
                             emoji: '⛔',
                             label: 'Insufficient Excuse',
                             customId: 'GLOBAL_DENY_EXCUSE'
                         }),
-                        new MessageButton({
+                        new ButtonBuilder({
                             style: ButtonStyle.Secondary,
                             emoji: '🗑',
                             label: 'Delete',
@@ -438,7 +438,7 @@ class ExcuseHandler extends CoreUtil {
 
         return this.days.map(day => {
             const p = paused.has(day.toUpperCase());
-            return new MessageButton({
+            return new ButtonBuilder({
                 customId: 'EXCUSEBUTTON:' + day.toUpperCase(),
                 style: p ? ButtonStyle.Secondary : ButtonStyle.Success,
                 emoji: p ? '⏸️' : undefined,

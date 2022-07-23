@@ -1,4 +1,4 @@
-const { GuildMember, TextChannel, MessageEmbed } = require('discord.js');
+const { GuildMember, TextChannel, EmbedBuilder } = require('discord.js');
 
 class AdminLogger {
 
@@ -24,7 +24,7 @@ class AdminLogger {
         if (!loggingChannel || !overrides || !overrides.length) return false;
         console.log(overrides);
         return loggingChannel.send({
-            embeds: [new MessageEmbed({
+            embeds: [new EmbedBuilder({
                 color: 'BLURPLE',
                 thumbnail: { url: administrator.user.avatarURL() },
                 title: '📝 Character Administrator Override',

@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const AttackManager = require('../../util/Battle/AttackManager');
 const HealthVisuals = require('../../util/Battle/HealthVisuals');
 
@@ -30,7 +30,7 @@ module.exports = {
         // notify if health is already at 0
         if (character.currentHealth < 1) return interaction.reply({
             embeds: [
-                new MessageEmbed({
+                new EmbedBuilder({
                     color: 'DARK_RED',
                     author: { name: 'The void has already consumed.' },
                     description: '> No more damage can be taken.',
@@ -53,7 +53,7 @@ module.exports = {
         // notify user along with any damage adjustments made
         interaction.reply({
             embeds: [
-                new MessageEmbed({
+                new EmbedBuilder({
                     color: character.currentHealth < 1 ? 'NOT_QUITE_BLACK' : 'DARK_RED',
                     title: '🪓 Took `' + finalDamageAmount + '` Damage',
                     description: '> ' + HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),

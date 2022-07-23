@@ -1,6 +1,6 @@
 const HuntManager = require('../../util/Hunting/HuntManager')
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const PreyPile = require('../../util/Hunting/PreyPile');
 const HuntInventory = require('../../util/Hunting/HuntInventory');
 const HuntCooldowns = require('../../util/Hunting/HuntCooldowns');
@@ -60,7 +60,7 @@ module.exports = {
         if (carrying.length < 1) {
             return interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setColor('YELLOW')
                     .setTitle('⚠️ Woah wait! You aren\'t carrying anything!')
                     .setDescription(`\
@@ -104,7 +104,7 @@ module.exports = {
         HuntCooldowns.addCooldownDeposit(interaction.guild.id, interaction.user.id);
 
         // notify the clan
-        const notifyEmbed = new MessageEmbed();
+        const notifyEmbed = new EmbedBuilder();
         if (character.clan == clan) {
             notifyEmbed
                 .setColor('GREEN')
@@ -146,7 +146,7 @@ module.exports = {
         // display deposit summary
         return interaction.reply({
             ephemeral: true,
-            embeds: [new MessageEmbed({
+            embeds: [new EmbedBuilder({
                 color: 'GREEN',
                 title: `📦 __Successfully deposited in: \`${clan.toUpperCase()}\`__`,
                 description: `You take all the prey that you have collected and dump it into the \`${clan.toUpperCase()}\` prey pile.`

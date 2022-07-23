@@ -3,7 +3,7 @@ const preyFromLocations = require('./prey.json');
 const huntChecks = require('./huntChecks.json');
 const MemberModel = require('../../database/schemas/member');
 const CharacterModel = require('../../database/schemas/character');
-const { MessageEmbed, CommandInteraction, GuildMember, MessageActionRow, MessageButton, ButtonStyle, Message } = require('discord.js');
+const { EmbedBuilder, CommandInteraction, GuildMember, ActionRowBuilder, ButtonBuilder, ButtonStyle, Message } = require('discord.js');
 const CoreUtil = require('../CoreUtil');
 
 /**
@@ -105,7 +105,7 @@ class HuntManager extends CoreUtil {
         const embeds = [];
 
         // display tracked result only if a track roll was required
-        if (!prey.overrides?.hasOwnProperty('requiresTracking') || prey.overrides?.requiresTracking) embeds.push(new MessageEmbed({
+        if (!prey.overrides?.hasOwnProperty('requiresTracking') || prey.overrides?.requiresTracking) embeds.push(new EmbedBuilder({
             color: tracked ? 'GREEN' : 'RED',
             title: '🧭 ' + (tracked ? 'Tracked and spotted prey' : 'No prey has made itself known'),
             description: '**Territory Bonus**: +`' + trackProfName.toUpperCase() + '`/`2`'
@@ -114,7 +114,7 @@ class HuntManager extends CoreUtil {
         }));
 
         // if tracked, display catch result only if a catch roll was required
-        if ((!prey.overrides?.hasOwnProperty('requiresCatching') || prey.overrides?.requiresCatching) && tracked) embeds.push(new MessageEmbed({
+        if ((!prey.overrides?.hasOwnProperty('requiresCatching') || prey.overrides?.requiresCatching) && tracked) embeds.push(new EmbedBuilder({
             color: caught ? 'GREEN' : 'RED',
             title: '🪝 ' + (caught ? 'Caught and collected prey' : 'Unfortunately, the prey ran off'),
             description: '**Territory Bonus**: +`' + catchProfName.toUpperCase() + '`/`2`'
@@ -123,7 +123,7 @@ class HuntManager extends CoreUtil {
         }));
 
         // attach final summary of the hunt
-        embeds.push(new MessageEmbed({
+        embeds.push(new EmbedBuilder({
             color: tracked && caught ? 'GREEN' : 'FUCHSIA',
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
@@ -141,20 +141,20 @@ class HuntManager extends CoreUtil {
         // build buttons
         const components = [];
 
-        if (tracked && caught) components.push(new MessageActionRow({
+        if (tracked && caught) components.push(new ActionRowBuilder({
             components: [
-                new MessageButton({
+                new ButtonBuilder({
                     customId: 'PREY:COLLECT',
                     label: 'Collect',
                     emoji: '🎒',
                     style: ButtonStyle.Success,
                 }),
-                new MessageButton({
+                new ButtonBuilder({
                     customId: 'PREY:SHARE',
                     label: 'Share',
                     style: ButtonStyle.Secondary,
                 }),
-                new MessageButton({
+                new ButtonBuilder({
                     customId: 'PREY:EAT',
                     label: 'Eat Secretly',
                     style: ButtonStyle.Danger,
@@ -221,7 +221,7 @@ class HuntManager extends CoreUtil {
         if (server.size >= this.#MAX_RECENTLY_CAUGHT) {
             const [[messageId, caughtData]] = server.entries();
             caughtData.message.edit({
-                embeds: [new MessageEmbed({
+                embeds: [new EmbedBuilder({
                     author: { name: 'Max active hunts reached.' },
                     description: 'This server only allows `' + this.#MAX_RECENTLY_CAUGHT
                     + '` active hunt(s) with buttons at a time.'
@@ -289,7 +289,7 @@ class HuntManager extends CoreUtil {
      */
     static async displayRestrictedHunting(interaction) {
         return await this.SendAndDelete(interaction, {
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('YELLOW')
                 .setTitle('🔒 Hunting is currently limited.')
                 .setDescription(
@@ -307,7 +307,7 @@ class HuntManager extends CoreUtil {
      * @param {GuildMember} memberSnowflake Member desired
      */
     static formatStats(character, memberSnowflake) {
-        return new MessageEmbed({
+        return new EmbedBuilder({
             color: 'DARK_VIVID_PINK',
             thumbnail: { url: character.icon ?? memberSnowflake.displayAvatarURL({ dynamic: true }) },
             title: '🥩 Hunting Stats and Contributions',
@@ -336,7 +336,7 @@ class HuntManager extends CoreUtil {
         });
     }
 
-    static editToDisplayCarried = (embed) => new MessageEmbed(embed)
+    static editToDisplayCarried = (embed) => EmbedBuilder.from(embed)
         .setColor('GREYPLE')
         .setTitle('')
         .setThumbnail(embed.image?.url || '')

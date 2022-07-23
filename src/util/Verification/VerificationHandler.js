@@ -1,9 +1,9 @@
 const {
     CommandInteraction, 
     GuildChannel, 
-    MessageEmbed, 
-    MessageActionRow, 
-    MessageButton,
+    EmbedBuilder, 
+    ActionRowBuilder, 
+    ButtonBuilder,
     ButtonStyle,
     Message, 
     ThreadChannel, 
@@ -146,7 +146,7 @@ class VerificationHandler extends CoreUtil {
      */
     static async spawnVerificationRequest(guildChannel) {
         return await guildChannel.send({
-            embeds: [new MessageEmbed({
+            embeds: [new EmbedBuilder({
                 color: 'BLUE',
                 title: '🌺 Adult Role and Verification',
                 description: '⚠️\n> **THIS IS NOT A PASS TO FLIRT OR SEND INAPPROPRIATE MESSAGES TO OTHER USERS, REGARDLESS OF WHETHER OR NOT THEY HAVE THE \'`ADULT`\' ROLE ON THEIR ACCOUNT.**'
@@ -156,9 +156,9 @@ class VerificationHandler extends CoreUtil {
                 + '\nIf you wish to verify your age as an adult and get the \'`ADULT`\' role, please be ready to submit **proof**, while also **censoring or removing** any and all **sensitive information** such as an address or license number.'
                 + '\n This will also give you access to the **Adult Voice Channel** 🎉'
             })],
-            components: [new MessageActionRow({
+            components: [new ActionRowBuilder({
                 components: [
-                    new MessageButton({
+                    new ButtonBuilder({
                         style: ButtonStyle.Primary,
                         emoji: "🆔",
                         label: "Request Adult Role",
@@ -178,7 +178,7 @@ class VerificationHandler extends CoreUtil {
     static async spawnVerificationThread(server, parentChannel) {
         /**@type {ThreadChannel} Spawned thread */
         const spawnedThread = await parentChannel.send({
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('AQUA')
                 .setTitle('Age Verification Thread')
                 .setFooter({ text: 'Started ➡️' })
@@ -205,7 +205,7 @@ class VerificationHandler extends CoreUtil {
     static REPLIES = {
         IS_DENIED: {
             ephemeral: true,
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('RED')
                 .setTitle('⚠️ Hang on.')
                 .setDescription(
@@ -214,7 +214,7 @@ class VerificationHandler extends CoreUtil {
         },
         IS_PENDING: {
             ephemeral: true,
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('YELLOW')
                 .setTitle('🌟 Woah-!')
                 .setDescription(
@@ -225,7 +225,7 @@ class VerificationHandler extends CoreUtil {
         },
         REQUEST_SENT: {
             ephemeral: true,
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('GREEN')
                 .setTitle('✅ Request submitted')
                 .setDescription(
@@ -236,14 +236,14 @@ class VerificationHandler extends CoreUtil {
         },
         ALREADY_VERIFIED: {
             ephemeral: true,
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('AQUA')
                 .setTitle('🎉 You\'re already verified!')
             ]
         },
         NO_CHANNEL: {
             ephemeral: true,
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('YELLOW')
                 .setTitle('⚠️ Sorry, something went wrong')
                 .setDescription(
@@ -253,7 +253,7 @@ class VerificationHandler extends CoreUtil {
         },
         NO_ROLE: {
             ephemeral: true,
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor('RED')
                 .setTitle('❗ Missing Roles')
                 .setDescription(

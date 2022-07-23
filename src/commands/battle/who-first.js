@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, GuildMember, MessageEmbed } = require('discord.js');
+const { CommandInteraction, GuildMember, EmbedBuilder } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const getRandom = (min, max) => { return Math.floor(Math.random() * (max + 1 - min) + min) }
 
@@ -37,7 +37,7 @@ module.exports = {
         const callerCharacter = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
         const targetCharacter = CoreUtil.Characters.cache.get(interaction.guild.id, target.user.id);
         interaction.editReply({
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setColor(first ? 'GREEN' : 'YELLOW')
                 .setTitle('💭 __Let\'s see who\'s first!__')
                 .setThumbnail(
@@ -66,7 +66,7 @@ module.exports = {
  */
 function denyBotAttack(interaction) {
     interaction.editReply({
-        embeds : [new MessageEmbed()
+        embeds : [new EmbedBuilder()
             .setColor('BLURPLE')
             .setTitle('🛡️ WOAH THERE')
             .setDescription('You can\'t attack a bot! 🤖')
@@ -81,7 +81,7 @@ function denyBotAttack(interaction) {
  */
  function denySelfAttack(interaction) {
     interaction.editReply({
-        embeds : [new MessageEmbed()
+        embeds : [new EmbedBuilder()
             .setColor('BLURPLE')
             .setTitle('❤️‍🩹 Hey now')
             .setDescription('You can\'t attack yourself! Take care! 🌟')

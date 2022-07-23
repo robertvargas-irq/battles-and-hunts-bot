@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const HungerVisuals = require('./HungerVisuals');
 const CoreUtil = require('../CoreUtil');
 const Hunger = require('./Hunger');
@@ -7,13 +7,13 @@ const CANON_MESSAGE = '🍃 This message is canon.'
 
 class Eating {
 
-    static notHungryEmbed = new MessageEmbed({
+    static notHungryEmbed = new EmbedBuilder({
         color: 'AQUA',
         title: '🍖 Hmm...',
         description: 'You are not really feeling hungry. Better to leave it for everyone else.',
     });
 
-    static noFoodOnBackEmbed = new MessageEmbed({
+    static noFoodOnBackEmbed = new EmbedBuilder({
         color: 'RED',
         title: '🦴 Huh...',
         description: '> Looks like you don\'t have much to eat on your back...'
@@ -21,7 +21,7 @@ class Eating {
         + '\n\n⚠️ **This will leave bones behind for your clanmates to find.**',
     });
 
-    static noFoodInPileEmbed = new MessageEmbed({
+    static noFoodInPileEmbed = new EmbedBuilder({
         color: 'RED',
         title: '🦴 Wonderful...',
         description: '> Looks like there\'s nothing to eat.'
@@ -40,7 +40,7 @@ class Eating {
      * Generate an alert embed for a clan pile when prey was eaten "Dishonestly"
      * @param {prey[]} consumed 
      */
-    static generateDishonestAlertEmbed = (consumed) => new MessageEmbed({
+    static generateDishonestAlertEmbed = (consumed) => new EmbedBuilder({
         color: 'RED',
         author: { name: '☠️ Some prey bones have been discovered...' },
         description: '**Someone has been dishonest.** There '
@@ -60,7 +60,7 @@ class Eating {
      * @param {CharacterModel} character 
      * @param {prey[]} consumed 
      */
-    static generateDishonestResultEmbed = (character, consumed) => new MessageEmbed({
+    static generateDishonestResultEmbed = (character, consumed) => new EmbedBuilder({
         color: 'DARK_GREEN',
         title: '☠️🍴 Finally... food... but at what cost?',
         description: '> You look around to make sure no one is looking... before silently tearing into your fairly caught hunt, hastily hiding ' + (consumed.length === 1 ? 'all':'') + ' the pair' + (consumed.length !== 1 ? 's':'') + ' of bones of the '
@@ -80,7 +80,7 @@ class Eating {
      * @param {CharacterModel} character 
      * @param {prey[]} consumed 
      */
-    static generateHonestResultEmbed = (character, consumed) => new MessageEmbed({
+    static generateHonestResultEmbed = (character, consumed) => new EmbedBuilder({
         color: 'GREEN',
         title: '🍴 __Finally, food.__',
         description: `> ${consumed.length == 1 ? 'Y':'One after the other, y'}ou take ${this.formatConsumed(consumed)} between your teeth and tear into ${consumed.length == 1 ? 'it' : 'them'}, finally getting a good meal.`
@@ -101,7 +101,7 @@ class Eating {
         return this.generateStolenFoodAlertEmbed(character, member, bitesTaken, consumed);
     }
 
-    static generateStolenFoodAlertEmbed = (character, member, bitesTaken, consumed) => new MessageEmbed({
+    static generateStolenFoodAlertEmbed = (character, member, bitesTaken, consumed) => new EmbedBuilder({
         color: 'RED',
         image: { url: 'https://www.wildliferemoval.com/wp-content/uploads/2019/02/Animal-Tracks.jpg' },
         title: '❗⚠️ Some prey has possibly been stolen!',
@@ -122,7 +122,7 @@ class Eating {
         footer: { text: CANON_MESSAGE },
     });
 
-    static generateEatenFoodAlertEmbed = (character, member, bitesTaken, consumed) => new MessageEmbed({
+    static generateEatenFoodAlertEmbed = (character, member, bitesTaken, consumed) => new EmbedBuilder({
         color: 'AQUA',
         author: {
             name: '🦴 Some prey has been eaten',

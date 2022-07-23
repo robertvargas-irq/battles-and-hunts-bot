@@ -1,4 +1,4 @@
-const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, PermissionsBitField } = require('discord.js');
 const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
 const CoreUtil = require('../../../util/CoreUtil');
 const Hunger = require('../../../util/Hunting/Hunger');
@@ -15,7 +15,7 @@ module.exports = async (interaction, subcommand) => {
         case 'excuses': {
             await interaction.deferReply({ ephemeral: true });
             const day = interaction.options.getString('day');
-            const headerEmbed = new MessageEmbed({
+            const headerEmbed = new EmbedBuilder({
                 color: 'FUCHSIA',
                 title: '📋 AUDIT FOR: ' + day,
                 description: '> This is the most up-to-date summary audit of **`' + day + '`** excuses and their status!'
@@ -26,15 +26,15 @@ module.exports = async (interaction, subcommand) => {
                 footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
                 timestamp: Date.now(),
             });
-            const lateEmbed = new MessageEmbed({
+            const lateEmbed = new EmbedBuilder({
                 color: 'YELLOW',
                 title: '⏰ __LATE__',
             });
-            const leftEarlyEmbed = new MessageEmbed({
+            const leftEarlyEmbed = new EmbedBuilder({
                 color: 'BLURPLE',
                 title: '🏃 __LEFT EARLY__',
             });
-            const absentEmbed = new MessageEmbed({
+            const absentEmbed = new EmbedBuilder({
                 color: 'ORANGE',
                 title: '❌ __ABSENT__',
             });
@@ -57,15 +57,15 @@ module.exports = async (interaction, subcommand) => {
             for (const excuse of excuses) {
                 switch (excuse.type) {
                     case 'LATE':
-                        late.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
+                        late.push(interaction.guild.members.fetch({ member: excuse.userId }).catch(() => false));
                         statuses.late[excuse.userId] = excuse.status;
                         break;
                     case 'LEFT EARLY':
-                        leftEarly.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
+                        leftEarly.push(interaction.guild.members.fetch({ member: excuse.userId }).catch(() => false));
                         statuses.leftEarly[excuse.userId] = excuse.status;
                         break;
                     case 'ABSENCE':
-                        absent.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
+                        absent.push(interaction.guild.members.fetch({ member: excuse.userId }).catch(() => false));
                         statuses.absent[excuse.userId] = excuse.status;
                         break;
                 }
@@ -167,7 +167,7 @@ module.exports = async (interaction, subcommand) => {
                 ? "**Don't forget to fill out your `/character` and submit when you can!**\n||"
                 + nonRegistered.map(m => "<@" + m.user.id + ">").join('')
                 + "||" : null,
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setColor('GREEN')
                     .setTitle('✅ Audit complete.')
                     .setDescription(
@@ -217,7 +217,7 @@ module.exports = async (interaction, subcommand) => {
                 const [clan, starvingMembers] = starvingMembersArray[i];
                 console.log({starvingMembers});
                 console.log({starvSorted: starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, ''))})
-                embeds.push(new MessageEmbed({
+                embeds.push(new EmbedBuilder({
                     color: 'DARK_RED',
                     title: 'STARVING MEMBERS IN: ' + clan.toUpperCase(),
                     description: starvingMembers.length > 0 ? starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, '')).map(member =>
@@ -228,7 +228,7 @@ module.exports = async (interaction, subcommand) => {
             }
 
             // generate header
-            embeds.push(new MessageEmbed({
+            embeds.push(new EmbedBuilder({
                 color: 'DARK_GREY',
                 title: '🦴 Starvation lingers...',
                 description: '> This audit contains the most up-to-date information available upon request.',
@@ -277,7 +277,7 @@ module.exports = async (interaction, subcommand) => {
             const embeds = [];
             const registeredList = Array.from(registered);
             for (let i = 0; i < registeredList.length && i < 9; i++) {
-                embeds.push(new MessageEmbed({
+                embeds.push(new EmbedBuilder({
                     color: 'FUCHSIA',
                     title: registeredList[i][0].toUpperCase(),
                     description: registeredList[i][1].map(member => '> ↣ **' + member.displayName + '** (<@' + member.user.id + '>)').join('\n'),
@@ -285,7 +285,7 @@ module.exports = async (interaction, subcommand) => {
             }
 
             // generate summary
-            embeds.push(new MessageEmbed({
+            embeds.push(new EmbedBuilder({
                 color: 'AQUA',
                 title: '📝 All members registered to the bot',
                 description: '> This audit contains the most up-to-date information available upon request.',

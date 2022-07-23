@@ -1,4 +1,4 @@
-const { MessageEmbed, Permissions, CommandInteraction } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField, CommandInteraction } = require('discord.js');
 
 const restrictions = require('./restrictions.json');
 
@@ -65,7 +65,7 @@ module.exports = async ( interaction ) => {
 function wrongChannel(interaction) {
 
     // administrator override
-    if (interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
+    if (interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels))
     return false;
 
     // if guild has no data return
@@ -100,7 +100,7 @@ async function wrongChannelMessage(interaction, [code, list]) {
 
     const messagePayload = {
         ephemeral: true,
-        embeds: [new MessageEmbed()
+        embeds: [new EmbedBuilder()
             .setColor('BLUE')
             .setTitle('❗ __Woah There!__')
             .setDescription(description)]

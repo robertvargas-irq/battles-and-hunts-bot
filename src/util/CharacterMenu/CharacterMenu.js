@@ -1,12 +1,12 @@
 const {
     CommandInteraction,
-    MessageEmbed,
+    EmbedBuilder,
     GuildMember,
-    MessageButton,
+    ButtonBuilder,
     ButtonStyle,
     TextInputStyle,
-    MessageActionRow,
-    TextInputComponent,
+    ActionRowBuilder,
+    TextInputBuilder,
     ButtonInteraction,
     ModalSubmitInteraction,
     Modal,
@@ -42,7 +42,7 @@ class CharacterMenu {
             userId: authorGuildMemberSnowflake.user.id,
         });
         this.statsLocked = statsLocked;
-        this.isAdmin = interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS);
+        this.isAdmin = interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels);
         this.isAuthor = interaction.user.id === authorGuildMemberSnowflake.user.id;
         this.registering = !forceNotEditing && this.isAuthor && !character.approved;
         this.editingEnabled = !forceNotEditing && (this.registering || (this.isAdmin || (this.isAuthor && editingEnabled)));
@@ -53,7 +53,7 @@ class CharacterMenu {
         // // console.log({NewObject: this});
     }
 
-    static statHelpEmbed = new MessageEmbed({
+    static statHelpEmbed = new EmbedBuilder({
         color: 'AQUA',
         title: '💡 Stats & What They Mean',
         fields: statArray.map(([_, statData]) => {return {
@@ -69,13 +69,13 @@ class CharacterMenu {
      * @param {boolean} editingEnabled 
      * @param {boolean} statsLocked 
      * @param {boolean} isAdmin 
-     * @returns {MessageEmbed}
+     * @returns {EmbedBuilder}
      */
     static constructEmbed(character, author, editingEnabled = false, statsLocked = true, isAdmin = false) {
         let statSection = 0;
         const c = character;
         const s = author;
-        const embed = new MessageEmbed({
+        const embed = new EmbedBuilder({
             color: s.displayColor || '#76e3ed',
             author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
@@ -129,7 +129,7 @@ class CharacterMenu {
         });
 
         // add image label if image provided
-        if (c.image) embed.addField('\u200B', '🖼️ **Character Reference Image**');
+        if (c.image) embed.addFields([{ name:'\u200B', value: '🖼️ **Character Reference Image**' }]);
 
         return embed;
     }
@@ -139,7 +139,7 @@ class CharacterMenu {
      * @param {CharacterModel} character 
      * @param {GuildMember} author 
      */
-    static iconEmbed = (character, author) => new MessageEmbed({ thumbnail: {
+    static iconEmbed = (character, author) => new EmbedBuilder({ thumbnail: {
         url: character.icon ?? author.displayAvatarURL({ dynamic: true }) }
     });
 
@@ -154,8 +154,8 @@ class CharacterMenu {
         // package message payload
         const components = [];
         if (this.editingEnabled) components.push(...generateEditingRows(this, statSections));
-        if (this.registering) components.push(new MessageActionRow({
-            components: [new MessageButton({
+        if (this.registering) components.push(new ActionRowBuilder({
+            components: [new ButtonBuilder({
                 customId: 'CHARACTERMENU:SUBMIT',
                 label: 'Submit for review',
                 emoji: '📋',
@@ -255,7 +255,7 @@ function generateAuxilaryEmbeds(menuObject) {
     const embeds = [];
 
     // if registering and the author is calling the menu
-    if (!menuObject.forceNotEditing && menuObject.registering && menuObject.isAuthor) embeds.push(new MessageEmbed({
+    if (!menuObject.forceNotEditing && menuObject.registering && menuObject.isAuthor) embeds.push(new EmbedBuilder({
         color: 'YELLOW',
         title: '📋 Welcome to ' + menuObject.authorSnowflake.guild.name + '!',
         description: 'It looks like your character is yet to be approved!'
@@ -265,7 +265,7 @@ function generateAuxilaryEmbeds(menuObject) {
     }));
 
     // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
-    if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new MessageEmbed({
+    if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new EmbedBuilder({
         color: 'BLURPLE',
         title: '💡 Why am I unable to edit stats?',
         description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
@@ -273,7 +273,7 @@ function generateAuxilaryEmbeds(menuObject) {
     }));
 
     // if administrator providing overrides, inform about their permissions
-    if (!menuObject.forceNotEditing && menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new MessageEmbed({
+    if (!menuObject.forceNotEditing && menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new EmbedBuilder({
         color: 'RED',
         title: '📌 Administrator Overrides',
         description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',
@@ -287,11 +287,11 @@ function generateAuxilaryEmbeds(menuObject) {
  * Generate editing button rows for the Main Menu render
  * @param {CharacterMenu} menuObject
  * @param {string[]} statSections 
- * @returns {MessageActionRow[]}
+ * @returns {ActionRowBuilder[]}
  */
 function generateEditingRows(menuObject, statSections) {
-    const helpButtonRow = new MessageActionRow({
-        components: [new MessageButton({
+    const helpButtonRow = new ActionRowBuilder({
+        components: [new ButtonBuilder({
             customId: 'CHARACTERMENU:HELP',
             label: 'What do these stats mean?',
             style: ButtonStyle.Secondary,
@@ -301,7 +301,7 @@ function generateEditingRows(menuObject, statSections) {
 
     // return single-row buttons
     if (!menuObject.registering && !menuObject.isAdmin && menuObject.editingEnabled && menuObject.statsLocked) return [
-        new MessageActionRow({
+        new ActionRowBuilder({
             components: [
                 ...generateStatEditButtons(menuObject, statSections),
                 ...generateMiscEditButtons(menuObject),
@@ -312,10 +312,10 @@ function generateEditingRows(menuObject, statSections) {
 
     // return dual-row buttons
     return [
-        new MessageActionRow({
+        new ActionRowBuilder({
             components: generateStatEditButtons(menuObject, statSections)
         }),
-        new MessageActionRow({
+        new ActionRowBuilder({
             components: generateMiscEditButtons(menuObject)
         }),
         helpButtonRow,
@@ -326,12 +326,12 @@ function generateEditingRows(menuObject, statSections) {
  * Generate stat edit buttons for the Main Menu render
  * @param {CharacterMenu} menuObject
  * @param {string[]} statSections 
- * @returns {MessageButton[]}
+ * @returns {ButtonBuilder[]}
  */
 function generateStatEditButtons(menuObject, statSections) {
     return [
         ...!menuObject.isAdmin && menuObject.statsLocked && !menuObject.registering
-        ? [new MessageButton({
+        ? [new ButtonBuilder({
             customId: 'dummy',
             label: 'Stat editing is locked',
             style: ButtonStyle.Secondary,
@@ -345,21 +345,21 @@ function generateStatEditButtons(menuObject, statSections) {
 /**
  * Generate miscellaneous edit buttons for the Main Menu render
  * @param {CharacterMenu} menuObject 
- * @returns {MessageButton[]}
+ * @returns {ButtonBuilder[]}
  */
 function generateMiscEditButtons(menuObject) {
     return [
-        new MessageButton({
+        new ButtonBuilder({
             customId: 'CHARACTERMENU:EDIT:INFO',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Basic Info',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? ButtonStyle.Danger : ButtonStyle.Success),
         }),
-        new MessageButton({
+        new ButtonBuilder({
             customId: 'CHARACTERMENU:EDIT:IMAGES',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Icon/Reference',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? ButtonStyle.Danger : ButtonStyle.Success),
         }),
-        new MessageButton({
+        new ButtonBuilder({
             customId: 'CHARACTERMENU:EDIT:PRONOUNS',
             label: (!menuObject.isAuthor && menuObject.isAdmin ? 'Override' : 'Edit') + ' Pronouns',
             style: (!menuObject.isAuthor && menuObject.isAdmin ? ButtonStyle.Danger : ButtonStyle.Success),
@@ -372,11 +372,11 @@ function generateMiscEditButtons(menuObject) {
  * @param {boolean} admin 
  * @param {boolean} isAuthor 
  * @param {string[]} statSections 
- * @returns {MessageButton[]}
+ * @returns {ButtonBuilder[]}
  */
 function generateSectionEditButtons(admin, isAuthor, statSections) {
     let sectionNumber = 0;
-    return statSections.map(sectionEmoji => new MessageButton({
+    return statSections.map(sectionEmoji => new ButtonBuilder({
         customId: 'CHARACTERMENU:EDIT:SECTION' + sectionNumber++,
         label: (!isAuthor && admin ? 'Override' : 'Edit') + ' Section',
         style: (!isAuthor && admin ? ButtonStyle.Danger : ButtonStyle.Success),
@@ -400,8 +400,8 @@ function getEditModal(instance, toEdit) {
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: '📝 Editing Basic Information',
         components: [
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'name',
                     label: 'Character Name',
                     placeholder: 'No name provided',
@@ -410,8 +410,8 @@ function getEditModal(instance, toEdit) {
                     maxLength: 50,
                 }),
             ]}),
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'clan',
                     style: TextInputStyle.Short,
                     label: (
@@ -440,8 +440,8 @@ function getEditModal(instance, toEdit) {
                     }, clanArray[0].length),
                 })
             ]}),
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'age',
                     label: 'Character Age (Moons)',
                     placeholder: 'No character age provided',
@@ -451,8 +451,8 @@ function getEditModal(instance, toEdit) {
                     maxLength: 3,
                 }),
             ]}),
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'background',
                     label: 'Basic Background',
                     placeholder: 'No name provided',
@@ -461,8 +461,8 @@ function getEditModal(instance, toEdit) {
                     maxLength: 3000,
                 }),
             ]}),
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'personality',
                     label: 'Character Personality',
                     placeholder: 'No personality provided',
@@ -477,8 +477,8 @@ function getEditModal(instance, toEdit) {
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: '🖼️ Editing Character\'s Icon and Appearance',
         components: [
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'icon',
                     label: 'Character Icon (Image Link)',
                     placeholder: 'Provide a link to an image',
@@ -486,8 +486,8 @@ function getEditModal(instance, toEdit) {
                     style: TextInputStyle.Short,
                 }),
             ]}),
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'image',
                     label: 'Character Appearance (Image Link)',
                     placeholder: 'Provide a link to an image',
@@ -501,8 +501,8 @@ function getEditModal(instance, toEdit) {
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: '💬 Editing Character\'s Pronouns',
         components: [
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'subjective',
                     label: 'Subjective (Ex. he/she/they/xe etc.)',
                     placeholder: 'No Subjective Pronoun provided',
@@ -511,8 +511,8 @@ function getEditModal(instance, toEdit) {
                     maxLength: 10,
                 }),
             ]}),
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'objective',
                     label: 'Objective (Ex. him/her/them/xem etc.)',
                     placeholder: 'No Objective Pronoun provided',
@@ -521,8 +521,8 @@ function getEditModal(instance, toEdit) {
                     maxLength: 10,
                 }),
             ]}),
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: 'possessive',
                     label: 'Possessive (Ex. his/hers/theirs/xyrs etc.)',
                     placeholder: 'No Possessive Pronoun provided',
@@ -545,8 +545,8 @@ function getEditModal(instance, toEdit) {
     for (let statNumber = sectionStart; statNumber < sectionEnd; statNumber++) {
         const [stat, statData] = statArray[statNumber];
         sectionComponents.push(
-            new MessageActionRow({ components: [
-                new TextInputComponent({
+            new ActionRowBuilder({ components: [
+                new TextInputBuilder({
                     customId: stat,
                     minLength: Math.min(statData.min.toString().length, statData.max.toString().length),
                     maxLength: Math.max(statData.min.toString().length, statData.max.toString().length),

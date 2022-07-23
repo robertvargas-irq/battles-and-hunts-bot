@@ -25,7 +25,7 @@ module.exports = async (button) => {
             const server = CoreUtil.Servers.cache.get(button.guild.id);
             if (active.character.approved) return button.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Yellow',
                     title: '⚠️ Woah wait-!',
                     description: '> It looks like this character has already been approved!'
@@ -39,7 +39,7 @@ module.exports = async (button) => {
             if (editTarget.startsWith('SECTION') && !active.isAdmin && !active.registering && !Player.allowedToEdit(active.interaction.guild.id, active.interaction.user.id))
                 return button.reply({
                     ephemeral: true,
-                    embeds: [new EmbedBuilder({
+                    embeds: [EmbedBuilder.from({
                         title: '🔒 Your editing is currently locked.'
                     })]
                 });

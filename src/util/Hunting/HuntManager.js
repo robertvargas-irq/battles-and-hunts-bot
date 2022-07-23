@@ -105,7 +105,7 @@ class HuntManager extends CoreUtil {
         const embeds = [];
 
         // display tracked result only if a track roll was required
-        if (!prey.overrides?.hasOwnProperty('requiresTracking') || prey.overrides?.requiresTracking) embeds.push(new EmbedBuilder({
+        if (!prey.overrides?.hasOwnProperty('requiresTracking') || prey.overrides?.requiresTracking) embeds.push(EmbedBuilder.from({
             color: tracked ? 'Green' : 'Red',
             title: '🧭 ' + (tracked ? 'Tracked and spotted prey' : 'No prey has made itself known'),
             description: '**Territory Bonus**: +`' + trackProfName.toUpperCase() + '`/`2`'
@@ -114,7 +114,7 @@ class HuntManager extends CoreUtil {
         }));
 
         // if tracked, display catch result only if a catch roll was required
-        if ((!prey.overrides?.hasOwnProperty('requiresCatching') || prey.overrides?.requiresCatching) && tracked) embeds.push(new EmbedBuilder({
+        if ((!prey.overrides?.hasOwnProperty('requiresCatching') || prey.overrides?.requiresCatching) && tracked) embeds.push(EmbedBuilder.from({
             color: caught ? 'Green' : 'Red',
             title: '🪝 ' + (caught ? 'Caught and collected prey' : 'Unfortunately, the prey ran off'),
             description: '**Territory Bonus**: +`' + catchProfName.toUpperCase() + '`/`2`'
@@ -123,7 +123,7 @@ class HuntManager extends CoreUtil {
         }));
 
         // attach final summary of the hunt
-        embeds.push(new EmbedBuilder({
+        embeds.push(EmbedBuilder.from({
             color: tracked && caught ? 'Green' : 'Fuchsia',
             thumbnail: { url: tracked ? prey.visual : undefined },
             footer: {
@@ -221,7 +221,7 @@ class HuntManager extends CoreUtil {
         if (server.size >= this.#MAX_RECENTLY_CAUGHT) {
             const [[messageId, caughtData]] = server.entries();
             caughtData.message.edit({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     author: { name: 'Max active hunts reached.' },
                     description: 'This server only allows `' + this.#MAX_RECENTLY_CAUGHT
                     + '` active hunt(s) with buttons at a time.'
@@ -289,7 +289,7 @@ class HuntManager extends CoreUtil {
      */
     static async displayRestrictedHunting(interaction) {
         return await this.SendAndDelete(interaction, {
-            embeds: [new EmbedBuilder()
+            embeds: [EmbedBuilder.from()
                 .setColor('Yellow')
                 .setTitle('🔒 Hunting is currently limited.')
                 .setDescription(
@@ -307,7 +307,7 @@ class HuntManager extends CoreUtil {
      * @param {GuildMember} memberSnowflake Member desired
      */
     static formatStats(character, memberSnowflake) {
-        return new EmbedBuilder({
+        return EmbedBuilder.from({
             color: 'DarkVividPink',
             thumbnail: { url: character.icon ?? memberSnowflake.displayAvatarURL({ dynamic: true }) },
             title: '🥩 Hunting Stats and Contributions',

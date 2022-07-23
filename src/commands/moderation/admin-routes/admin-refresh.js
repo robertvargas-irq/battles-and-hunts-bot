@@ -59,7 +59,7 @@ module.exports = async (interaction, subcommand) => {
 
             // notify successful set
             return interaction.editReply({
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Green')
                     .setTitle('✅ Refreshed everyone\'s clan affiliations.')
                     .setDescription('Everyone\'s affiliations should now be properly accounted for.')

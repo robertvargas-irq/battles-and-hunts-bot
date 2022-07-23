@@ -86,7 +86,7 @@ class CoreUtil {
      */
     static InformNonAdministrator = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Red',
                 title: '❗ Woah wait-!',
                 description: customMessage ?? `Sorry about that **${interaction.member.displayName}**! This command is for administrators only!`
@@ -102,7 +102,7 @@ class CoreUtil {
     static denyBotInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
             ephemeral: true,
-            embeds : [new EmbedBuilder()
+            embeds : [EmbedBuilder.from()
                 .setColor('Blurple')
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription(customMessage ?? 'You cannot perform this action on a bot! 🤖')
@@ -117,7 +117,7 @@ class CoreUtil {
      */
     static denySelfInteraction = (interaction, customMessage = null) => {
         CoreUtil.SafeReply(interaction, {
-            embeds : [new EmbedBuilder()
+            embeds : [EmbedBuilder.from()
                 .setColor('Blurple')
                 .setTitle('🛡️ WOAH THERE')
                 .setDescription(customMessage ?? 'You cannot perform this action on yourself! 🥬')
@@ -132,7 +132,7 @@ class CoreUtil {
      */
     static async NotRegistered(interaction) {
         const reply = {
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Red',
                 title: '⚠️ Woah there!',
                 description: '**You\'re not quite ready yet!**'
@@ -323,7 +323,7 @@ class CoreUtil {
     static InformTimeout(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new EmbedBuilder()
+            embeds: [ EmbedBuilder.from()
                 .setColor('Aqua')
                 .setTitle("⏰ " + translator.getGlobal('TIMEOUT'))
                 .setDescription(translator.getGlobal('TIMEOUT_MESSAGE') + " ❣️"),
@@ -340,7 +340,7 @@ class CoreUtil {
     static InformInvalid(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new EmbedBuilder()
+            embeds: [ EmbedBuilder.from()
                 .setColor('Aqua')
                 .setTitle("⚠️ " + translator.get('TOO_MANY_INVALID'))
                 .setDescription(translator.get('TOO_MANY_INVALID_MESSAGE') + " ❣️"),
@@ -357,7 +357,7 @@ class CoreUtil {
     static InformNotRegistered(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new EmbedBuilder()
+            embeds: [ EmbedBuilder.from()
                 .setColor('Red')
                 .setTitle("⚠️ " + translator.get('NOT_REGISTERed'))
                 .setDescription(translator.get('NOT_REGISTERed_MESSAGE') + " ❣️"),
@@ -374,7 +374,7 @@ class CoreUtil {
     static InformSuccessfulCancel(interaction, translator) {
         if (!translator) translator = new (require('./Translator'))();
         interaction.editReply({
-            embeds: [ new EmbedBuilder()
+            embeds: [ EmbedBuilder.from()
                 .setColor('Aqua')
                 .setTitle("✅ " + translator.getGlobal('SUCCESSFUL_CANCEL'))
                 .setDescription(translator.getGlobal('MENU_DISMISS') + " ❣️"),

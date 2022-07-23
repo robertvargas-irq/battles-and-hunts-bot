@@ -60,7 +60,7 @@ module.exports = {
         if (carrying.length < 1) {
             return interaction.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Yellow')
                     .setTitle('⚠️ Woah wait! You aren\'t carrying anything!')
                     .setDescription(`\
@@ -104,7 +104,7 @@ module.exports = {
         HuntCooldowns.addCooldownDeposit(interaction.guild.id, interaction.user.id);
 
         // notify the clan
-        const notifyEmbed = new EmbedBuilder();
+        const notifyEmbed = EmbedBuilder.from();
         if (character.clan == clan) {
             notifyEmbed
                 .setColor('Green')
@@ -146,7 +146,7 @@ module.exports = {
         // display deposit summary
         return interaction.reply({
             ephemeral: true,
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Green',
                 title: `📦 __Successfully deposited in: \`${clan.toUpperCase()}\`__`,
                 description: `You take all the prey that you have collected and dump it into the \`${clan.toUpperCase()}\` prey pile.`

@@ -15,7 +15,7 @@ module.exports = async (interaction, subcommand) => {
         case 'excuses': {
             await interaction.deferReply({ ephemeral: true });
             const day = interaction.options.getString('day');
-            const headerEmbed = new EmbedBuilder({
+            const headerEmbed = EmbedBuilder.from({
                 color: 'Fuchsia',
                 title: '📋 AUDIT FOR: ' + day,
                 description: '> This is the most up-to-date summary audit of **`' + day + '`** excuses and their status!'
@@ -26,15 +26,15 @@ module.exports = async (interaction, subcommand) => {
                 footer: { text: 'Requested by ' + interaction.user.tag + ' (' + interaction.user.id + ')', iconURL: interaction.member.displayAvatarURL({ dynamic: true }) },
                 timestamp: Date.now(),
             });
-            const lateEmbed = new EmbedBuilder({
+            const lateEmbed = EmbedBuilder.from({
                 color: 'Yellow',
                 title: '⏰ __LATE__',
             });
-            const leftEarlyEmbed = new EmbedBuilder({
+            const leftEarlyEmbed = EmbedBuilder.from({
                 color: 'Blurple',
                 title: '🏃 __LEFT EARLY__',
             });
-            const absentEmbed = new EmbedBuilder({
+            const absentEmbed = EmbedBuilder.from({
                 color: 'Orange',
                 title: '❌ __ABSENT__',
             });
@@ -167,7 +167,7 @@ module.exports = async (interaction, subcommand) => {
                 ? "**Don't forget to fill out your `/character` and submit when you can!**\n||"
                 + nonRegistered.map(m => "<@" + m.user.id + ">").join('')
                 + "||" : null,
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Green')
                     .setTitle('✅ Audit complete.')
                     .setDescription(
@@ -217,7 +217,7 @@ module.exports = async (interaction, subcommand) => {
                 const [clan, starvingMembers] = starvingMembersArray[i];
                 console.log({starvingMembers});
                 console.log({starvSorted: starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, ''))})
-                embeds.push(new EmbedBuilder({
+                embeds.push(EmbedBuilder.from({
                     color: 'DarkRed',
                     title: 'STARVING MEMBERS IN: ' + clan.toUpperCase(),
                     description: starvingMembers.length > 0 ? starvingMembers.sort((a, b) => a.displayName.replace(/[^a-zA-Z]/g, '') - b.displayName.replace(/[^a-zA-Z]/g, '')).map(member =>
@@ -228,7 +228,7 @@ module.exports = async (interaction, subcommand) => {
             }
 
             // generate header
-            embeds.push(new EmbedBuilder({
+            embeds.push(EmbedBuilder.from({
                 color: 'DarkGrey',
                 title: '🦴 Starvation lingers...',
                 description: '> This audit contains the most up-to-date information available upon request.',
@@ -277,7 +277,7 @@ module.exports = async (interaction, subcommand) => {
             const embeds = [];
             const registeredList = Array.from(registered);
             for (let i = 0; i < registeredList.length && i < 9; i++) {
-                embeds.push(new EmbedBuilder({
+                embeds.push(EmbedBuilder.from({
                     color: 'Fuchsia',
                     title: registeredList[i][0].toUpperCase(),
                     description: registeredList[i][1].map(member => '> ↣ **' + member.displayName + '** (<@' + member.user.id + '>)').join('\n'),
@@ -285,7 +285,7 @@ module.exports = async (interaction, subcommand) => {
             }
 
             // generate summary
-            embeds.push(new EmbedBuilder({
+            embeds.push(EmbedBuilder.from({
                 color: 'Aqua',
                 title: '📝 All members registered to the bot',
                 description: '> This audit contains the most up-to-date information available upon request.',

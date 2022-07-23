@@ -14,7 +14,7 @@ class SharePool {
 
     static witherPrey = (message) => {
         return message.edit({
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'DarkAqua',
                 footer: { text: 'This catch has withered away...' },
             })],
@@ -78,7 +78,7 @@ class SharePool {
 
         // ensure original member is the one clicking
         if (originalMember.user.id != button.user.id) return button.reply({
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Red',
                 title: '⚠️ You can only share your own catches!',
             })]
@@ -105,7 +105,7 @@ class SharePool {
         });
     }
 
-    static generateShareEmbed = (prey, character, member) => new EmbedBuilder({
+    static generateShareEmbed = (prey, character, member) => EmbedBuilder.from({
         color: 'Gold',
         title: '💖🥬 Shared Prey',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },

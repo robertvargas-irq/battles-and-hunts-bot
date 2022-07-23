@@ -23,7 +23,7 @@ const guildsAllowingAllToEdit = new Set();
  */
 function formatStats(member, character) {
     const maxHealth = StatCalculator.calculateMaxHealth(character);
-    const generalStats = new EmbedBuilder({
+    const generalStats = EmbedBuilder.from({
         color: '680d2b',
         title: (character.name ?? member.displayName + '\'s Character') + ' General Stats',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
@@ -48,7 +48,7 @@ function formatStats(member, character) {
     });
 
     let i = 0;
-    const listedStats = new EmbedBuilder({
+    const listedStats = EmbedBuilder.from({
         color: 'LuminousVividPink',
         image: { url: STATS_BANNER },
         fields: Object.keys(character.stats).map(stat => {
@@ -73,7 +73,7 @@ function formatStats(member, character) {
  */
  function formatBattleStats(member, character) {
     const maxHealth = StatCalculator.calculateMaxHealth(character);
-    const generalStats = new EmbedBuilder({
+    const generalStats = EmbedBuilder.from({
         color: '680d2b',
         title: (character.name ?? member.displayName + '\'s Character') + ' Battle Stats',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },

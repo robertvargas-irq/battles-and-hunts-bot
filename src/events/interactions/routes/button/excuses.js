@@ -6,7 +6,7 @@ const {
     ButtonBuilder,
     ButtonStyle,
     TextInputStyle,
-    Modal,
+    ModalBuilder,
     TextInputBuilder
 } = require('discord.js');
 
@@ -45,7 +45,7 @@ module.exports = async (button) => {
 
             return button.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Blurple')
                     .setTitle('📝 Status View')
                     .setDescription('Quickly view the status of any of your excuses, whether they\'ve been approved, still pending, or denied!')
@@ -66,7 +66,7 @@ module.exports = async (button) => {
             // generate quick viewer with expandable view
             return button.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Fuchsia',
                     title: 'Check all of your submitted excuses for `' + EXCUSE_DAY + '`!',
                     description: '> Press any of the available buttons to pull up the original request submitted!',
@@ -125,7 +125,7 @@ module.exports = async (button) => {
             ].indexOf(submittedExcuse.status);
             return button.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: ['Green', 'Yellow', 'Red'][statusIndex],
                     author: {
                         name: EXCUSE_TYPE + ' Form Status: ' + [
@@ -158,7 +158,7 @@ module.exports = async (button) => {
         // if the request is unique, display form if the day is not paused
         if (ExcuseHandler.dayIsPaused(button.guild.id, EXCUSE_DAY)) return button.reply({
             ephemeral: true,
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Yellow',
                 title: '⚠️ Woah wait a minute-!',
                 description: 'Looks like all excuse forms for **`' + EXCUSE_DAY + '`** are currently ⏸ **`PAUSED`**!'
@@ -171,7 +171,7 @@ module.exports = async (button) => {
             })]
         });
 
-        return button.showModal(new Modal({
+        return button.showModal(ModalBuilder.from({
             customId: 'EXCUSE:' + EXCUSE_DAY + ':' + EXCUSE_TYPE,
             title: EXCUSE_TYPE + ' Excuse Form for ' + EXCUSE_DAY,
             components: [
@@ -194,7 +194,7 @@ module.exports = async (button) => {
     // if no type, prompt user for one
     return button.reply({
         ephemeral: true,
-        embeds: [new EmbedBuilder({
+        embeds: [EmbedBuilder.from({
             color: 'Fuchsia',
             title: 'Need an excuse for `' + EXCUSE_DAY + '`? Just one more thing...',
             description: '> What kind of excuse do you wish to submit?'

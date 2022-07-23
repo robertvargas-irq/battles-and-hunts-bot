@@ -51,7 +51,7 @@ module.exports = async (button) => {
             // check with the user if they wish to continue
             return button.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Red',
                     title: '‼️⚠️ Please Read',
                     description: '> To ensure you did not press on this verification by accident, the administrative team wishes to inform you of the following:'
@@ -98,7 +98,7 @@ module.exports = async (button) => {
 
             // push message to administrators regarding the incoming request
             const verificationThreadMessage = await VerificationHandler.pushToVerificationThread(verificationThread, {
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Aqua')
                     .setTitle('Adult Verification Request')
                     .setThumbnail(button.member.displayAvatarURL({ dynamic: true }))
@@ -183,7 +183,7 @@ module.exports = async (button) => {
 
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Green')
                     .setTitle('🌟 Update on your role request')
                     .setDescription(
@@ -256,7 +256,7 @@ module.exports = async (button) => {
 
             // notify user asyncronously
             VerificationHandler.pushToUser(pendingUser, {
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Yellow')
                     .setTitle('❗ Update on your role request')
                     .setDescription(
@@ -351,7 +351,7 @@ module.exports = async (button) => {
             await button.deferUpdate();
             const excuse = await ExcuseHandler.fetchExcuseFromMessage(button.message.id);
             if (!excuse) return button.message.edit({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Orange',
                     author: { name: 'Unable to delete; excuse no longer exists' },
                     footer: {
@@ -361,7 +361,7 @@ module.exports = async (button) => {
                 })],
                 components: [],
             }).catch(() => button.message.edit({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Orange',
                     author: { name: 'Unable to delete' },
                     footer: {
@@ -376,7 +376,7 @@ module.exports = async (button) => {
             ExcuseHandler.Excuses.cache.remove({ guildId: excuse.guildId, userId: excuse.userId, day: excuse.day, type: excuse.type });
             ExcuseModel.deleteOne({ guildId: excuse.guildId, userId: excuse.userId }).then(console.log).catch(console.error);
             return button.message.edit({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Greyple',
                     author: { name: 'Excuse successfully deleted.' },
                     footer: {

@@ -25,7 +25,7 @@ module.exports = async (interaction, subcommand) => {
             server.save();
 
             return interaction.reply({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Green',
                     title: '✅ Hunting DC successfully modified',
                     description: '> ' + (
@@ -63,7 +63,7 @@ module.exports = async (interaction, subcommand) => {
 
             // notify successful set
             return interaction.editReply({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Green',
                     title: '✅ Successfully set all character\'s hungers to max.',
                     description: '> **Hunger begins to bear down upon warriors great and small, leaders and young, and everyone in-between.**'
@@ -82,7 +82,7 @@ module.exports = async (interaction, subcommand) => {
                 const spoiledFood = PreyPile.emptyPreyPile(clanName, server);
                 PreyPile.updatePreyPile(interaction, server, clanName);
                 PreyPile.pushPreyUpdateMessage(interaction, server, clanName, {
-                    embeds: [new EmbedBuilder()
+                    embeds: [EmbedBuilder.from()
                         .setColor('Red')
                         .setTitle('🪰🦴 All of your food has gone to waste.')
                         .setDescription(`The entirety of the prey pile has rotted away, leaving behind a foul odor that absolutely engulfs your sense of smell.` +
@@ -96,7 +96,7 @@ module.exports = async (interaction, subcommand) => {
 
             // notify successful set
             return interaction.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Green')
                     .setTitle('✅ Successfully spoiled all prey piles.')
                     .setDescription('As the moons pass, disease and rot takes away what little you have left.')
@@ -111,7 +111,7 @@ module.exports = async (interaction, subcommand) => {
 
             // inform if already locked
             if (server.hunting.locked) return interaction.reply({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Fuchsia',
                     title: '🔐 Hunting is already locked!',
                 })]
@@ -123,7 +123,7 @@ module.exports = async (interaction, subcommand) => {
 
             // notify successful set
             return interaction.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('DarkVividPink')
                     .setTitle('🔒 Hunting has been heavily restricted.')
                     .setDescription(
@@ -141,7 +141,7 @@ module.exports = async (interaction, subcommand) => {
 
             // inform if already unlocked
             if (!server.hunting.locked) return interaction.reply({
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     color: 'Fuchsia',
                     title: '🔓 Hunting is already unlocked!',
                 })]
@@ -153,7 +153,7 @@ module.exports = async (interaction, subcommand) => {
 
             // notify successful set
             return interaction.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Green')
                     .setTitle('🔓 Hunting is now fully available.')
                     .setDescription(

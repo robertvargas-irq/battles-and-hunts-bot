@@ -37,7 +37,7 @@ module.exports = {
         const callerCharacter = CoreUtil.Characters.cache.get(interaction.guild.id, interaction.user.id);
         const targetCharacter = CoreUtil.Characters.cache.get(interaction.guild.id, target.user.id);
         interaction.editReply({
-            embeds: [new EmbedBuilder()
+            embeds: [EmbedBuilder.from()
                 .setColor(first ? 'Green' : 'Yellow')
                 .setTitle('💭 __Let\'s see who\'s first!__')
                 .setThumbnail(
@@ -66,7 +66,7 @@ module.exports = {
  */
 function denyBotAttack(interaction) {
     interaction.editReply({
-        embeds : [new EmbedBuilder()
+        embeds : [EmbedBuilder.from()
             .setColor('Blurple')
             .setTitle('🛡️ WOAH THERE')
             .setDescription('You can\'t attack a bot! 🤖')
@@ -81,7 +81,7 @@ function denyBotAttack(interaction) {
  */
  function denySelfAttack(interaction) {
     interaction.editReply({
-        embeds : [new EmbedBuilder()
+        embeds : [EmbedBuilder.from()
             .setColor('Blurple')
             .setTitle('❤️‍🩹 Hey now')
             .setDescription('You can\'t attack yourself! Take care! 🌟')

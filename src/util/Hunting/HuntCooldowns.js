@@ -184,7 +184,7 @@ class HuntCooldowns {
         let minutes = ((HuntCooldowns.HUNT_COOLDOWN - (Date.now() - this.getCooldownHunt(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Fuchsia',
                 title: '💫 Feeling a little winded',
                 description: '**You\'re feeling a bit tired...**'
@@ -206,7 +206,7 @@ class HuntCooldowns {
         let minutes = ((HuntCooldowns.DEPOSIT_COOLDOWN - (Date.now() - this.getCooldownDeposit(interaction.guild.id, interaction.user.id)[0])) / 60 / 1000).toFixed(1);
         return await CoreUtil.SafeReply(interaction, {
             ephemeral: true,
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Fuchsia',
                 title: '💤 W...Wait...',
                 description: '**You\'re feeling a bit tired...**'

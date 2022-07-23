@@ -30,7 +30,7 @@ module.exports = {
         // notify if health is already at 0
         if (character.currentHealth < 1) return interaction.reply({
             embeds: [
-                new EmbedBuilder({
+                EmbedBuilder.from({
                     color: 'DarkRed',
                     author: { name: 'The void has already consumed.' },
                     description: '> No more damage can be taken.',
@@ -53,7 +53,7 @@ module.exports = {
         // notify user along with any damage adjustments made
         interaction.reply({
             embeds: [
-                new EmbedBuilder({
+                EmbedBuilder.from({
                     color: character.currentHealth < 1 ? 'NotQuiteBlack' : 'DarkRed',
                     title: '🪓 Took `' + finalDamageAmount + '` Damage',
                     description: '> ' + HealthVisuals.Damage.getRandomDamageMessage(character.currentHealth),

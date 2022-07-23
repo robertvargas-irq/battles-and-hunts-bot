@@ -9,7 +9,9 @@ const {
     TextInputBuilder,
     ButtonInteraction,
     ModalSubmitInteraction,
-    Modal,
+    PermissionsBitField,
+    ModalBuilder,
+    Colors,
 } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
@@ -53,8 +55,8 @@ class CharacterMenu {
         // // console.log({NewObject: this});
     }
 
-    static statHelpEmbed = new EmbedBuilder({
-        color: 'Aqua',
+    static statHelpEmbed = EmbedBuilder.from({
+        color: Colors.Aqua,
         title: '💡 Stats & What They Mean',
         fields: statArray.map(([_, statData]) => {return {
             name: statData.flair + ' ' + statData.name,
@@ -75,7 +77,7 @@ class CharacterMenu {
         let statSection = 0;
         const c = character;
         const s = author;
-        const embed = new EmbedBuilder({
+        const embed = EmbedBuilder.from({
             color: s.displayColor || '#76e3ed',
             author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
@@ -139,7 +141,7 @@ class CharacterMenu {
      * @param {CharacterModel} character 
      * @param {GuildMember} author 
      */
-    static iconEmbed = (character, author) => new EmbedBuilder({ thumbnail: {
+    static iconEmbed = (character, author) => EmbedBuilder.from({ thumbnail: {
         url: character.icon ?? author.displayAvatarURL({ dynamic: true }) }
     });
 
@@ -255,8 +257,8 @@ function generateAuxilaryEmbeds(menuObject) {
     const embeds = [];
 
     // if registering and the author is calling the menu
-    if (!menuObject.forceNotEditing && menuObject.registering && menuObject.isAuthor) embeds.push(new EmbedBuilder({
-        color: 'Yellow',
+    if (!menuObject.forceNotEditing && menuObject.registering && menuObject.isAuthor) embeds.push(EmbedBuilder.from({
+        color: Colors.Yellow,
         title: '📋 Welcome to ' + menuObject.authorSnowflake.guild.name + '!',
         description: 'It looks like your character is yet to be approved!'
         + '\nBefore you can start roleplaying or use any of the nifty features provided by this bot, you must first fully create your character and submit it for review with the button below!'
@@ -265,16 +267,16 @@ function generateAuxilaryEmbeds(menuObject) {
     }));
 
     // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
-    if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new EmbedBuilder({
-        color: 'Blurple',
+    if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(EmbedBuilder.from({
+        color: Colors.Blurple,
         title: '💡 Why am I unable to edit stats?',
         description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
         footer: { text: 'This is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.' },
     }));
 
     // if administrator providing overrides, inform about their permissions
-    if (!menuObject.forceNotEditing && menuObject.isAdmin && !menuObject.isAuthor) embeds.push(new EmbedBuilder({
-        color: 'Red',
+    if (!menuObject.forceNotEditing && menuObject.isAdmin && !menuObject.isAuthor) embeds.push(EmbedBuilder.from({
+        color: Colors.Red,
         title: '📌 Administrator Overrides',
         description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',
         footer: { text: 'Please ensure that the user is informed of any changes. Additionally, ensure that these changes are reasonable and are only used to enforce a standard set in place by the server.' }
@@ -396,7 +398,7 @@ function getEditModal(instance, toEdit) {
     // // console.log({toEdit});
     const server = CoreUtil.Servers.cache.get(instance.interaction.guild.id);
     const clanArray = [...Object.keys(server.clans), 'None'];
-    if (toEdit.startsWith('INFO')) return new Modal({
+    if (toEdit.startsWith('INFO')) return ModalBuilder.from({
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: '📝 Editing Basic Information',
         components: [
@@ -473,7 +475,7 @@ function getEditModal(instance, toEdit) {
             ]}),
         ]
     });
-    else if (toEdit.startsWith('IMAGES')) return new Modal({
+    else if (toEdit.startsWith('IMAGES')) return ModalBuilder.from({
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: '🖼️ Editing Character\'s Icon and Appearance',
         components: [
@@ -497,7 +499,7 @@ function getEditModal(instance, toEdit) {
             ]}),
         ],
     });
-    else if (toEdit.startsWith('PRONOUNS')) return new Modal({
+    else if (toEdit.startsWith('PRONOUNS')) return ModalBuilder.from({
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: '💬 Editing Character\'s Pronouns',
         components: [
@@ -560,7 +562,7 @@ function getEditModal(instance, toEdit) {
         );
     }
 
-    return new Modal({
+    return ModalBuilder.from({
         customId: 'CHARACTERMENU:EDIT:' + toEdit,
         title: statSections[sectionNumber] + ' Editing Section ' + (sectionNumber + 1),
         components: sectionComponents,

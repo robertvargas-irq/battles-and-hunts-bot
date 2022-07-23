@@ -16,7 +16,7 @@ module.exports = {
         else
             await channel.send({
                 embeds: [
-                    new EmbedBuilder({
+                    EmbedBuilder.from({
                         color: guild.client.config.colors.neutral,
                         thumbnail: { url: guild.iconURL() },
                         title: `♾️ Hey there, ${guild.name}!`,
@@ -46,7 +46,7 @@ module.exports = {
         else
             await owner.send({
                 embeds: [
-                    new EmbedBuilder({
+                    EmbedBuilder.from({
                         color: guild.client.config.colors.neutral,
                         thumbnail: { url: owner.user.avatarURL() },
                         title: `♾️ Hey there, ${owner.user.username}!`,

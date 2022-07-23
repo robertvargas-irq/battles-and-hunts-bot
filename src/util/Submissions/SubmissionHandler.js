@@ -23,7 +23,7 @@ class SubmissionHandler {
         const channel = await this.fetchProcessingChannel(interaction, server);
         // // console.log({channel});
         if (!channel) return interaction.reply({
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 title: '⚠️ Wait a minute-!',
                 description: '**This server has not yet configured a Character Submissions channel!**\n> Bug your server admins to make sure they set one up!'
             })]
@@ -113,7 +113,7 @@ class SubmissionHandler {
                 });
                 return interaction.reply({
                     ephemeral: true,
-                    embeds: [new EmbedBuilder({
+                    embeds: [EmbedBuilder.from({
                         title: '🔃 Refreshed submission',
                         description: '<#' + server.submissions?.channelId + '>'
                     })]
@@ -124,7 +124,7 @@ class SubmissionHandler {
             sendAndSave();
             interaction.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder({
+                embeds: [EmbedBuilder.from({
                     title: '✅ Re-submitted!',
                     description: '<#' + server.submissions?.channelId + '>',
                 })]
@@ -137,7 +137,7 @@ class SubmissionHandler {
         sendAndSave();
         interaction.reply({
             ephemeral: true,
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 title: '✅ Submitted!',
                 description: '<#' + server.submissions?.channelId + '>',
             })]

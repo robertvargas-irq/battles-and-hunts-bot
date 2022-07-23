@@ -62,7 +62,7 @@ module.exports = {
 
         // if the target is a bot, inform that bots do not have stats
         if (playerMember.user.bot) return interaction.reply({ ephemeral: true,
-            embeds: [new EmbedBuilder({ title: '🤖 These stats are too powerful!' })] });
+            embeds: [EmbedBuilder.from({ title: '🤖 These stats are too powerful!' })] });
         
         // fetch user from the cache
         const found = CoreUtil.Characters.cache.get(interaction.guild.id, playerMember.user.id);
@@ -72,7 +72,7 @@ module.exports = {
             if (playerMember.user.id == interaction.user.id) CoreUtil.NotRegistered(interaction);
             else interaction.reply({
                 ephemeral: true,
-                embeds: [new EmbedBuilder()
+                embeds: [EmbedBuilder.from()
                     .setColor('Aqua')
                     .setTitle('⚠️ Woah!')
                     .setDescription('**That user has not set up their stats yet!**\nCome back later or bug them to do so! 🌟')

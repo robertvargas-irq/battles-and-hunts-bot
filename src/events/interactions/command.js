@@ -100,7 +100,7 @@ async function wrongChannelMessage(interaction, [code, list]) {
 
     const messagePayload = {
         ephemeral: true,
-        embeds: [new EmbedBuilder()
+        embeds: [EmbedBuilder.from()
             .setColor('Blue')
             .setTitle('❗ __Woah There!__')
             .setDescription(description)]

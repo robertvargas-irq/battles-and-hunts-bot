@@ -166,7 +166,7 @@ class HuntInventory {
      * @param {number} weightCarrying
      */
     static generateCarryingEmbed(character, preyCarrying, weightCarrying) {
-        return new EmbedBuilder({
+        return EmbedBuilder.from({
             color: 'Blurple',
             title: '🎒 Hunting Carrying Inventory',
             description: preyCarrying.length > 0

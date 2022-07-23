@@ -21,7 +21,7 @@ module.exports = async (modal) => {
     if (editTarget.startsWith('SECTION') && !instance.isAdmin && !instance.registering && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id))
         return modal.reply({
             ephemeral: true,
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 title: '🔒 Your editing is currently locked.',
                 description: '> All changes were discarded.'
             })]
@@ -210,11 +210,11 @@ module.exports = async (modal) => {
     });
 
     // save and re-render
-    const embeds = [new EmbedBuilder({
+    const embeds = [EmbedBuilder.from({
         title: '✅ Edits successful!',
         color: 'Green',
     })];
-    if (errors.length) embeds.push(new EmbedBuilder({
+    if (errors.length) embeds.push(EmbedBuilder.from({
         title: '⚠️ Whoops-! Something\'s a bit off...',
         color: 'Red',
         description: 'There were a few values that were\'t quite right! They have been reset to their original values.\n\n'

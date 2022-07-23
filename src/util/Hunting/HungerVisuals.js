@@ -16,7 +16,7 @@ class HungerVisuals {
      */
     static generateHungerEmbed = (member, character) => {
         const hungerRatio = Hunger.getHunger(character) / Hunger.getMaxHunger(character);
-        return new EmbedBuilder({
+        return EmbedBuilder.from({
             color: HungerVisuals.getColor(hungerRatio),
             title: '⟪' + HungerVisuals.getFlair(hungerRatio) + '⟫ ' + HungerVisuals.getTitle(hungerRatio),
             description: '*' + HungerVisuals.getDescription(hungerRatio) + '*',

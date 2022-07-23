@@ -22,7 +22,7 @@ class PlayerLogger {
     static characterEdits = (loggingChannel, player, overrides) => {
         if (!loggingChannel || !overrides || !overrides.length) return false;
         return loggingChannel.send({
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Yellow',
                 thumbnail: { url: player.user.avatarURL() },
                 title: '📝 Character Changes',

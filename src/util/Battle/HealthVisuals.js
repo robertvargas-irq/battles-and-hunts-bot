@@ -41,7 +41,7 @@ class HealthVisuals {
         const maxHealth = StatCalculator.calculateMaxHealth(character);
         const healthRatio = character.currentHealth / maxHealth;
         const description = HealthVisuals.getDescription(healthRatio);
-        return new EmbedBuilder({
+        return EmbedBuilder.from({
             color: HealthVisuals.getColor(healthRatio),
             title: '⟪' + HealthVisuals.getFlair(healthRatio) + '⟫ ' + HealthVisuals.getTitle(healthRatio),
             description: description ? '*' + description + '*' : '',

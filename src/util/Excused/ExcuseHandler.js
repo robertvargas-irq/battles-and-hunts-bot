@@ -101,7 +101,7 @@ class ExcuseHandler extends CoreUtil {
     static async approveAndDM(excuse, message, admin, member) {
         let errorSending = false;
         await member.user.send({
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Green',
                 author: {
                     name: message.guild.name,
@@ -171,7 +171,7 @@ class ExcuseHandler extends CoreUtil {
      static async denyAndDM(excuse, message, admin, member) {
         let errorSending = false;
         await member.user.send({
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Red',
                 author: {
                     name: message.guild.name,
@@ -385,7 +385,7 @@ class ExcuseHandler extends CoreUtil {
         const color = ['Orange', 'Blurple', 'Yellow'][typeIndex];
 
         return excuseThread.send({
-            embeds: [new EmbedBuilder()
+            embeds: [EmbedBuilder.from()
                 .setColor(color)
                 .setTitle(emoji + ' ' + excuse.type + ' FORM')
                 .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))

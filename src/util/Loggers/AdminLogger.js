@@ -24,7 +24,7 @@ class AdminLogger {
         if (!loggingChannel || !overrides || !overrides.length) return false;
         console.log(overrides);
         return loggingChannel.send({
-            embeds: [new EmbedBuilder({
+            embeds: [EmbedBuilder.from({
                 color: 'Blurple',
                 thumbnail: { url: administrator.user.avatarURL() },
                 title: '📝 Character Administrator Override',

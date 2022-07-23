@@ -41,7 +41,7 @@ module.exports = {
         const maxHealth = StatCalculator.calculateMaxHealth(character);
         if (character.currentHealth > maxHealth) return interaction.reply({
             embeds: [
-                new EmbedBuilder({
+                EmbedBuilder.from({
                     color: 'Fuchsia',
                     title: '💖 You are over-healed!',
                     description: 'You feel at ease.',
@@ -51,7 +51,7 @@ module.exports = {
         });
         if (character.currentHealth === maxHealth) return interaction.reply({
             embeds: [
-                new EmbedBuilder({
+                EmbedBuilder.from({
                     color: 'Fuchsia',
                     title: '✨ You are already at Max Health!',
                     description: 'You feel at ease.',
@@ -73,7 +73,7 @@ module.exports = {
         // notify user
         interaction.reply({
             embeds: [
-                new EmbedBuilder({
+                EmbedBuilder.from({
                     color: 'Aqua',
                     title: '🥬 Healed up `' + finalHealAmount + '` HP',
                     description: '> ' + HealthVisuals.Healing.getRandomHealingMessage(),

@@ -141,7 +141,7 @@ module.exports = {
 
                 // notify successful set
                 return interaction.reply({
-                    embeds: [new EmbedBuilder({
+                    embeds: [EmbedBuilder.from({
                         color: 'Green',
                         title: '✅ Configuration Saved',
                         description: '`Admin Action Logging Channel`: ' + (server.logging.admin ? `<#${server.logging.admin}>` : '`None`')
@@ -162,7 +162,7 @@ module.exports = {
                 if (processingChannel.type !== ChannelType.GuildText) {
                     return interaction.reply({
                         ephemeral: true,
-                        embeds: [new EmbedBuilder()
+                        embeds: [EmbedBuilder.from()
                             .setColor('Red')
                             .setTitle('❗ Woah wait-!')
                             .setDescription('The channel must be a text channel, not a thread or category!')
@@ -172,7 +172,7 @@ module.exports = {
 
                 // finally, spawn the menu and provide a loading screen
                 const menuMessage = interaction.channel.send({
-                    embeds: [new EmbedBuilder()
+                    embeds: [EmbedBuilder.from()
                         .setColor('Blurple')
                         .setTitle('📝 Excuse Form Requests')
                         .setDescription(
@@ -207,7 +207,7 @@ module.exports = {
                 ExcuseHandler.setProcessingChannel(server, processingChannel.id);
                 await server.save();
                 return interaction.editReply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [EmbedBuilder.from()
                         .setColor('Green')
                         .setTitle('✅ Configuration Saved')
                         .setDescription('`Processing Channel`: <#' + processingChannel.id + '>')
@@ -231,7 +231,7 @@ module.exports = {
                 await server.save();
 
                 await interaction.editReply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [EmbedBuilder.from()
                         .setColor('Green')
                         .setTitle('✅ Configuration Saved')
                         .setDescription(
@@ -259,7 +259,7 @@ module.exports = {
 
                 // notify successful set
                 return interaction.editReply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [EmbedBuilder.from()
                         .setColor('Green')
                         .setTitle('✅ Successfully spawned the prey pile')
                         .setDescription(`The prey pile for \`${clan.toUpperCase()}\` has been successfully spawned.\
@@ -277,7 +277,7 @@ module.exports = {
                 if (processingChannel.type !== ChannelType.GuildText) {
                     return interaction.reply({
                         ephemeral: true,
-                        embeds: [new EmbedBuilder()
+                        embeds: [EmbedBuilder.from()
                             .setColor('Red')
                             .setTitle('❗ Woah wait-!')
                             .setDescription('The channel must be a text channel, not a thread or category!')
@@ -291,7 +291,7 @@ module.exports = {
 
                 // spawn menu to open a submission
                 interaction.channel.send({
-                    embeds: [new EmbedBuilder({
+                    embeds: [EmbedBuilder.from({
                         color: 'Fuchsia',
                         title: '🗃️ Character Submission Information',
                         description: '> Welcome to **' + CoreUtil.roleplayName + '**! We\'re incredibly happy to have you join us!'
@@ -334,7 +334,7 @@ module.exports = {
                 // inform success
                 return interaction.reply({
                     ephemeral: true,
-                    embeds: [new EmbedBuilder({
+                    embeds: [EmbedBuilder.from({
                         color: 'Green',
                         title: '✅ Configuration Saved',
                         description: '`Processing Channel`: <#' + processingChannel.id + '>'

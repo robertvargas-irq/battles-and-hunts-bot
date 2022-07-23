@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton, ButtonStyle } = require('discord.js');
+const { CommandInteraction, MessageEmbed, Permissions, MessageActionRow, MessageButton, ButtonStyle, ChannelType } = require('discord.js');
 const VerificationHandler = require('../../util/Verification/VerificationHandler');
 const ExcuseHandler = require('../../util/Excused/ExcuseHandler');
 const PreyPile = require('../../util/Hunting/PreyPile');
@@ -159,7 +159,7 @@ module.exports = {
                 const processingChannel = interaction.options.getChannel('excuse-processing-channel');
 
                 // ensure the channel is valid
-                if (processingChannel.type !== 'GUILD_TEXT') {
+                if (processingChannel.type !== ChannelType.GuildText) {
                     return interaction.reply({
                         ephemeral: true,
                         embeds: [new MessageEmbed()
@@ -274,7 +274,7 @@ module.exports = {
                 const processingChannel = interaction.options.getChannel('submission-processing-channel');
 
                 // ensure the channel is valid
-                if (processingChannel.type !== 'GUILD_TEXT') {
+                if (processingChannel.type !== ChannelType.GuildText) {
                     return interaction.reply({
                         ephemeral: true,
                         embeds: [new MessageEmbed()

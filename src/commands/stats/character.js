@@ -25,7 +25,7 @@ module.exports = {
     async execute(interaction) {
 
         // ensure target is not a bot
-        const target = interaction.options.getMember('player', false) || interaction.member;
+        const target = interaction.options.getMember('player') || interaction.member;
         if (target.user.bot) return CoreUtil.denyBotInteraction(interaction);
 
         // get character from cache

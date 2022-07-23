@@ -58,7 +58,7 @@ module.exports = {
         /**
          * @type {GuildMember}
          * Target's player member  */
-        const playerMember = interaction.options.getMember('player', false) || interaction.member;
+        const playerMember = interaction.options.getMember('player') || interaction.member;
 
         // if the target is a bot, inform that bots do not have stats
         if (playerMember.user.bot) return interaction.reply({ ephemeral: true,

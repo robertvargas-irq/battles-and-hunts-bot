@@ -60,7 +60,7 @@ module.exports = async (button) => {
             button.message.edit({
                 embeds: [EmbedBuilder.from(button.message.embeds[0])
                     .setColor(Colors.Green)
-                    .setTitle(button.message.embeds[0].title + ' | ✅ APPROVED')
+                    .setTitle('✅ APPROVED')
                     .setFooter({ text: 'Fulfilled by: ' + button.user.tag + ' (' + button.user.id + ')' })
                     .setTimestamp(),
                 ],

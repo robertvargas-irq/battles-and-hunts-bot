@@ -46,11 +46,11 @@ module.exports = async (modal) => {
             return parseInt(age);
         };
         const isValidClan = (clan) => server.clans.hasOwnProperty(clan.toLowerCase());
-        const name = modal.fields.getField('name').value || null;
-        const clan = modal.fields.getField('clan').value || null;
+        const name = modal.fields.getField('name').value?.trim() || null;
+        const clan = modal.fields.getField('clan').value?.trim() || null;
         const age = parseAge(modal.fields.getField('age').value);
-        const personality = modal.fields.getField('personality').value || null;
-        const background = modal.fields.getField('background').value || null;
+        const personality = modal.fields.getField('personality').value?.trim() || null;
+        const background = modal.fields.getField('background').value?.trim() || null;
         
         if (!isNaN(age)) {
             // for logging purposes
@@ -110,8 +110,8 @@ module.exports = async (modal) => {
         instance.character.background = background;
     }
     else if (editTarget === 'IMAGES') {
-        const image = modal.fields.getField('image').value || null;
-        const icon = modal.fields.getField('icon').value || null;
+        const image = modal.fields.getField('image').value?.trim() || null;
+        const icon = modal.fields.getField('icon').value?.trim() || null;
 
         // for logging purposes
         changes.push(
@@ -134,9 +134,9 @@ module.exports = async (modal) => {
 
     else if (editTarget === 'PRONOUNS') {
 
-        const subjective = modal.fields.getField('subjective').value?.toLowerCase().replace(/[^A-Za-z]/g, '') || null;
-        const objective = modal.fields.getField('objective').value?.toLowerCase().replace(/[^A-Za-z]/g, '') || null;
-        const possessive = modal.fields.getField('possessive').value?.toLowerCase().replace(/[^A-Za-z]/g, '') || null;
+        const subjective = modal.fields.getField('subjective').value?.toLowerCase().replace(/[^A-Za-z/]/g, '').trim() || null;
+        const objective = modal.fields.getField('objective').value?.toLowerCase().replace(/[^A-Za-z/]/g, '').trim() || null;
+        const possessive = modal.fields.getField('possessive').value?.toLowerCase().replace(/[^A-Za-z/]/g, '').trim() || null;
 
         // for logging purposes
         changes.push(

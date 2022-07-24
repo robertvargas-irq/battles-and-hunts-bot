@@ -32,7 +32,7 @@ module.exports = async (button) => {
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
                     color: Colors.Red,
-                    title: '⚠️ Only members with the `MANAGE_ROLES` permission can approve submissions.',
+                    title: '⚠️ Only members with the `ManageRoles` permission can approve submissions.',
                 })],
             });
 
@@ -92,7 +92,7 @@ module.exports = async (button) => {
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
                     color: Colors.Red,
-                    title: '⚠️ Only members with the `MANAGE_ROLES` permission or the original submitter can refresh submissions.',
+                    title: '⚠️ Only members with the `ManageRoles` permission or the original submitter can refresh submissions.',
                 })],
             });            
 
@@ -114,7 +114,7 @@ module.exports = async (button) => {
                 ephemeral: true,
                 embeds: [EmbedBuilder.from({
                     color: Colors.Red,
-                    title: '⚠️ Only members with the `MANAGE_ROLES` permission can delete submissions.',
+                    title: '⚠️ Only members with the `ManageRoles` permission can delete submissions.',
                 })],
             });
 

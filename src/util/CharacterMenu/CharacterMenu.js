@@ -81,7 +81,7 @@ class CharacterMenu {
             color: s.displayColor || 0x76e3ed,
             author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
-            description: '🍵 **Basic Background**\n>>> ' + (c.background || '`None given.`') + '\n\n⇸',
+            description: '🍵 **Basic Background**\n>>> ' + (/[^ ]/.exec(c.background) ? c.background : '`None given.`') + '\n\n⇸',
             fields: [
                 ...statArray.map(([stat, data]) => { return {
                     name: (editingEnabled && (!statsLocked || isAdmin)
@@ -120,7 +120,7 @@ class CharacterMenu {
                 },
                 {
                     name: 'Personality',
-                    value: '>>> ' + (c.personality || '`None given.`'),
+                    value: '>>> ' + (/[^ ]/.exec(c.personality) ? c.personality : '`None given.`'),
                 },
             ],
             footer: {
@@ -141,8 +141,8 @@ class CharacterMenu {
      * @param {CharacterModel} character 
      * @param {GuildMember} author 
      */
-    static iconEmbed = (character, author) => EmbedBuilder.from({ thumbnail: {
-        url: character.icon ?? author.displayAvatarURL({ dynamic: true }) }
+    static iconEmbed = (character, author) => new EmbedBuilder({ thumbnail: {
+        url: /[^ ]/.exec(character.icon) ? character.icon : author.displayAvatarURL({ dynamic: true }) }
     });
 
     /**

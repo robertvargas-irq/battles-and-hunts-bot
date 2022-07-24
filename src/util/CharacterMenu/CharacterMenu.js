@@ -315,7 +315,7 @@ function generateAuxilaryEmbeds(menuObject) {
     if (menuObject.isAdmin && !menuObject.isAuthor) embeds.push(EmbedBuilder.from({
         color: Colors.Red,
         title: '📌 Administrator Overrides',
-        description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',
+        description: '> As a member with `ManageChannels` permissions, you are authorized to override any character information or stats you deem fit.',
         footer: { text: 'Please ensure that the user is informed of any changes. Additionally, ensure that these changes are reasonable and are only used to enforce a standard set in place by the server.' }
     }));
 

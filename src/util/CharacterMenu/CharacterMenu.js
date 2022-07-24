@@ -81,7 +81,7 @@ class CharacterMenu {
             color: s.displayColor || 0x76e3ed,
             author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
             image: { url: c.image || undefined },
-            description: '🍵 **Basic Background**\n>>> ' + (/[^ ]/.exec(c.background) ? c.background : '`None given.`') + '\n\n⇸',
+            description: '🍵 **Basic Background**\n>>> ' + (c.background && /[^ ]/.exec(c.background) ? c.background : '`None given.`') + '\n\n⇸',
             fields: [
                 ...statArray.map(([stat, data]) => { return {
                     name: (editingEnabled && (!statsLocked || isAdmin)
@@ -120,7 +120,7 @@ class CharacterMenu {
                 },
                 {
                     name: 'Personality',
-                    value: '>>> ' + (/[^ ]/.exec(c.personality) ? c.personality : '`None given.`'),
+                    value: '>>> ' + (c.personality && /[^ ]/.exec(c.personality) ? c.personality : '`None given.`'),
                 },
             ],
             footer: {
@@ -142,7 +142,7 @@ class CharacterMenu {
      * @param {GuildMember} author 
      */
     static iconEmbed = (character, author) => new EmbedBuilder({ thumbnail: {
-        url: /[^ ]/.exec(character.icon) ? character.icon : author.displayAvatarURL({ dynamic: true }) }
+        url: character.icon && /[^ ]/.exec(character.icon) ? character.icon : author.displayAvatarURL({ dynamic: true }) }
     });
 
     /**
@@ -470,6 +470,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No name provided',
                     value: instance.character.name || '',
                     style: TextInputStyle.Short,
+                    minLength: 0,
                     maxLength: 50,
                 }),
             ]}),
@@ -496,6 +497,7 @@ function getEditModal(instance, toEdit) {
                     value: (!instance.isAdmin && !instance.registering || instance.statsLocked)
                     ? ''
                     : CoreUtil.ProperCapitalization(instance.character.clan ?? ''),
+                    minLength: 0,
                     maxLength: (!instance.isAdmin && !instance.registering && instance.statsLocked)
                     ? 1
                     : clanArray.reduce((previousValue, currentValue) => {
@@ -521,6 +523,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No name provided',
                     value: instance.character.background || '',
                     style: TextInputStyle.Paragraph,
+                    minLength: 0,
                     maxLength: 3000,
                 }),
             ]}),
@@ -531,6 +534,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No personality provided',
                     value: instance.character.personality || '',
                     style: TextInputStyle.Paragraph,
+                    minLength: 0,
                     maxLength: 700,
                 }),
             ]}),
@@ -547,6 +551,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'Provide a link to an image',
                     value: instance.character.icon || '',
                     style: TextInputStyle.Short,
+                    minLength: 0,
                 }),
             ]}),
             new ActionRowBuilder({ components: [
@@ -556,6 +561,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'Provide a link to an image',
                     value: instance.character.image || '',
                     style: TextInputStyle.Short,
+                    minLength: 0,
                 }),
             ]}),
         ],
@@ -571,6 +577,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No Subjective Pronoun provided',
                     value: instance.character.pronouns.subjective || '',
                     style: TextInputStyle.Short,
+                    minLength: 0,
                     maxLength: 10,
                 }),
             ]}),
@@ -581,6 +588,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No Objective Pronoun provided',
                     value: instance.character.pronouns.objective || '',
                     style: TextInputStyle.Short,
+                    minLength: 0,
                     maxLength: 10,
                 }),
             ]}),
@@ -591,6 +599,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No Possessive Pronoun provided',
                     value: instance.character.pronouns.possessive || '',
                     style: TextInputStyle.Short,
+                    minLength: 0,
                     maxLength: 12,
                 }),
             ]}),
@@ -618,6 +627,7 @@ function getEditModal(instance, toEdit) {
                     placeholder: 'No value yet',
                     value: instance.character.stats[stat] ?? statData.min,
                     style: TextInputStyle.Short,
+                    minLength: 0,
                 })
             ]})
         );

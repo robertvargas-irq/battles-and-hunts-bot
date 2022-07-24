@@ -253,6 +253,16 @@ class CharacterMenu {
 function generateAuxilaryEmbeds(menuObject) {
     const embeds = [];
 
+    // if registering and the author is calling the menu
+    if (!menuObject.forceNotEditing && menuObject.registering && menuObject.isAuthor) embeds.push(new MessageEmbed({
+        color: 'YELLOW',
+        title: '📋 Welcome to ' + menuObject.authorSnowflake.guild.name + '!',
+        description: 'It looks like your character is yet to be approved!'
+        + '\nBefore you can start roleplaying or use any of the nifty features provided by this bot, you must first fully create your character and submit it for review with the button below!'
+        + '\n\nOnce you fill out every detail, and provide an image of your character\'s appearance, go ahead and press "Submit" below, and an administrator will review your character and make any suggestions before approving your character both into the roleplay and into the bot! **Be sure to read any relevant Roleplay or Submission rules as well!**'
+        + '\n\n*If you already submitted, but need to change something, you may make the edit and press "Submit" again to refresh your submission with the most up-to-date information!*',
+    }));
+
     // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
     if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(new MessageEmbed({
         color: 'BLURPLE',

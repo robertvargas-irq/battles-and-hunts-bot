@@ -249,28 +249,70 @@ class CharacterMenu {
  * @param {CharacterMenu} menuObject 
  */
 function generateAuxilaryEmbeds(menuObject) {
+
+    // override
+    if (menuObject.forceNotEditing) return [];
+
+    // generate auxilary embeds
     const embeds = [];
+    const authorRegistering = menuObject.registering && menuObject.isAuthor;
 
     // if registering and the author is calling the menu
-    if (!menuObject.forceNotEditing && menuObject.registering && menuObject.isAuthor) embeds.push(EmbedBuilder.from({
-        color: Colors.Yellow,
-        title: '📋 Welcome to ' + menuObject.authorSnowflake.guild.name + '!',
-        description: 'It looks like your character is yet to be approved!'
-        + '\nBefore you can start roleplaying or use any of the nifty features provided by this bot, you must first fully create your character and submit it for review with the button below!'
-        + '\n\nOnce you fill out every detail, and provide an image of your character\'s appearance, go ahead and press "Submit" below, and an administrator will review your character and make any suggestions before approving your character both into the roleplay and into the bot! **Be sure to read any relevant Roleplay or Submission rules as well!**'
-        + '\n\n*If you already submitted, but need to change something, you may make the edit and press "Submit" again to refresh your submission with the most up-to-date information!*',
-    }));
+    if (authorRegistering) {
 
-    // if stats are locked, and the author is calling the menu while not being an admin and not registering, give editing lock information
-    if (!menuObject.forceNotEditing && !menuObject.registering && !menuObject.isAdmin && menuObject.isAuthor && menuObject.statsLocked) embeds.push(EmbedBuilder.from({
-        color: Colors.Blurple,
-        title: '💡 Why am I unable to edit stats?',
-        description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
-        footer: { text: 'This is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.' },
-    }));
+        // first push registering message
+        embeds.push(EmbedBuilder.from({
+            color: Colors.Yellow,
+            title: '📋 Welcome to ' + menuObject.authorSnowflake.guild.name + '!',
+            description: 'It looks like your character is yet to be approved!'
+            + '\nBefore you can start roleplaying or use any of the nifty features provided by this bot, you must first fully create your character and submit it for review with the button below!'
+            + '\n\nOnce you fill out every detail, and provide an image of your character\'s appearance, go ahead and press "Submit" below, and an administrator will review your character and make any suggestions before approving your character both into the roleplay and into the bot! **Be sure to read any relevant Roleplay or Submission rules as well!**'
+            + '\n\n*If you already submitted, but need to change something, you may make the edit and press "Submit" again to refresh your submission with the most up-to-date information!*',
+        }));
+
+        // push any warnings afterward
+        const server = CoreUtil.Servers.cache.get(menuObject.authorSnowflake.guild.id);
+        const agesPaused = server.submissions.paused.ages.size > 0;
+        const restrictedFields = [];
+        if (agesPaused) {
+            const pausedDaysFormatted = Array.from(server.submissions.paused.ages.keys(), (pausedAge) => '`' + pausedAge + '`');
+            restrictedFields.push({
+                name: 'Character Age',
+                value: pausedDaysFormatted.join(', ') + ' character age groups are currently paused.',
+            });
+        }
+
+        // push restrictions notification
+        if (restrictedFields.length > 0) embeds.push(EmbedBuilder.from({
+            color: Colors.Red,
+            title: '⚠️ There are currently certain restrictions in place for submissions.',
+            description: 'Unfortunately, due to either a large influx or a clan capacity issue, the following character traits are currently on hold:',
+            fields: restrictedFields,
+        }));
+
+    }
+
+    // if stats are locked and author is editing
+    if (!menuObject.registering && menuObject.isAuthor && menuObject.statsLocked) {
+
+        // if an admin, inform priveleges
+        if (menuObject.isAdmin) embeds.push(EmbedBuilder.from({
+            color: Colors.Fuchsia,
+            title: '✨ Stats are currently locked, but you\'re immune!',
+            description: '> Editing stats is only usable upon request, but you have the `ManageChannels` permission, so you\'re all set!'
+        }));
+
+        // else, inform that stat editing is currently locked
+        else embeds.push(EmbedBuilder.from({
+            color: Colors.Blurple,
+            title: '💡 Why am I unable to edit stats?',
+            description: '> **Editing stats is only usable upon request.** Please contact an administrator if you wish to edit your stats.',
+            footer: { text: 'This is usually only granted to players who\'s characters are about to reach a milestone, such as a kit becoming an apprentice, an apprentice a warrior, etc.' },
+        }));
+    }
 
     // if administrator providing overrides, inform about their permissions
-    if (!menuObject.forceNotEditing && menuObject.isAdmin && !menuObject.isAuthor) embeds.push(EmbedBuilder.from({
+    if (menuObject.isAdmin && !menuObject.isAuthor) embeds.push(EmbedBuilder.from({
         color: Colors.Red,
         title: '📌 Administrator Overrides',
         description: '> As a member with `MANAGE_CHANNELS` permissions, you are authorized to override any character information or stats you deem fit.',
@@ -294,7 +336,7 @@ function generateSubmitButton(menuObject) {
     return new ButtonBuilder({
         customId: 'CHARACTERMENU:SUBMIT',
         label: !submissionAllowed
-        ? `Submissions for ⟪${ageTitle.toUpperCase()}⟫(${menuObject.character.moons}) paused.`
+        ? '⚠️ Submission restrictions in place | Refer to embed above'
         : alreadySubmitted
         ? 'Refresh Submission'
         : 'Submit for review',

@@ -1,4 +1,4 @@
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, Colors } = require('discord.js');
 const CharacterModel = require('../../../database/schemas/character');
 const SubmissionHandler = require('../../../util/Submissions/SubmissionHandler');
 const CoreUtil= require('../../../util/CoreUtil');
@@ -35,8 +35,8 @@ module.exports = async (interaction, subcommand) => {
 
             // inform administrator that the character was deleted
             return interaction.reply({
-                embeds: [new MessageEmbed({
-                    color: 'RED',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Red,
                     title: '🗑️ ' + (character.name || (author.displayName + '\'s unnamed character')) + ' was permanently deleted.',
                 })]
             });
@@ -47,8 +47,8 @@ module.exports = async (interaction, subcommand) => {
             // notify if already approved
             if (character.approved) return interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'FUCHSIA',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Fuchsia,
                     title: '💡 This character is already approved!',
                 })]
             });
@@ -57,8 +57,8 @@ module.exports = async (interaction, subcommand) => {
             character.approved = true;
             character.save();
             return interaction.reply({
-                embeds: [new MessageEmbed({
-                    color: 'GREEN',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Green,
                     title: '✅ This character is now marked as approved!',
                 })]
             });
@@ -69,8 +69,8 @@ module.exports = async (interaction, subcommand) => {
             // notify if not approved already
             if (!character.approved) return interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
-                    color: 'FUCHSIA',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Fuchsia,
                     title: '💡 This character is not approved yet!',
                 })]
             });
@@ -79,8 +79,8 @@ module.exports = async (interaction, subcommand) => {
             character.approved = false;
             character.save();
             return interaction.reply({
-                embeds: [new MessageEmbed({
-                    color: 'GREEN',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Green,
                     title: '✅ This character is no longer marked as approved!',
                 })]
             });

@@ -1,7 +1,7 @@
 const FILE_LANG_ID = 'PREFERRED_LANGUAGE';
 
 const { ApplicationCommandOptionType: dTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const Language = require('../../util/Language');
 const Translator = require('../../util/Translator');
@@ -74,8 +74,8 @@ module.exports = {
         // show success message
         interaction.editReply({
             embeds: [
-                new MessageEmbed()
-                    .setColor('AQUA')
+                new EmbedBuilder()
+                    .setColor('Aqua')
                     .setTitle('🌟 ' + translator.get('LANGUAGE_UPDATE_TITLE'))
                     .setDescription(translator.getGlobal('MENU_DISMISS')),
             ]

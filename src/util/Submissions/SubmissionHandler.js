@@ -1,9 +1,10 @@
 const {
     Message,
     CommandInteraction,
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
 } = require('discord.js');
 const ServerSchema = require('../../database/schemas/server');
 const CharacterMenu = require('../CharacterMenu/CharacterMenu');
@@ -20,11 +21,19 @@ class SubmissionHandler {
      */
     static async handleSubmission(interaction, character, server) {
         const channel = await this.fetchProcessingChannel(interaction, server);
-        // // console.log({channel});
         if (!channel) return interaction.reply({
-            embeds: [new MessageEmbed({
+            embeds: [EmbedBuilder.from({
                 title: '⚠️ Wait a minute-!',
                 description: '**This server has not yet configured a Character Submissions channel!**\n> Bug your server admins to make sure they set one up!'
+            })]
+        });
+
+        // check if age submission is paused
+        const ageTitle = CharacterMenu.getAgeTitle(character.moons);
+        if (!SubmissionHandler.isAllowedToSubmitByAgeTitle(server, ageTitle)) return interaction.reply({
+            embeds: [EmbedBuilder.from({
+                title: '⚠️ Hang on',
+                description: '**Unfortunately, the current age range: `' + ageTitle.toUpperCase() + '` (`' + character.moons + '`) is currently not being accepted.** If you believe this is a mistake, please contact an administrator.'
             })]
         });
 
@@ -33,29 +42,29 @@ class SubmissionHandler {
             return channel.send({
                 embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
                 components: [
-                    new MessageActionRow({
+                    new ActionRowBuilder({
                         components: [
-                            new MessageButton({
+                            new ButtonBuilder({
                                 customId: 'CHARACTERSUBMISSION:APPROVE',
                                 label: 'Approve Submission',
                                 emoji: '✅',
-                                style: 'SUCCESS',
+                                style: ButtonStyle.Success,
                             }),
-                            new MessageButton({
+                            new ButtonBuilder({
                                 customId: 'CHARACTERSUBMISSION:REFRESH',
                                 label: 'Refresh Submission',
                                 emoji: '🔃',
-                                style: 'SECONDARY',
+                                style: ButtonStyle.Secondary,
                             }),
                         ]
                     }),
-                    new MessageActionRow({
+                    new ActionRowBuilder({
                         components: [
-                            new MessageButton({
+                            new ButtonBuilder({
                                 customId:'CHARACTERSUBMISSION:DELETE',
                                 label: 'Delete',
                                 emoji: '🗑️',
-                                style: 'SECONDARY',
+                                style: ButtonStyle.Secondary,
                             }),
                         ]
                     }),
@@ -82,29 +91,29 @@ class SubmissionHandler {
                 message.edit({
                     embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
                     components: [
-                        new MessageActionRow({
+                        new ActionRowBuilder({
                             components: [
-                                new MessageButton({
+                                new ButtonBuilder({
                                     customId: 'CHARACTERSUBMISSION:APPROVE',
                                     label: 'Approve Submission',
                                     emoji: '✅',
-                                    style: 'SUCCESS',
+                                    style: ButtonStyle.Success,
                                 }),
-                                new MessageButton({
+                                new ButtonBuilder({
                                     customId: 'CHARACTERSUBMISSION:REFRESH',
                                     label: 'Refresh Submission',
                                     emoji: '🔃',
-                                    style: 'SECONDARY',
+                                    style: ButtonStyle.Secondary,
                                 }),
                             ]
                         }),
-                        new MessageActionRow({
+                        new ActionRowBuilder({
                             components: [
-                                new MessageButton({
+                                new ButtonBuilder({
                                     customId:'CHARACTERSUBMISSION:DELETE',
                                     label: 'Delete',
                                     emoji: '🗑️',
-                                    style: 'SECONDARY',
+                                    style: ButtonStyle.Secondary,
                                 }),
                             ]
                         }),
@@ -112,7 +121,7 @@ class SubmissionHandler {
                 });
                 return interaction.reply({
                     ephemeral: true,
-                    embeds: [new MessageEmbed({
+                    embeds: [EmbedBuilder.from({
                         title: '🔃 Refreshed submission',
                         description: '<#' + server.submissions?.channelId + '>'
                     })]
@@ -123,7 +132,7 @@ class SubmissionHandler {
             sendAndSave();
             interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed({
+                embeds: [EmbedBuilder.from({
                     title: '✅ Re-submitted!',
                     description: '<#' + server.submissions?.channelId + '>',
                 })]
@@ -136,7 +145,7 @@ class SubmissionHandler {
         sendAndSave();
         interaction.reply({
             ephemeral: true,
-            embeds: [new MessageEmbed({
+            embeds: [EmbedBuilder.from({
                 title: '✅ Submitted!',
                 description: '<#' + server.submissions?.channelId + '>',
             })]
@@ -191,6 +200,34 @@ class SubmissionHandler {
         server.submissions?.messageIdToAuthorId?.delete(messageId);
 
         server.save();
+    }
+
+    /**
+     * Check if character age is allowed to be submitted
+     * @param {ServerSchema} server 
+     * @param {string} ageTitle 
+     */
+    static isAllowedToSubmitByAgeTitle(server, ageTitle) {
+        return !server.submissions.paused.ages.has(ageTitle);
+    }
+
+    /**
+     * Check if character age is allowed to be submitted
+     * @param {ServerSchema} server 
+     * @param {number|string} characterAge 
+     * @returns 
+     */
+    static isAllowedToSubmitByMoons(server, characterAge) {
+
+        // coerce to int
+        const age = parseInt(characterAge);
+        if (age === NaN) throw new Error('Character age in moons must be a number or a coercable number.');
+
+        // fetch age title
+        const ageTitle = CharacterMenu.getAgeTitle(age);
+
+        // return whether or not it's paused
+        return SubmissionHandler.isAllowedToSubmitByAgeTitle(server, ageTitle);
     }
 }
 

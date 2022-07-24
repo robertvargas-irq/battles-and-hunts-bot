@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { MessageEmbed, MessageActionRow, MessageButton, Permissions } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, PermissionsBitField } = require('discord.js');
 
 module.exports = {
     name: 'guildCreate',
@@ -16,7 +16,7 @@ module.exports = {
         else
             await channel.send({
                 embeds: [
-                    new MessageEmbed({
+                    EmbedBuilder.from({
                         color: guild.client.config.colors.neutral,
                         thumbnail: { url: guild.iconURL() },
                         title: `♾️ Hey there, ${guild.name}!`,
@@ -30,8 +30,8 @@ module.exports = {
                     }),
                 ],
                 components: [
-                    new MessageActionRow().addComponents([
-                        new MessageButton()
+                    new ActionRowBuilder().addComponents([
+                        new ButtonBuilder()
                             .setLabel('Github Repo')
                             .setStyle('LINK')
                             .setURL( guild.client.config.githubRepoURL ),
@@ -46,7 +46,7 @@ module.exports = {
         else
             await owner.send({
                 embeds: [
-                    new MessageEmbed({
+                    EmbedBuilder.from({
                         color: guild.client.config.colors.neutral,
                         thumbnail: { url: owner.user.avatarURL() },
                         title: `♾️ Hey there, ${owner.user.username}!`,
@@ -59,8 +59,8 @@ module.exports = {
                     }),
                 ],
                 components: [
-                    new MessageActionRow().addComponents([
-                        new MessageButton()
+                    new ActionRowBuilder().addComponents([
+                        new ButtonBuilder()
                             .setLabel('Github Repo')
                             .setStyle('LINK')
                             .setURL( guild.client.config.githubRepoURL ),

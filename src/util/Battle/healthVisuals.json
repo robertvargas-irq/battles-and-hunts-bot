@@ -1,10 +1,10 @@
 {
     "colors": [
-        "NOT_QUITE_BLACK",
-        "DARK_RED",
-        "RED",
-        "YELLOW",
-        "AQUA"
+        "NotQuiteBlack",
+        "DarkRed",
+        "Red",
+        "Yellow",
+        "Aqua"
     ],
     "titles": [
         "",

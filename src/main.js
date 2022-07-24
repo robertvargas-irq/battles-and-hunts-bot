@@ -3,7 +3,7 @@ const process = require('process');
 process.chdir('./src');
 
 const BotClient = require("./util/BotClient/BotClient");
-const { Intents } = require('discord.js');
+const { GatewayIntentBits, Partials } = require('discord.js');
 const dotenv = require('dotenv');
 const Language = require('./util/Language');
 const CharacterCache = require('./util/Character/CharacterCache');
@@ -14,8 +14,8 @@ dotenv.config({ path: '../.env' });
 
 // initialize Discord client
 const client = new BotClient({
-    intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES ],
-    partials: ["CHANNEL"]
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages],
+    partials: [Partials.Channel]
 });
 
 // create console header

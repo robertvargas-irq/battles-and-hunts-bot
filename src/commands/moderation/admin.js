@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType : CommandTypes } = require('discord-api-types/v10');
-const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, PermissionsBitField } = require('discord.js');
 const CoreUtil = require('../../util/CoreUtil');
 const DAY_CHOICES = [
     {
@@ -296,7 +296,7 @@ module.exports = {
             ]
         },
         {
-        name: 'refresh',
+            name: 'refresh',
             description: 'Something not quite right?',
             type: CommandTypes.SubcommandGroup,
             options: [
@@ -306,13 +306,25 @@ module.exports = {
                     type: CommandTypes.Subcommand,
                 }
             ]
-        }
+        },
+        {
+            name: 'submissions',
+            description: 'Methods for character submissions',
+            type: CommandTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'allowed-age-groups',
+                    description: 'Allow or pause specific Character Age Groups',
+                    type: CommandTypes.Subcommand,
+                },
+            ],
+        },
     ],
     /**@param {CommandInteraction} interaction */
     async execute(interaction) {
 
         // filter out non-administrators
-        if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS))
+        if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels))
             return CoreUtil.InformNonAdministrator(interaction);
         
         // route
@@ -331,6 +343,8 @@ module.exports = {
                 return require('./admin-routes/admin-stats')(interaction, subcommand);
             case 'refresh':
                 return require('./admin-routes/admin-refresh')(interaction, subcommand);
+            case 'submissions':
+                return require('./admin-routes/admin-submissions')(interaction, subcommand);
         }
 
     },

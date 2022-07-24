@@ -1,4 +1,4 @@
-const { GuildMember, MessageEmbed } = require('discord.js');
+const { GuildMember, EmbedBuilder, Colors } = require('discord.js');
 const CharacterModel = require('../../database/schemas/character');
 const StatCalculator = require('../Stats/StatCalculator');
 const HealthVisuals = require('../Battle/HealthVisuals');
@@ -19,12 +19,12 @@ const guildsAllowingAllToEdit = new Set();
  * Format player stats.
  * @param {GuildMember} member
  * @param {CharacterModel} character 
- * @returns {MessageEmbed[]}
+ * @returns {EmbedBuilder[]}
  */
 function formatStats(member, character) {
     const maxHealth = StatCalculator.calculateMaxHealth(character);
-    const generalStats = new MessageEmbed({
-        color: '680d2b',
+    const generalStats = EmbedBuilder.from({
+        color: 0x680d2b,
         title: (character.name ?? member.displayName + '\'s Character') + ' General Stats',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
         fields: [
@@ -48,8 +48,8 @@ function formatStats(member, character) {
     });
 
     let i = 0;
-    const listedStats = new MessageEmbed({
-        color: 'LUMINOUS_VIVID_PINK',
+    const listedStats = EmbedBuilder.from({
+        color: Colors.LuminousVividPink,
         image: { url: STATS_BANNER },
         fields: Object.keys(character.stats).map(stat => {
             return {
@@ -73,8 +73,8 @@ function formatStats(member, character) {
  */
  function formatBattleStats(member, character) {
     const maxHealth = StatCalculator.calculateMaxHealth(character);
-    const generalStats = new MessageEmbed({
-        color: '680d2b',
+    const generalStats = EmbedBuilder.from({
+        color: 0x680d2b,
         title: (character.name ?? member.displayName + '\'s Character') + ' Battle Stats',
         thumbnail: { url: character.icon ?? member.displayAvatarURL({ dynamic: true }) },
         fields: [

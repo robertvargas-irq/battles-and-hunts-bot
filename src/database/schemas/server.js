@@ -34,6 +34,9 @@ const { Schema } = require("mongoose");
  *          channelId: string,
  *          messageIdToAuthorId: Map<messageId, submittingUserId>,
  *          authorIdToMessageId: Map<submittingUserId, messageId>,
+ *          paused: {
+ *              ages: Map<age, age>,
+ *          },
  *      },
  *      roles: {
  *          adult: string
@@ -162,6 +165,13 @@ const serverSchema = new Schema({
             type: Map,
             of: String,
             default: new Map(),
+        },
+        paused: {
+            ages: {
+                type: Map,
+                of: String,
+                default: new Map(),
+            },
         },
     },
     roles: {

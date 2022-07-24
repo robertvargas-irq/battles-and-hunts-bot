@@ -1,4 +1,4 @@
-const { GuildMember, TextChannel, MessageEmbed } = require('discord.js');
+const { GuildMember, TextChannel, EmbedBuilder, Colors } = require('discord.js');
 
 class PlayerLogger {
 
@@ -22,8 +22,8 @@ class PlayerLogger {
     static characterEdits = (loggingChannel, player, overrides) => {
         if (!loggingChannel || !overrides || !overrides.length) return false;
         return loggingChannel.send({
-            embeds: [new MessageEmbed({
-                color: 'YELLOW',
+            embeds: [EmbedBuilder.from({
+                color: Colors.Yellow,
                 thumbnail: { url: player.user.avatarURL() },
                 title: '📝 Character Changes',
                 description: `<@${player.user.id}>(${player.user.tag}) has changed items from their Character.`,

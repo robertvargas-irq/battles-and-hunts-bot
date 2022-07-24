@@ -1,4 +1,4 @@
-const { CommandInteraction, MessageEmbed, Permissions } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, PermissionsBitField, Colors } = require('discord.js');
 const Player = require('../../../util/Account/Player');
 
 
@@ -15,8 +15,8 @@ module.exports = async (interaction, subcommand) => {
             Player.disallowGuildEditing(interaction.guild.id);
             Player.clearEditing(interaction.guild.id);
             return interaction.reply({
-                embeds: [new MessageEmbed({
-                    color: 'GREEN',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Green,
                     title: '🔐 Editing Stats in /character re-locked.',
                     description: 'To unlock individual or server-wide editing, use the `unlock-one` or `unlock-all` subcommand respectively.'
                     + '\n/admin stats unlock'
@@ -29,8 +29,8 @@ module.exports = async (interaction, subcommand) => {
             const member = interaction.options.getMember('user');
             Player.allowEditing(interaction.guild.id, member.user.id);
             return interaction.reply({
-                embeds: [new MessageEmbed({
-                    color: 'GREEN',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Green,
                     title: '🔓 Editing Stats in /character temporarily granted to ' + member.displayName + '(' + member.user.tag + ').',
                     description: 'To lock everyone\'s ability to edit /character Stats, use the `lock` subcommand.'
                     + '\n/admin stats lock'
@@ -42,8 +42,8 @@ module.exports = async (interaction, subcommand) => {
             // add guild to unrestricted editing set
             Player.allowGuildEditing(interaction.guild.id);
             return interaction.reply({
-                embeds: [new MessageEmbed({
-                    color: 'GREEN',
+                embeds: [EmbedBuilder.from({
+                    color: Colors.Green,
                     title: '🔓 Editing Stats in /character granted to everyone within the server.',
                     description: 'To lock everyone\'s ability to edit /character Stats, use the `lock` subcommand.'
                     + '\n/admin stats lock'

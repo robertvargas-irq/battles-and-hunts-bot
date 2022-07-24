@@ -1,4 +1,4 @@
-const { ModalSubmitInteraction, MessageEmbed } = require('discord.js');
+const { ModalSubmitInteraction, EmbedBuilder, Colors } = require('discord.js');
 const CharacterMenu = require('../../../../util/CharacterMenu/CharacterMenu');
 const CoreUtil = require('../../../../util/CoreUtil');
 const Player = require('../../../../util/Account/Player');
@@ -21,7 +21,7 @@ module.exports = async (modal) => {
     if (editTarget.startsWith('SECTION') && !instance.isAdmin && !instance.registering && !Player.allowedToEdit(instance.interaction.guild.id, instance.interaction.user.id))
         return modal.reply({
             ephemeral: true,
-            embeds: [new MessageEmbed({
+            embeds: [EmbedBuilder.from({
                 title: '🔒 Your editing is currently locked.',
                 description: '> All changes were discarded.'
             })]
@@ -210,13 +210,13 @@ module.exports = async (modal) => {
     });
 
     // save and re-render
-    const embeds = [new MessageEmbed({
+    const embeds = [EmbedBuilder.from({
         title: '✅ Edits successful!',
-        color: 'GREEN',
+        color: Colors.Green,
     })];
-    if (errors.length) embeds.push(new MessageEmbed({
+    if (errors.length) embeds.push(EmbedBuilder.from({
         title: '⚠️ Whoops-! Something\'s a bit off...',
-        color: 'RED',
+        color: Colors.Red,
         description: 'There were a few values that were\'t quite right! They have been reset to their original values.\n\n'
         + errors.map(([customId, errorMessage]) =>
         (stats[customId]?.flair ?? '') + ' **' +

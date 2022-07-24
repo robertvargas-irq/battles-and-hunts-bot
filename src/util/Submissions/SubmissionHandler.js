@@ -10,7 +10,6 @@ const ServerSchema = require('../../database/schemas/server');
 const CharacterMenu = require('../CharacterMenu/CharacterMenu');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
-const ages = require('../CharacterMenu/ages.json');
 
 class SubmissionHandler {
 

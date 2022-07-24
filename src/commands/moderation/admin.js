@@ -296,7 +296,7 @@ module.exports = {
             ]
         },
         {
-        name: 'refresh',
+            name: 'refresh',
             description: 'Something not quite right?',
             type: CommandTypes.SubcommandGroup,
             options: [
@@ -306,7 +306,19 @@ module.exports = {
                     type: CommandTypes.Subcommand,
                 }
             ]
-        }
+        },
+        {
+            name: 'submissions',
+            description: 'Methods for character submissions',
+            type: CommandTypes.SubcommandGroup,
+            options: [
+                {
+                    name: 'allowed-age-groups',
+                    description: 'Allow or pause specific Character Age Groups',
+                    type: CommandTypes.Subcommand,
+                },
+            ],
+        },
     ],
     /**@param {CommandInteraction} interaction */
     async execute(interaction) {
@@ -331,6 +343,8 @@ module.exports = {
                 return require('./admin-routes/admin-stats')(interaction, subcommand);
             case 'refresh':
                 return require('./admin-routes/admin-refresh')(interaction, subcommand);
+            case 'submissions':
+                return require('./admin-routes/admin-submissions')(interaction, subcommand);
         }
 
     },

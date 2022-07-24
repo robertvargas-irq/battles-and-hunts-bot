@@ -11,6 +11,8 @@ module.exports = {
                 return require('./interactions/command')(interaction);
             if (interaction.type === InteractionType.ModalSubmit)
                 return require('./interactions/modalSubmit')(interaction);
+            if (interaction.isSelectMenu())
+                return require('./interactions/selectMenu')(interaction);
             if (interaction.isButton())
                 return require('./interactions/button')(interaction);
         }

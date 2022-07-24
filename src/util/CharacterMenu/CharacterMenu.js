@@ -52,8 +52,6 @@ class CharacterMenu {
         this.forceNotEditing = forceNotEditing;
 
         this.messageId = null;
-
-        // // console.log({NewObject: this});
     }
 
     static statHelpEmbed = EmbedBuilder.from({

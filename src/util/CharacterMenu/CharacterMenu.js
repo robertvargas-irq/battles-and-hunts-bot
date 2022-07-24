@@ -18,6 +18,7 @@ const CoreUtil = require('../CoreUtil');
 const StatCalculator = require('../Stats/StatCalculator');
 
 const stats = require('../Stats/stats.json');
+const SubmissionHandler = require('../Submissions/SubmissionHandler');
 const statSections = ['🍓', '🫐', '🍋'];
 const statArray = Object.entries(stats);
 
@@ -77,6 +78,7 @@ class CharacterMenu {
         let statSection = 0;
         const c = character;
         const s = author;
+        const statPointTotal = statArray.slice(1).reduce((previousValue, currentValue) => previousValue + c.stats[currentValue[0]], 0).toString();
         const embed = EmbedBuilder.from({
             color: s.displayColor || 0x76e3ed,
             author: { name: '« ' + (c.name ?? s.displayName + '\'s unnamed character') + ' »', iconURL:  c.icon ?? s.displayAvatarURL({ dynamic: true }) },
@@ -93,7 +95,7 @@ class CharacterMenu {
                 }}),
                 {
                     name: '🧮 Stat Point Total',
-                    value: '> `' + statArray.slice(1).reduce((previousValue, currentValue) => previousValue + c.stats[currentValue[0]], 0).toString() + '`',
+                    value: '> `' + statPointTotal + '`',
                     inline: true,
                 },
                 {
@@ -157,12 +159,7 @@ class CharacterMenu {
         const components = [];
         if (this.editingEnabled) components.push(...generateEditingRows(this, statSections));
         if (this.registering) components.push(new ActionRowBuilder({
-            components: [new ButtonBuilder({
-                customId: 'CHARACTERMENU:SUBMIT',
-                label: 'Submit for review',
-                emoji: '📋',
-                style: ButtonStyle.Secondary,
-            })]
+            components: [generateSubmitButton(this)]
         }));
         const payload = {
             embeds: [icon, embed, ...generateAuxilaryEmbeds(this)],
@@ -283,6 +280,30 @@ function generateAuxilaryEmbeds(menuObject) {
     }));
 
     return embeds;
+}
+
+/**
+ * Generate the proper submission button
+ * @param {CharacterMenu} menuObject 
+ */
+function generateSubmitButton(menuObject) {
+
+    const server = CoreUtil.Servers.cache.get(menuObject.authorSnowflake.guild.id);
+    const alreadySubmitted = server.submissions.authorIdToMessageId.has(menuObject.authorSnowflake.user.id);
+    const ageTitle = CharacterMenu.getAgeTitle(menuObject.character.moons);
+    const submissionAllowed = SubmissionHandler.isAllowedToSubmitByAgeTitle(server, ageTitle);
+
+    return new ButtonBuilder({
+        customId: 'CHARACTERMENU:SUBMIT',
+        label: !submissionAllowed
+        ? `Submissions for ⟪${ageTitle.toUpperCase()}⟫(${menuObject.character.moons}) paused.`
+        : alreadySubmitted
+        ? 'Refresh Submission'
+        : 'Submit for review',
+        emoji: !submissionAllowed ? '🛑' : alreadySubmitted ? '🔃' : '📋',
+        style: !submissionAllowed ? ButtonStyle.Danger : alreadySubmitted ? ButtonStyle.Success : ButtonStyle.Secondary,
+        disabled: !submissionAllowed
+    });
 }
 
 /**

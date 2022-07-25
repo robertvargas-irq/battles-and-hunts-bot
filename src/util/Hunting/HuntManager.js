@@ -336,16 +336,14 @@ class HuntManager extends CoreUtil {
         });
     }
 
-    static editToDisplayCarried = (embed) => EmbedBuilder.from(embed)
-        .setColor(Colors.Greyple)
-        .setTitle('')
-        .setThumbnail(embed.image?.url || '')
-        .setDescription('')
-        .setImage('')
-        .setFooter({
+    static editToDisplayCarried = (embed) => new EmbedBuilder({
+        color: Colors.Greyple,
+        thumbnail: embed.image?.url || undefined,
+        footer: {
             text: '🐾 Prey was carried away',
             iconURL: embed.footer?.iconURL
-        });
+        }
+    });
 
 }
 

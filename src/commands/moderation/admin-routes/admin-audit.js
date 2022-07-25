@@ -57,15 +57,15 @@ module.exports = async (interaction, subcommand) => {
             for (const excuse of excuses) {
                 switch (excuse.type) {
                     case 'LATE':
-                        late.push(interaction.guild.members.fetch({ member: excuse.userId }).catch(() => false));
+                        late.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
                         statuses.late[excuse.userId] = excuse.status;
                         break;
                     case 'LEFT EARLY':
-                        leftEarly.push(interaction.guild.members.fetch({ member: excuse.userId }).catch(() => false));
+                        leftEarly.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
                         statuses.leftEarly[excuse.userId] = excuse.status;
                         break;
                     case 'ABSENCE':
-                        absent.push(interaction.guild.members.fetch({ member: excuse.userId }).catch(() => false));
+                        absent.push(interaction.guild.members.fetch(excuse.userId).catch(() => false));
                         statuses.absent[excuse.userId] = excuse.status;
                         break;
                 }
@@ -94,23 +94,24 @@ module.exports = async (interaction, subcommand) => {
             };
 
             // sort into each respective embed
-            lateEmbed.description = lateMembers
+            lateEmbed.data.description = lateMembers
                 .filter(member => member != false)
-                .sort((a, b) => a.status - b.status)
+                .sort((a, b) => statuses.late[a.user.id] - statuses.late[b.user.id])
                 .map(member => {
+                    console.log({member});
                     const status = statuses.late[member.user.id];
                     return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
                 }).join('\n') || '> Nothin to see here! ✨';
-            leftEarlyEmbed.description = leftEarlyMembers
+            leftEarlyEmbed.data.description = leftEarlyMembers
                 .filter(member => member != false)
-                .sort((a, b) => a.status - b.status)
+                .sort((a, b) => statuses.leftEarly[a.user.id] - statuses.leftEarly[b.user.id])
                 .map(member => {
                     const status = statuses.leftEarly[member.user.id];
                     return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';
                 }).join('\n') || '> Nothin to see here! ✨';
-            absentEmbed.description = absentMembers
+            absentEmbed.data.description = absentMembers
                 .filter(member => member != false)
-                .sort((a, b) => a.status - b.status)
+                .sort((a, b) => statuses.absent[a.user.id] - statuses.absent[b.user.id])
                 .map(member => {
                     const status = statuses.absent[member.user.id];
                     return '> **' + colors[status] + ' ' + member.displayName + '** (<@' + member.user.id + '>)';

@@ -1,4 +1,4 @@
-const ExcuseHandler = require('../../../util/Excused/ExcuseHandler');
+const ExcuseHandler = require('../../../../util/Excused/ExcuseHandler');
 const {
     ButtonInteraction,
     EmbedBuilder,

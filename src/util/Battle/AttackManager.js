@@ -55,7 +55,7 @@ class AttackManager extends CoreUtil {
 
         // create attack header with attacker
         embeds.push(EmbedBuilder.from({
-            color: (hit && crit) ? '#fa7acb' : (hit) ? '#abfa7a' : '#fa877a',
+            color: (hit && crit) ? 0xfa7acb : (hit) ? 0xabfa7a : 0xfa877a,
             image: { url: attacker.icon ?? interaction.member.displayAvatarURL({ dynamic: true }) },
             author: {
                 name: '🗡️ '
@@ -66,7 +66,7 @@ class AttackManager extends CoreUtil {
 
         // break down attack roll
         embeds.push(EmbedBuilder.from({ 
-            color: (hit && crit) ? '#fa7acb' : (hit) ? '#7afabc' : '#faad7a',
+            color: (hit && crit) ? 0xfa7acb : (hit) ? 0x7afabc : 0xfaad7a,
             author: {
                 name: hit
                 ? '🎯 ' + CoreUtil.ProperCapitalization(attacker.pronouns.subjective ?? 'They') + ' '
@@ -81,7 +81,7 @@ class AttackManager extends CoreUtil {
 
         // if the user hit, then display crit results
         if (hit) embeds.push(EmbedBuilder.from({
-            color: (hit && crit) ? '#fa7acb' : (crit) ? '#7afabc' : '#faad7a',
+            color: (hit && crit) ? 0xfa7acb : (crit) ? 0x7afabc : 0xfaad7a,
             author: {
                 name: crit
                 ? '🪨 ' + CoreUtil.ProperCapitalization(attacker.pronouns.subjective ?? 'They') + ' '
@@ -95,7 +95,7 @@ class AttackManager extends CoreUtil {
 
         // provide a brief summary
         embeds.push(EmbedBuilder.from({
-            color: hit ? '#fa877a' : '#abfa7a',
+            color: hit ? 0xfa877a : 0xabfa7a,
             thumbnail: { url: target.icon ?? targetMember.displayAvatarURL({ dynamic: true }) },
             title: (hit && crit ? '💥 CRITICAL HIT\n' : hit ? '⚔️ ' : '🍃 ')
             + (target.name ?? targetMember.displayName + '\'s character')

@@ -110,8 +110,26 @@ module.exports = async (modal) => {
         instance.character.background = background;
     }
     else if (editTarget === 'IMAGES') {
-        const image = modal.fields.getField('image').value?.trim() || null;
-        const icon = modal.fields.getField('icon').value?.trim() || null;
+        let image = modal.fields.getField('image').value?.trim() || null;
+        let icon = modal.fields.getField('icon').value?.trim() || null;
+        const allowedLinks = /^https?:/;
+
+        // reset to previous values if either image or icon is not allowed
+        if (!allowedLinks.test(image)) {
+            image = instance.character.image;
+            errors.push([
+                'image', '`Image` links MUST start with `http:` or `https:`'
+            ]);
+        }
+
+        if (!allowedLinks.test(icon)) {
+            icon = instance.character.icon;
+            errors.push([
+                'icon', '`Icon` links MUST start with `http:` or `https:`'
+            ]);
+        }
+
+
 
         // for logging purposes
         changes.push(

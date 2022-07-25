@@ -1,4 +1,4 @@
-const { CommandInteraction, EmbedBuilder, MessagePayload, Message, ThreadManager } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, MessagePayload, Message, ThreadManager, Colors } = require('discord.js');
 const serverSchema = require('../../database/schemas/server');
 const CoreUtil = require('../CoreUtil');
 const flairs = require('./preyPileFlairs.json');
@@ -64,7 +64,7 @@ class PreyPile extends CoreUtil {
      */
     static async spawnPreyPile(interaction, server, clan) {
         const pile = new EmbedBuilder()
-            .setColor(flairs[clan].color)
+            .setColor(Colors[flairs[clan].color])
             .setTitle(flairs[clan].flair + ` ${clan.toUpperCase()} PREY PILE`)
             .setDescription('__(`Bites Left` / `Size`) **Prey Type**__\n**- - - - - -**\n'
             + this.formatPrey(server.clans[clan].preyPile));
@@ -126,7 +126,7 @@ class PreyPile extends CoreUtil {
 
         // create new pile and update existing message
         const pile = new EmbedBuilder()
-            .setColor(flairs[clan].color)
+            .setColor(Colors[flairs[clan].color])
             .setTitle(flairs[clan].flair + ` ${clan.toUpperCase()} PREY PILE`)
             .setDescription('__(`Bites` / `Total Bites`) Prey Name__\n'
             + this.formatPrey(server.clans[clan].preyPile));

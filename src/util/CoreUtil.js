@@ -28,9 +28,9 @@ class CoreUtil {
     /**
      * Parse array of Discord Color Resolvables into Hexidecimal strings
      * @param {DiscordColor[] | Number[] | [r,g,b]} colors 
-     * @returns {string[]} Hexidecimal color strings
+     * @returns {string[]} Hexidecimal color numbers
      */
-    static DiscordColorArrayToHex = (colors) => colors.map(c => Colors[c]);
+    static DiscordColorArrayToHex = (colors) => colors.map(c => '#' + Colors[c].toString(16).replace('#', ''));
 
     /**
      * Get a Color from an array based on a ratio
@@ -38,7 +38,9 @@ class CoreUtil {
      * @param {number} ratio Decimal between `0` and `1`
      * @returns {number} Hexidecimal color from the given array based on the given ratio
      */
-    static GetColorFromRatio = (colors, ratio) => ColorUtil.toHex(ColorUtil.getScale(...CoreUtil.DiscordColorArrayToHex(colors))(ratio));
+    static GetColorFromRatio = (colors, ratio) => parseInt(
+        ColorUtil.toHex(ColorUtil.getScale(...CoreUtil.DiscordColorArrayToHex(colors))(ratio)).replace('#', '')
+    , 16);
 
     /**
      * Get an array index from a given ratio

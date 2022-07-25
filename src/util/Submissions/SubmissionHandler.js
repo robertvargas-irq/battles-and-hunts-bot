@@ -7,7 +7,7 @@ const {
     ButtonStyle,
 } = require('discord.js');
 const ServerSchema = require('../../database/schemas/server');
-const CharacterMenu = require('../CharacterMenu/CharacterMenu');
+// const CharacterMenu = require('../CharacterMenu/CharacterMenu');
 const CharacterModel = require('../../database/schemas/character');
 const CoreUtil = require('../CoreUtil');
 
@@ -29,7 +29,7 @@ class SubmissionHandler {
         });
 
         // check if age submission is paused
-        const ageTitle = CharacterMenu.getAgeTitle(character.moons);
+        const ageTitle = require('../CharacterMenu/CharacterMenu').getAgeTitle(character.moons);
         if (!SubmissionHandler.isAllowedToSubmitByAgeTitle(server, ageTitle)) return interaction.reply({
             embeds: [EmbedBuilder.from({
                 title: '⚠️ Hang on',
@@ -40,7 +40,7 @@ class SubmissionHandler {
         // function to send a brand new submission message and create the thread
         const sendAndSave = async () => {
             return channel.send({
-                embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
+                embeds: [require('../CharacterMenu/CharacterMenu').constructEmbed(character, interaction.member)],
                 components: [
                     new ActionRowBuilder({
                         components: [
@@ -89,7 +89,7 @@ class SubmissionHandler {
             const message = await channel.messages.fetch(alreadySubmittedMessageId).catch(() => false);
             if (message) {
                 message.edit({
-                    embeds: [CharacterMenu.constructEmbed(character, interaction.member)],
+                    embeds: [require('../CharacterMenu/CharacterMenu').constructEmbed(character, interaction.member)],
                     components: [
                         new ActionRowBuilder({
                             components: [
@@ -224,7 +224,7 @@ class SubmissionHandler {
         if (age === NaN) throw new Error('Character age in moons must be a number or a coercable number.');
 
         // fetch age title
-        const ageTitle = CharacterMenu.getAgeTitle(age);
+        const ageTitle = require('../CharacterMenu/CharacterMenu').getAgeTitle(age);
 
         // return whether or not it's paused
         return SubmissionHandler.isAllowedToSubmitByAgeTitle(server, ageTitle);

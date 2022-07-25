@@ -67,7 +67,7 @@ module.exports = async (button) => {
             // generate quick viewer with expandable view
             return button.reply({
                 ephemeral: true,
-                embeds: [EmbedBuilder.from({
+                embeds: [new EmbedBuilder({
                     color: Colors.Fuchsia,
                     title: 'Check all of your submitted excuses for `' + EXCUSE_DAY + '`!',
                     description: '> Press any of the available buttons to pull up the original request submitted!',

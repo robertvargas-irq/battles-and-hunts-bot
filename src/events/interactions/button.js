@@ -16,6 +16,7 @@ module.exports = async (button) => {
         case 'CHARACTERMENU': return require('./routes/button/charactermenu')(button);
         case 'CHARACTERSUBMISSION': return require('./routes/button/charactersubmission')(button);
         case 'EXCUSEBUTTON': return require('./routes/button/excuses')(button);
+        case 'EXCUSEBUTTON_VIEW': return require('./routes/button/excuses')(button);
         case 'PREY': return require('./routes/button/prey')(button);
     }
 

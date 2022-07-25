@@ -446,7 +446,7 @@ class ExcuseHandler extends CoreUtil {
                 label: p ? day + ' : Under review since ' + paused.get(day.toUpperCase()) : day,
                 disabled: p
             });
-        }).sort((a, b) => a.disabled - b.disabled);
+        }).sort((a, b) => a.data.disabled - b.data.disabled);
     }
 }
 

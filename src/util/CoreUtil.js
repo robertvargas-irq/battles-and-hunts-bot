@@ -1,6 +1,6 @@
 const FILE_LANG_ID = 'CORE_UTIL';
 
-const { CommandInteraction, EmbedBuilder, MessagePayload, Util: DiscordUtil, Colors } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, MessagePayload, Colors } = require('discord.js');
 const Pluralize = require('pluralize');
 const ColorUtil = require('color2k');
 const mongoose = require('mongoose');
@@ -30,7 +30,7 @@ class CoreUtil {
      * @param {DiscordColor[] | Number[] | [r,g,b]} colors 
      * @returns {string[]} Hexidecimal color strings
      */
-    static DiscordColorArrayToHex = (colors) => colors.map(c => '#' + DiscordUtil.resolveColor(c).toString(16).replace('#', ''));
+    static DiscordColorArrayToHex = (colors) => colors.map(c => Colors[c]);
 
     /**
      * Get a Color from an array based on a ratio

@@ -118,14 +118,14 @@ module.exports = async (modal) => {
         if (!allowedLinks.test(image)) {
             image = instance.character.image;
             errors.push([
-                'image', '`Image` links MUST start with `http:` or `https:`'
+                'image', '`Image` links MUST start with `http:` or `https:`. If you are trying to submit an HTML Embed code (`<a ref=...`) (`<img src=...`), only submit the link located inside the `<img>` tag\'s `src` property. For example:\n`<img src="https://www.imgur.com/some-image-code-here" alt="Cool image!">`, only submit `https://www.imgur.com/some-image-code here`!'
             ]);
         }
 
         if (!allowedLinks.test(icon)) {
             icon = instance.character.icon;
             errors.push([
-                'icon', '`Icon` links MUST start with `http:` or `https:`'
+                'icon', '`Icon` links MUST start with `http:` or `https:`. If you are trying to submit an HTML Embed code (`<a ref=...`) (`<img src=...`), only submit the link located inside the `<img>` tag\'s `src` property. For example:\n`<img src="https://www.imgur.com/some-image-code-here" alt="Cool image!">`, only submit `https://www.imgur.com/some-image-code here`!'
             ]);
         }
 
